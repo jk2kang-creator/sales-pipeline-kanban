@@ -6,7 +6,7 @@ create extension if not exists pgcrypto;
 
 -- ---------- 1. stages: 파이프라인 단계 ----------
 create table if not exists stages (
-  id                  text primary key,      -- 단계 슬러그 (lead, review, proposal, negotiation, won, lost)
+  id                  text primary key,      -- 단계 슬러그 (discovery, contact, proposal, negotiation, won, lost, hold)
   name                text not null,          -- 화면에 표시할 단계 이름
   sort_order          int not null,           -- 칸반 보드에서의 정렬 순서
   default_probability numeric not null default 0 check (default_probability between 0 and 100)
@@ -47,14 +47,15 @@ create policy "deals_anon_all"
   using (true)
   with check (true);
 
--- ---------- 4. 초기 데이터: 단계 ----------
+-- ---------- 4. 초기 데이터: 단계 (7단계, 엑셀 '딜_파이프라인_관리양식' 기준정보와 동일) ----------
 insert into stages (id, name, sort_order, default_probability) values
-  ('lead',        '리드', 1, 10),
-  ('review',      '검토', 2, 30),
-  ('proposal',    '제안', 3, 50),
+  ('discovery',   '발굴', 1, 10),
+  ('contact',     '접촉', 2, 25),
+  ('proposal',    '제안', 3, 45),
   ('negotiation', '협상', 4, 70),
   ('won',         '수주', 5, 100),
-  ('lost',        '실주', 6, 0)
+  ('lost',        '실주', 6, 0),
+  ('hold',        '보류', 7, 0)
 on conflict (id) do update
   set name = excluded.name,
       sort_order = excluded.sort_order,
@@ -62,8 +63,8 @@ on conflict (id) do update
 
 -- ---------- 5. 초기 데이터: 딜 (화면 예시 6건) ----------
 insert into deals (company, deal_name, amount, stage_id, owner, expected_close_date, probability) values
-  ('(주)한빛전자',   '클라우드 인프라 전환 프로젝트',   120000000, 'lead',        '김민수', '2026-10-15', 20),
-  ('대성물산',        '사내 ERP 고도화',                  85000000, 'review',      '이서연', '2026-09-30', 40),
+  ('(주)한빛전자',   '클라우드 인프라 전환 프로젝트',   120000000, 'discovery',   '김민수', '2026-10-15', 20),
+  ('대성물산',        '사내 ERP 고도화',                  85000000, 'contact',     '이서연', '2026-09-30', 40),
   ('태양테크',        '보안 솔루션 구축',                  64000000, 'proposal',    '박지훈', '2026-10-05', 55),
   ('미래산업',        '영업관리 시스템 라이선스 갱신',      32000000, 'negotiation', '김민수', '2026-09-20', 75),
   ('그린바이오',      '데이터 분석 플랫폼 구축',          150000000, 'won',         '최유진', '2026-08-25', 100),

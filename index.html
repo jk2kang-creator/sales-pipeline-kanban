@@ -490,12 +490,12 @@
     <div class="summary-card">
       <div class="label">전체 파이프라인 총액</div>
       <div class="value" id="totalPipeline">-</div>
-      <div class="sub">실주 제외, 진행 중인 전체 딜 금액 합계</div>
+      <div class="sub">실주·보류 제외, 진행 중인 전체 딜 금액 합계</div>
     </div>
     <div class="summary-card won">
       <div class="label">가중 예상매출 (금액 × 수주확률 합계)</div>
       <div class="value" id="totalWeighted">-</div>
-      <div class="sub">실주 제외, 단계별 확률 반영 예상 매출</div>
+      <div class="sub">실주·보류 제외, 단계별 확률 반영 예상 매출</div>
     </div>
   </div>
 
@@ -567,8 +567,8 @@
   var SUPABASE_ANON_KEY = "sb_publishable_m0VSZ3Cl_29zOCIt59S5gQ_NiONIdlX";
 
   var STAGE_COLORS = {
-    lead:"#9aa0ac", review:"#4f9dfd", proposal:"#7c5cf0",
-    negotiation:"#f2a33d", won:"#38b76c", lost:"#e5564f"
+    discovery:"#9aa0ac", contact:"#4f9dfd", proposal:"#7c5cf0",
+    negotiation:"#f2a33d", won:"#38b76c", lost:"#e5564f", hold:"#c9a15a"
   };
 
   var supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -683,7 +683,7 @@
   function renderSummary(){
     var totalPipeline = 0, totalWeighted = 0;
     deals.forEach(function(d){
-      if(d.stage !== "lost"){
+      if(d.stage !== "lost" && d.stage !== "hold"){
         totalPipeline += Number(d.amount)||0;
         totalWeighted += (Number(d.amount)||0) * (Number(d.probability)||0) / 100;
       }
