@@ -24,15 +24,16 @@
     font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",-apple-system,BlinkMacSystemFont,sans-serif;
     -webkit-font-smoothing:antialiased;
   }
+  a{color:inherit;}
 
-  /* ---------- Header ---------- */
+  /* ---------- Header / Nav ---------- */
   header{
-    padding:20px 28px 16px;
+    padding:16px 28px 0;
     background:var(--panel);
     border-bottom:1px solid var(--border);
     position:sticky;
     top:0;
-    z-index:20;
+    z-index:30;
   }
   .header-top{
     display:flex;
@@ -40,16 +41,18 @@
     justify-content:space-between;
     gap:16px;
     flex-wrap:wrap;
-    margin-bottom:16px;
+    margin-bottom:12px;
   }
   h1{
-    font-size:20px;
-    font-weight:700;
+    font-size:19px;
+    font-weight:800;
     margin:0;
     letter-spacing:-0.01em;
+    white-space:nowrap;
   }
   .header-actions{
     display:flex;
+    align-items:center;
     gap:8px;
   }
   .btn{
@@ -62,6 +65,7 @@
     font-weight:600;
     cursor:pointer;
     transition:background .15s, border-color .15s, transform .05s;
+    white-space:nowrap;
   }
   .btn:hover{background:#f6f7fa;}
   .btn:active{transform:scale(0.98);}
@@ -77,369 +81,28 @@
     color:#d5453f;
   }
   .btn-danger:hover{background:#fdeeee;}
+  .btn-sm{ padding:6px 11px; font-size:12px; }
 
-  .summary-row{
-    display:grid;
-    grid-template-columns:repeat(2, minmax(220px,1fr));
-    gap:12px;
-    margin-bottom:14px;
-  }
-  .summary-card{
-    background:linear-gradient(135deg,var(--accent-dim),#f8f9ff);
-    border:1px solid #dfe4ff;
-    border-radius:var(--radius);
-    padding:14px 18px;
-  }
-  .summary-card .label{
-    font-size:12px;
-    color:var(--text-dim);
-    font-weight:600;
-    margin-bottom:6px;
-  }
-  .summary-card .value{
-    font-size:24px;
-    font-weight:800;
-    letter-spacing:-0.02em;
-  }
-  .summary-card.won{
-    background:linear-gradient(135deg,#e9faf0,#f7fffb);
-    border-color:#c9f0da;
-  }
-  .summary-card .sub{
-    font-size:11.5px;
-    color:var(--text-dim);
-    margin-top:4px;
-  }
-
-  .stage-summary{
+  .main-nav{
     display:flex;
-    gap:10px;
-    overflow-x:auto;
-    padding-bottom:2px;
-  }
-  .stage-chip{
-    flex:1 1 0;
-    min-width:150px;
-    background:var(--panel);
-    border:1px solid var(--border);
-    border-radius:10px;
-    padding:9px 12px;
-  }
-  .stage-chip .stage-name{
-    font-size:11.5px;
-    font-weight:700;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    color:var(--text-dim);
-    margin-bottom:4px;
-  }
-  .stage-chip .dot{
-    width:8px;height:8px;border-radius:50%;
-  }
-  .stage-chip .amt{
-    font-size:14px;
-    font-weight:700;
-  }
-  .stage-chip .weighted{
-    font-size:11.5px;
-    color:var(--text-dim);
-    margin-top:2px;
-  }
-
-  /* ---------- Board ---------- */
-  .board-wrap{
-    padding:20px 28px 40px;
+    gap:4px;
     overflow-x:auto;
   }
-  .board{
-    display:grid;
-    grid-auto-flow:column;
-    grid-auto-columns:280px;
-    gap:14px;
-    align-items:start;
-    min-height:60vh;
-  }
-  .column{
-    background:#eceef2;
-    border-radius:var(--radius);
-    display:flex;
-    flex-direction:column;
-    max-height:calc(100vh - 230px);
-  }
-  .column-header{
-    padding:12px 14px 10px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:6px;
-    position:sticky;
-    top:0;
-  }
-  .column-title-wrap{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    min-width:0;
-  }
-  .column-dot{
-    width:10px;height:10px;border-radius:50%;flex:none;
-  }
-  .column-title{
-    font-size:13.5px;
-    font-weight:800;
-    white-space:nowrap;
-  }
-  .column-count{
-    font-size:11px;
-    color:var(--text-dim);
-    background:rgba(0,0,0,.05);
-    padding:1px 7px;
-    border-radius:20px;
-    font-weight:700;
-  }
-  .column-totals{
-    padding:0 14px 10px;
-    font-size:11.5px;
-    color:var(--text-dim);
-    line-height:1.5;
-  }
-  .column-totals b{
-    color:var(--text);
-    font-weight:700;
-  }
-  .card-list{
-    flex:1;
-    overflow-y:auto;
-    padding:2px 10px 10px;
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    min-height:40px;
-  }
-  .card-list.drag-over{
-    background:rgba(79,110,247,.08);
-    outline:2px dashed var(--accent);
-    outline-offset:-4px;
-    border-radius:8px;
-  }
-  .add-card-btn{
-    margin:0 10px 12px;
-    padding:9px;
-    border:1.5px dashed #c7cad3;
-    border-radius:8px;
-    background:transparent;
-    color:var(--text-dim);
-    font-size:12.5px;
-    font-weight:700;
-    cursor:pointer;
-    text-align:center;
-  }
-  .add-card-btn:hover{
-    border-color:var(--accent);
-    color:var(--accent);
-    background:#fff;
-  }
-
-  .deal-card{
-    background:var(--panel);
-    border:1px solid var(--border);
-    border-radius:10px;
-    padding:12px 12px 10px;
-    box-shadow:var(--shadow);
-    cursor:grab;
-    transition:box-shadow .15s, transform .1s, opacity .15s;
-  }
-  .deal-card:hover{
-    box-shadow:0 4px 14px rgba(20,22,30,.12);
-  }
-  .deal-card.dragging{
-    opacity:.4;
-  }
-  .deal-card .deal-name{
-    font-size:13.5px;
-    font-weight:700;
-    margin-bottom:3px;
-    line-height:1.35;
-  }
-  .deal-card .company{
-    font-size:12px;
-    color:var(--text-dim);
-    margin-bottom:8px;
-  }
-  .deal-card .amount{
-    font-size:15px;
-    font-weight:800;
-    color:var(--text);
-    margin-bottom:8px;
-  }
-  .deal-card .meta-row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    font-size:11.5px;
-    color:var(--text-dim);
-    margin-bottom:4px;
-  }
-  .owner-badge{
-    display:inline-flex;
-    align-items:center;
-    gap:5px;
-    font-weight:600;
-    color:var(--text);
-  }
-  .owner-dot{
-    width:16px;height:16px;border-radius:50%;
-    background:var(--accent);
-    color:#fff;
-    font-size:9px;
-    display:flex;align-items:center;justify-content:center;
-    font-weight:800;
-    flex:none;
-  }
-  .prob-bar-wrap{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    margin-top:6px;
-  }
-  .prob-bar-bg{
-    flex:1;
-    height:5px;
-    background:#eceef2;
-    border-radius:4px;
-    overflow:hidden;
-  }
-  .prob-bar-fill{
-    height:100%;
-    background:var(--accent);
-    border-radius:4px;
-  }
-  .prob-text{
-    font-size:11px;
-    font-weight:700;
-    color:var(--text-dim);
-    width:32px;
-    text-align:right;
-    flex:none;
-  }
-  .card-actions{
-    display:flex;
-    justify-content:flex-end;
-    gap:6px;
-    margin-top:8px;
-    padding-top:8px;
-    border-top:1px solid #f0f1f4;
-  }
-  .icon-btn{
+  .main-nav button{
     border:none;
     background:transparent;
     color:var(--text-dim);
-    font-size:11.5px;
-    font-weight:700;
-    cursor:pointer;
-    padding:3px 8px;
-    border-radius:6px;
-  }
-  .icon-btn:hover{
-    background:#f0f1f4;
-    color:var(--text);
-  }
-  .icon-btn.del:hover{
-    background:#fdeeee;
-    color:#d5453f;
-  }
-  .empty-hint{
-    font-size:11.5px;
-    color:#b3b6c0;
-    text-align:center;
-    padding:18px 8px;
-  }
-
-  /* ---------- Modal ---------- */
-  .overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(20,22,30,.45);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index:100;
-    padding:20px;
-  }
-  .overlay.open{display:flex;}
-  .modal{
-    background:#fff;
-    border-radius:14px;
-    width:100%;
-    max-width:420px;
-    padding:24px;
-    box-shadow:0 20px 60px rgba(0,0,0,.25);
-    max-height:90vh;
-    overflow-y:auto;
-  }
-  .modal h2{
-    font-size:17px;
-    margin:0 0 18px;
-    font-weight:800;
-  }
-  .field{
-    margin-bottom:14px;
-  }
-  .field label{
-    display:block;
-    font-size:12px;
-    font-weight:700;
-    color:var(--text-dim);
-    margin-bottom:6px;
-  }
-  .field input,
-  .field select{
-    width:100%;
-    padding:10px 11px;
-    border:1px solid var(--border);
-    border-radius:8px;
     font-size:13.5px;
-    font-family:inherit;
-    background:#fbfbfc;
-    color:var(--text);
+    font-weight:700;
+    padding:10px 14px;
+    cursor:pointer;
+    border-bottom:2.5px solid transparent;
+    white-space:nowrap;
   }
-  .field input:focus,
-  .field select:focus{
-    outline:none;
-    border-color:var(--accent);
-    background:#fff;
-  }
-  .field-row{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-  }
-  .range-row{
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
-  .range-row input[type=range]{
-    flex:1;
-  }
-  .range-val{
-    font-size:13px;
-    font-weight:800;
+  .main-nav button:hover{ color:var(--text); }
+  .main-nav button.active{
     color:var(--accent);
-    width:40px;
-    text-align:right;
-  }
-  .modal-actions{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-top:20px;
-    gap:8px;
-  }
-  .modal-actions .right{
-    display:flex;
-    gap:8px;
+    border-bottom-color:var(--accent);
   }
 
   .error-banner{
@@ -451,16 +114,9 @@
     font-weight:600;
     padding:10px 14px;
     border-radius:8px;
-    margin-bottom:14px;
+    margin:0 0 12px;
   }
   .error-banner.show{ display:block; }
-  .loading-hint{
-    padding:60px 20px;
-    text-align:center;
-    color:var(--text-dim);
-    font-size:13px;
-    font-weight:600;
-  }
   .sync-tag{
     font-size:11px;
     font-weight:700;
@@ -470,6 +126,308 @@
     gap:5px;
   }
   .sync-tag.show{ display:inline-flex; }
+  .loading-hint{
+    padding:60px 20px;
+    text-align:center;
+    color:var(--text-dim);
+    font-size:13px;
+    font-weight:600;
+  }
+
+  main{ padding:20px 28px 48px; }
+  .view{ display:none; }
+  .view.active{ display:block; }
+
+  /* ---------- Cards / KPI ---------- */
+  .kpi-row{
+    display:grid;
+    grid-template-columns:repeat(5, minmax(150px,1fr));
+    gap:12px;
+    margin-bottom:18px;
+  }
+  .kpi-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:14px 16px;
+  }
+  .kpi-card .label{ font-size:12px; color:var(--text-dim); font-weight:700; margin-bottom:6px; }
+  .kpi-card .value{ font-size:21px; font-weight:800; letter-spacing:-0.01em; }
+  .kpi-card .unit{ font-size:11.5px; color:var(--text-dim); font-weight:600; margin-left:2px; }
+  .kpi-card.accent{ background:linear-gradient(135deg,var(--accent-dim),#f8f9ff); border-color:#dfe4ff; }
+  .kpi-card.won{ background:linear-gradient(135deg,#e9faf0,#f7fffb); border-color:#c9f0da; }
+  .kpi-card.warn{ background:linear-gradient(135deg,#fff6e9,#fffdf7); border-color:#f3e0bd; }
+
+  .section-block{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:18px 20px;
+    margin-bottom:18px;
+  }
+  .section-title{
+    font-size:14.5px;
+    font-weight:800;
+    margin:0 0 4px;
+  }
+  .section-sub{
+    font-size:11.5px;
+    color:var(--text-dim);
+    margin:0 0 14px;
+  }
+
+  /* ---------- Tables ---------- */
+  .table-scroll{ overflow-x:auto; }
+  table.data-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:12.5px;
+    min-width:720px;
+  }
+  table.data-table th{
+    text-align:left;
+    font-size:11.5px;
+    font-weight:700;
+    color:var(--text-dim);
+    padding:8px 10px;
+    border-bottom:1.5px solid var(--border);
+    white-space:nowrap;
+    background:#fafafc;
+    position:sticky;
+    top:0;
+  }
+  table.data-table td{
+    padding:9px 10px;
+    border-bottom:1px solid #f0f1f4;
+    vertical-align:middle;
+    white-space:nowrap;
+  }
+  table.data-table td.wrap{ white-space:normal; min-width:160px; }
+  table.data-table tbody tr:hover{ background:#fafbff; }
+  table.data-table tfoot td{
+    font-weight:800;
+    border-top:1.5px solid var(--border);
+    border-bottom:none;
+    background:#fafafc;
+  }
+  .cell-actions{ display:flex; gap:4px; }
+
+  .badge{
+    display:inline-block;
+    padding:2px 9px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:700;
+    white-space:nowrap;
+  }
+  .badge-stage{ color:#fff; }
+  .badge-status-active{ background:#eef1ff; color:#4f6ef7; }
+  .badge-status-won{ background:#e6f7ed; color:#1f9d55; }
+  .badge-status-lost{ background:#fdeeee; color:#d5453f; }
+  .badge-status-hold{ background:#fff4e2; color:#b07a1f; }
+  .badge-alert-overdue{ background:#fdeeee; color:#d5453f; }
+  .badge-alert-idle{ background:#f0f1f4; color:#6b7280; }
+  .badge-alert-stale{ background:#fff1e0; color:#c46a12; }
+  .badge-alert-imminent{ background:#fff9db; color:#9a7b06; }
+  .badge-alert-none{ color:#b3b6c0; }
+
+  .filter-row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+  .filter-row select, .filter-row input[type=text]{
+    padding:7px 10px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    font-size:12.5px;
+    font-family:inherit;
+    background:#fbfbfc;
+  }
+
+  .subtabs{
+    display:flex;
+    gap:6px;
+    margin-bottom:14px;
+  }
+  .subtabs button{
+    border:1px solid var(--border);
+    background:var(--panel);
+    color:var(--text-dim);
+    font-size:12.5px;
+    font-weight:700;
+    padding:7px 14px;
+    border-radius:20px;
+    cursor:pointer;
+  }
+  .subtabs button.active{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+  }
+  .subview{ display:none; }
+  .subview.active{ display:block; }
+
+  /* ---------- Guide ---------- */
+  .guide-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    margin-bottom:12px;
+  }
+  .guide-card h3{
+    margin:0 0 4px;
+    font-size:15px;
+    font-weight:800;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .guide-card .prob{
+    font-size:11.5px;
+    font-weight:700;
+    color:#fff;
+    background:var(--accent);
+    padding:2px 9px;
+    border-radius:20px;
+  }
+  .guide-card .definition{ font-size:13px; color:var(--text-dim); margin:2px 0 12px; }
+  .guide-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+    gap:12px;
+    font-size:12px;
+  }
+  .guide-grid .g-label{ font-weight:700; color:var(--text-dim); margin-bottom:4px; }
+  .guide-grid .g-body{ white-space:pre-line; line-height:1.6; color:var(--text); }
+  .guide-grid .g-warn{ white-space:pre-line; line-height:1.6; color:#b3661e; }
+  .principle-item{
+    display:flex;
+    gap:10px;
+    padding:10px 0;
+    border-bottom:1px solid #f0f1f4;
+  }
+  .principle-item:last-child{ border-bottom:none; }
+  .principle-item .p-title{ font-weight:700; font-size:13px; margin-bottom:2px; }
+  .principle-item .p-body{ font-size:12px; color:var(--text-dim); }
+
+  /* ---------- Kanban (reused) ---------- */
+  .board-wrap{ overflow-x:auto; }
+  .board{
+    display:grid;
+    grid-auto-flow:column;
+    grid-auto-columns:260px;
+    gap:14px;
+    align-items:start;
+    min-height:50vh;
+  }
+  .column{
+    background:#eceef2;
+    border-radius:var(--radius);
+    display:flex;
+    flex-direction:column;
+    max-height:calc(100vh - 320px);
+  }
+  .column-header{
+    padding:12px 14px 10px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:6px;
+  }
+  .column-title-wrap{ display:flex; align-items:center; gap:8px; min-width:0; }
+  .column-dot{ width:10px;height:10px;border-radius:50%;flex:none; }
+  .column-title{ font-size:13px; font-weight:800; white-space:nowrap; }
+  .column-count{
+    font-size:11px; color:var(--text-dim); background:rgba(0,0,0,.05);
+    padding:1px 7px; border-radius:20px; font-weight:700;
+  }
+  .column-totals{ padding:0 14px 10px; font-size:11px; color:var(--text-dim); line-height:1.5; }
+  .column-totals b{ color:var(--text); font-weight:700; }
+  .card-list{
+    flex:1; overflow-y:auto; padding:2px 10px 10px;
+    display:flex; flex-direction:column; gap:8px; min-height:40px;
+  }
+  .card-list.drag-over{
+    background:rgba(79,110,247,.08);
+    outline:2px dashed var(--accent);
+    outline-offset:-4px;
+    border-radius:8px;
+  }
+  .add-card-btn{
+    margin:0 10px 12px; padding:9px; border:1.5px dashed #c7cad3; border-radius:8px;
+    background:transparent; color:var(--text-dim); font-size:12px; font-weight:700;
+    cursor:pointer; text-align:center;
+  }
+  .add-card-btn:hover{ border-color:var(--accent); color:var(--accent); background:#fff; }
+  .deal-card{
+    background:var(--panel); border:1px solid var(--border); border-radius:10px;
+    padding:11px 11px 9px; box-shadow:var(--shadow); cursor:grab;
+    transition:box-shadow .15s, opacity .15s;
+  }
+  .deal-card:hover{ box-shadow:0 4px 14px rgba(20,22,30,.12); }
+  .deal-card.dragging{ opacity:.4; }
+  .deal-card .deal-code{ font-size:10.5px; font-weight:700; color:var(--text-dim); }
+  .deal-card .company{ font-size:13px; font-weight:700; margin:1px 0 6px; }
+  .deal-card .amount{ font-size:14.5px; font-weight:800; margin-bottom:7px; }
+  .deal-card .meta-row{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:11px; color:var(--text-dim); margin-bottom:6px;
+  }
+  .owner-badge{ display:inline-flex; align-items:center; gap:5px; font-weight:600; color:var(--text); }
+  .owner-dot{
+    width:15px;height:15px;border-radius:50%; color:#fff; font-size:8.5px;
+    display:flex;align-items:center;justify-content:center; font-weight:800; flex:none;
+  }
+  .card-alert{ font-size:10.5px; font-weight:700; margin-bottom:6px; }
+  .card-actions{
+    display:flex; justify-content:flex-end; gap:6px; margin-top:6px;
+    padding-top:7px; border-top:1px solid #f0f1f4;
+  }
+  .icon-btn{
+    border:none; background:transparent; color:var(--text-dim); font-size:11px;
+    font-weight:700; cursor:pointer; padding:3px 8px; border-radius:6px;
+  }
+  .icon-btn:hover{ background:#f0f1f4; color:var(--text); }
+  .icon-btn.del:hover{ background:#fdeeee; color:#d5453f; }
+  .empty-hint{ font-size:11px; color:#b3b6c0; text-align:center; padding:18px 8px; }
+
+  /* ---------- Modal ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(20,22,30,.45);
+    display:none; align-items:center; justify-content:center; z-index:100; padding:20px;
+    overflow-y:auto;
+  }
+  .overlay.open{ display:flex; }
+  .modal{
+    background:#fff; border-radius:14px; width:100%; max-width:560px;
+    padding:24px; box-shadow:0 20px 60px rgba(0,0,0,.25); max-height:90vh; overflow-y:auto;
+    margin:auto;
+  }
+  .modal h2{ font-size:17px; margin:0 0 4px; font-weight:800; }
+  .modal .modal-sub{ font-size:11.5px; color:var(--text-dim); margin:0 0 16px; }
+  .field{ margin-bottom:13px; }
+  .field label{ display:block; font-size:12px; font-weight:700; color:var(--text-dim); margin-bottom:6px; }
+  .field input, .field select, .field textarea{
+    width:100%; padding:9px 11px; border:1px solid var(--border); border-radius:8px;
+    font-size:13px; font-family:inherit; background:#fbfbfc; color:var(--text);
+  }
+  .field textarea{ resize:vertical; min-height:52px; }
+  .field input:focus, .field select:focus, .field textarea:focus{
+    outline:none; border-color:var(--accent); background:#fff;
+  }
+  .field .hint{ font-size:11px; color:var(--text-dim); margin-top:4px; }
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .field-row3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+  .modal-actions{ display:flex; justify-content:space-between; align-items:center; margin-top:18px; gap:8px; }
+  .modal-actions .right{ display:flex; gap:8px; }
+  .deal-preview-box{
+    background:#f7f8fb; border:1px solid var(--border); border-radius:8px;
+    padding:10px 12px; font-size:12px; color:var(--text-dim); margin-bottom:13px;
+  }
+  .deal-preview-box b{ color:var(--text); }
 </style>
 </head>
 <body>
@@ -483,74 +441,207 @@
       <button class="btn btn-primary" id="newDealBtn">+ 새 딜 추가</button>
     </div>
   </div>
-
+  <nav class="main-nav" id="mainNav">
+    <button data-view="guide">📖 단계 정의 가이드</button>
+    <button data-view="dashboard">📊 대시보드</button>
+    <button data-view="pipeline" class="active">📋 딜 파이프라인</button>
+    <button data-view="activities">📝 활동 이력</button>
+    <button data-view="analysis">🔽 분석</button>
+  </nav>
   <div class="error-banner" id="errorBanner"></div>
-
-  <div class="summary-row">
-    <div class="summary-card">
-      <div class="label">전체 파이프라인 총액</div>
-      <div class="value" id="totalPipeline">-</div>
-      <div class="sub">실주·보류 제외, 진행 중인 전체 딜 금액 합계</div>
-    </div>
-    <div class="summary-card won">
-      <div class="label">가중 예상매출 (금액 × 수주확률 합계)</div>
-      <div class="value" id="totalWeighted">-</div>
-      <div class="sub">실주·보류 제외, 단계별 확률 반영 예상 매출</div>
-    </div>
-  </div>
-
-  <div class="stage-summary" id="stageSummary"></div>
 </header>
 
-<div class="board-wrap">
-  <div class="board" id="board"></div>
-</div>
+<main id="app">
 
-<!-- Modal -->
+  <!-- ================= 가이드 ================= -->
+  <section class="view" id="view-guide">
+    <div id="guideContent"></div>
+  </section>
+
+  <!-- ================= 대시보드 ================= -->
+  <section class="view" id="view-dashboard">
+    <div class="kpi-row" id="dashKpiRow"></div>
+
+    <div class="section-block">
+      <div class="section-title">▶ 파이프라인 단계별 현황 (진행중)</div>
+      <div class="section-sub">발굴·접촉·제안·협상 단계의 사실 집계입니다.</div>
+      <div class="table-scroll"><table class="data-table" id="dashStageTable"></table></div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">▶ ⚠ 점검 필요 딜 TOP 10</div>
+      <div class="section-sub">위험도 순: 액션지연 → 액션일 없음 → 정체 → 임박</div>
+      <div class="table-scroll"><table class="data-table" id="dashAlertTable"></table></div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">▶ 🏢 부서별 × 단계별 현황</div>
+      <div class="section-sub">건수 / 금액 · 사실 집계</div>
+      <div class="table-scroll"><table class="data-table" id="dashDeptTable"></table></div>
+    </div>
+  </section>
+
+  <!-- ================= 딜 파이프라인 ================= -->
+  <section class="view active" id="view-pipeline">
+    <div class="subtabs" id="pipelineSubtabs">
+      <button data-sub="table" class="active">테이블 보기</button>
+      <button data-sub="kanban">칸반 보기</button>
+    </div>
+
+    <div class="subview active" id="sub-table">
+      <div class="filter-row">
+        <select id="filterStage"><option value="">전체 단계</option></select>
+        <select id="filterDept"><option value="">전체 부서</option></select>
+        <input type="text" id="filterSearch" placeholder="고객사·담당자 검색">
+      </div>
+      <div class="table-scroll"><table class="data-table" id="pipelineTable"></table></div>
+    </div>
+
+    <div class="subview" id="sub-kanban">
+      <div class="board-wrap"><div class="board" id="board"></div></div>
+    </div>
+  </section>
+
+  <!-- ================= 활동 이력 ================= -->
+  <section class="view" id="view-activities">
+    <div class="header-actions" style="margin-bottom:14px;">
+      <button class="btn btn-primary" id="newActivityBtn">+ 활동 추가</button>
+    </div>
+    <div class="table-scroll"><table class="data-table" id="activitiesTable"></table></div>
+  </section>
+
+  <!-- ================= 분석 ================= -->
+  <section class="view" id="view-analysis">
+    <div class="section-block">
+      <div class="section-title">▶ 단계별 현황 (전체 딜 · 사실 집계)</div>
+      <div class="table-scroll"><table class="data-table" id="analysisStageTable"></table></div>
+    </div>
+    <div class="section-block">
+      <div class="section-title">▶ 부서별 성과 (확정 결과 기준)</div>
+      <div class="table-scroll"><table class="data-table" id="analysisDeptTable"></table></div>
+    </div>
+    <div class="section-block">
+      <div class="section-title">▶ 담당자별 × 단계별 현황</div>
+      <div class="table-scroll"><table class="data-table" id="analysisOwnerTable"></table></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ 딜 추가/수정 모달 ============ -->
 <div class="overlay" id="overlay">
   <div class="modal">
     <h2 id="modalTitle">새 딜 추가</h2>
+    <p class="modal-sub" id="modalDealCode"></p>
     <form id="dealForm">
-      <div class="field">
-        <label>딜명</label>
-        <input type="text" id="f_dealName" required placeholder="예: ERP 시스템 구축 계약">
-      </div>
-      <div class="field">
-        <label>고객사</label>
-        <input type="text" id="f_company" required placeholder="예: (주)한빛전자">
-      </div>
       <div class="field-row">
         <div class="field">
-          <label>금액 (원)</label>
-          <input type="number" id="f_amount" required min="0" step="100000" placeholder="0">
+          <label>고객사명</label>
+          <input type="text" id="f_company" required placeholder="예: 삼성전자">
         </div>
+        <div class="field">
+          <label>영업부서</label>
+          <select id="f_department"></select>
+        </div>
+      </div>
+      <div class="field-row">
         <div class="field">
           <label>담당자</label>
-          <input type="text" id="f_owner" required placeholder="예: 김민수">
+          <select id="f_owner"></select>
+        </div>
+        <div class="field">
+          <label>파이프라인 단계</label>
+          <select id="f_stage"></select>
+          <div class="hint" id="f_probHint"></div>
         </div>
       </div>
       <div class="field-row">
         <div class="field">
-          <label>예상 마감일</label>
-          <input type="date" id="f_closeDate" required>
+          <label>예상 수주금액 (원)</label>
+          <input type="number" id="f_amount" required min="0" step="1" placeholder="0">
         </div>
         <div class="field">
-          <label>단계</label>
-          <select id="f_stage"></select>
+          <label>예상 수주일</label>
+          <input type="date" id="f_closeDate">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>다음 액션일</label>
+          <input type="date" id="f_nextActionDate">
+        </div>
+        <div class="field">
+          <label>확정일 (수주·실주)</label>
+          <input type="date" id="f_confirmedDate">
         </div>
       </div>
       <div class="field">
-        <label>수주 확률 (%)</label>
-        <div class="range-row">
-          <input type="range" id="f_probability" min="0" max="100" step="5" value="50">
-          <span class="range-val" id="probVal">50%</span>
+        <label>다음 액션 내용</label>
+        <input type="text" id="f_nextActionNote" placeholder="예: 제안서 최종본 제출">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>경쟁사</label>
+          <input type="text" id="f_competitor" placeholder="예: A사">
         </div>
+        <div class="field">
+          <label>당사 경쟁우위</label>
+          <input type="text" id="f_competitiveEdge" placeholder="예: 빠른 구축 일정">
+        </div>
+      </div>
+      <div class="field">
+        <label>비고 / 메모</label>
+        <textarea id="f_memo" placeholder="특이사항을 기록하세요"></textarea>
       </div>
 
       <div class="modal-actions">
         <button type="button" class="btn btn-danger" id="deleteBtn" style="display:none;">삭제</button>
         <div class="right">
           <button type="button" class="btn" id="cancelBtn">취소</button>
+          <button type="submit" class="btn btn-primary">저장</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ 활동 이력 추가/수정 모달 ============ -->
+<div class="overlay" id="activityOverlay">
+  <div class="modal">
+    <h2 id="activityModalTitle">활동 추가</h2>
+    <form id="activityForm">
+      <div class="field">
+        <label>딜 선택</label>
+        <select id="a_dealId" required></select>
+      </div>
+      <div class="deal-preview-box" id="a_dealPreview">딜을 선택하면 고객사·부서·담당자가 표시됩니다.</div>
+      <div class="field-row">
+        <div class="field">
+          <label>활동일</label>
+          <input type="date" id="a_date" required>
+        </div>
+        <div class="field">
+          <label>활동 유형</label>
+          <select id="a_type"></select>
+        </div>
+      </div>
+      <div class="field">
+        <label>활동 내용</label>
+        <textarea id="a_content" placeholder="예: 솔루션 PoC 결과 공유 미팅 진행"></textarea>
+      </div>
+      <div class="field">
+        <label>다음 액션</label>
+        <input type="text" id="a_nextAction" placeholder="예: 경영진 보고회 8/28 진행">
+      </div>
+      <div class="field">
+        <label>비고</label>
+        <input type="text" id="a_memo" placeholder="비고">
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-danger" id="activityDeleteBtn" style="display:none;">삭제</button>
+        <div class="right">
+          <button type="button" class="btn" id="activityCancelBtn">취소</button>
           <button type="submit" class="btn btn-primary">저장</button>
         </div>
       </div>
@@ -565,43 +656,246 @@
 
   var SUPABASE_URL = "https://asuueoudciufikqjfbts.supabase.co";
   var SUPABASE_ANON_KEY = "sb_publishable_m0VSZ3Cl_29zOCIt59S5gQ_NiONIdlX";
+  var supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   var STAGE_COLORS = {
     discovery:"#9aa0ac", contact:"#4f9dfd", proposal:"#7c5cf0",
     negotiation:"#f2a33d", won:"#38b76c", lost:"#e5564f", hold:"#c9a15a"
   };
+  var ACTIVE_STAGE_IDS = ["discovery","contact","proposal","negotiation"];
+  var ALERT_STALE_DAYS = 45;
+  var ALERT_IMMINENT_DAYS = 7;
 
-  var supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  var DEPARTMENTS = ["영업1팀","영업2팀","영업3팀","솔루션팀","파트너팀"];
+  var OWNERS = [
+    {name:"김철수", dept:"영업1팀"},
+    {name:"박민준", dept:"영업1팀"},
+    {name:"이영희", dept:"영업2팀"},
+    {name:"최지연", dept:"영업3팀"},
+    {name:"정대호", dept:"솔루션팀"},
+    {name:"오준혁", dept:"솔루션팀"},
+    {name:"강수진", dept:"파트너팀"}
+  ];
+  var ACTIVITY_TYPES = ["미팅","전화","이메일","제안발표","데모·PoC","현장방문","계약협의","기타"];
+
+  var STAGE_GUIDE = [
+    { icon:"🔍", name:"발굴", prob:"10%",
+      def:"영업 대상으로 식별했으나 아직 공식 접촉 전인 잠재 딜",
+      entry:"• 고객사명, 예상 사업 내용, 담당 부서 파악\n• 접근 가능한 담당자 존재 확인\n• 당사 솔루션과의 적합성 1차 판단 완료",
+      todo:"• 의사결정자 및 담당자 파악\n• 고객사 현황·문제점 리서치\n• 첫 접촉 방법 및 시점 계획 수립\n• 딜 등록 및 파이프라인에 추가",
+      next:"• 담당자와 첫 공식 미팅 or 통화 완료\n• 고객사가 우리 연락을 수락한 상태",
+      warn:"⚠ 단순 명함 교환, LinkedIn 연결은 발굴이 아님\n⚠ 실제 사업 가능성 없는 고객은 등록 불필요\n⚠ 오래된 리드를 방치하지 말 것",
+      dur:"1~4주" },
+    { icon:"📞", name:"접촉", prob:"25%",
+      def:"고객사와 공식 커뮤니케이션이 시작되어 니즈를 파악 중인 단계",
+      entry:"• 고객 담당자와 1회 이상 공식 미팅/통화 완료\n• 고객이 우리 회사·솔루션에 관심 표명\n• 사업 배경 또는 현재 문제점 공유 받음",
+      todo:"• 고객의 Pain Point, 예산, 의사결정 구조 파악\n• 내부 이해관계자(챔피언, 결정권자) 식별\n• 경쟁사 현황 파악\n• 솔루션 적합성 내부 검토",
+      next:"• 고객이 공식 제안을 요청했거나\n• 당사가 제안서 제출 의사를 밝히고 고객이 수락\n• 예산 규모가 어느 정도 확인됨",
+      warn:"⚠ 고객이 단순 정보 수집 중인지, 실제 구매 의사가 있는지 구분 필요\n⚠ 챔피언(내부 지지자) 없이 제안 단계로 넘기지 말 것\n⚠ 예산 미확인 상태로 오래 머물지 말 것",
+      dur:"2~6주" },
+    { icon:"📄", name:"제안", prob:"45%",
+      def:"공식 제안서를 제출했거나 제출 준비 중인 단계",
+      entry:"• 고객으로부터 제안 요청(구두 또는 RFP) 수령\n• 제안서 작성 착수 또는 제출 완료\n• 예산 범위 및 의사결정 일정 파악됨",
+      todo:"• 제안서 작성 및 제출\n• 기술 PT / 데모 진행\n• 고객 피드백 수집 및 보완\n• 경쟁사 대비 차별화 포인트 강화\n• 의사결정자에게 직접 접근 시도",
+      next:"• 고객이 당사 제안을 긍정적으로 검토 중\n• 가격·조건 협의를 시작하자는 고객 의사 확인\n• 경쟁에서 최종 후보(Short-list)에 포함 확인",
+      warn:"⚠ 제안서만 내고 팔로업 없이 결과 기다리는 것은 위험\n⚠ 의사결정자가 아닌 실무자에게만 제안하는 경우 주의\n⚠ 경쟁사 수 및 고객 선호도 파악 필수",
+      dur:"3~8주" },
+    { icon:"🤝", name:"협상", prob:"70%",
+      def:"고객이 당사를 우선협상대상자로 검토 중이며 계약 조건을 논의 중인 단계",
+      entry:"• 고객이 당사를 1순위 또는 유력 후보로 언급\n• 가격, 납기, 계약 조건에 대한 구체적 협의 시작\n• 구매/법무팀이 계약 검토에 참여",
+      todo:"• 가격·조건 협상 진행\n• 계약서 초안 검토 및 조율\n• 내부 승인(할인율, 계약 조건) 진행\n• 고객 내부 결재 일정 확인 및 관리\n• 리스크 요인(예산 삭감, 경쟁사 역전) 모니터링",
+      next:"• 계약서에 최종 서명 완료\n• 구매발주서(PO) 또는 계약금 수령",
+      warn:"⚠ '잘 될 것 같다'는 느낌만으로 협상 단계 이동 금지\n⚠ 고객 내부 결재 지연을 수주로 착각하지 말 것\n⚠ 협상 중 경쟁사가 뒤집기 시도하는 경우 多",
+      dur:"2~6주" },
+    { icon:"✅", name:"수주", prob:"100%",
+      def:"계약이 확정·체결된 딜",
+      entry:"• 계약서 쌍방 서명 완료 또는\n• 구매발주서(PO) 수령 또는\n• 계약금 입금 확인",
+      todo:"• 수주 금액·일자 확정 업데이트\n• 프로젝트 인수인계(PM, 기술팀)\n• 수주 원인 분석 기록 (무엇이 주효했나)\n• 레퍼런스 활용 가능 여부 확인",
+      next:"N/A (최종 단계)",
+      warn:"⚠ 구두 수주, 이메일 의향서는 수주가 아님\n⚠ 공식 문서(계약서/PO) 없이 수주 처리 금지\n⚠ 수주 후 파이프라인에서 삭제하지 말고 상태만 '수주'로 유지",
+      dur:"—" },
+    { icon:"❌", name:"실주", prob:"0%",
+      def:"경쟁에서 패배하거나 고객이 구매를 철회한 딜",
+      entry:"• 고객이 타사 선정을 공식 통보\n• 고객이 해당 사업 자체를 취소\n• 내부적으로 더 이상 진행이 불가능하다고 판단",
+      todo:"• 실주 원인 반드시 기록 (가격? 기술? 경쟁사? 내부사정?)\n• 경쟁사 선정 이유 파악 시도\n• 향후 재도전 가능성 메모\n• 영업팀 공유를 통한 학습 자산화",
+      next:"N/A — 단, 추후 재발굴 가능성 있으면 '보류'로 전환 검토",
+      warn:"⚠ 실주 원인을 기록하지 않으면 같은 실수 반복\n⚠ 감정적으로 실주 처리 지연하지 말 것\n⚠ 실주 딜도 삭제하지 말고 데이터로 유지 (승률 계산에 필요)",
+      dur:"—" },
+    { icon:"⏸", name:"보류", prob:"0%",
+      def:"고객 사정 또는 내부 판단으로 진행이 일시 중단된 딜",
+      entry:"• 고객 예산 동결·조직 개편 등 외부 사유로 진행 중단\n• 의사결정이 다음 분기 이후로 연기\n• 당사 내부 사유로 일시 홀드",
+      todo:"• 재개 예상 시점 기록\n• 정기적 고객 관계 유지 (분기 1회 이상 접촉)\n• 보류 사유 및 재개 트리거 조건 메모",
+      next:"• 고객이 재개 의사를 밝히면 → 기존 단계로 복귀\n• 재개 가능성이 없다고 판단되면 → 실주로 전환",
+      warn:"⚠ 보류를 '포기하지 않은 실주'로 방치하지 말 것\n⚠ 재개 시점을 반드시 기록하고 주기적으로 점검\n⚠ 보류 딜이 너무 많으면 파이프라인 품질 저하 신호",
+      dur:"1개월 이상" }
+  ];
+  var STAGE_PRINCIPLES = [
+    { title:"1️⃣ 단계는 '고객 행동' 기준으로 판단하세요", body:"내가 제안서를 썼다고 제안 단계가 아닙니다. 고객이 제안을 요청했을 때 제안 단계입니다." },
+    { title:"2️⃣ 단계를 앞당기거나 부풀리지 마세요", body:"파이프라인이 좋아 보이도록 단계를 올리면 전체 예측 데이터가 왜곡됩니다." },
+    { title:"3️⃣ 실주·보류도 반드시 기록하세요", body:"삭제하면 승률 계산이 불가능합니다. 원인 기록이 팀 전체의 학습 자산이 됩니다." },
+    { title:"4️⃣ 1~2주에 한 번 파이프라인을 점검하세요", body:"장기간 같은 단계에 머무는 딜은 실제로 진행 중인지 재확인이 필요합니다." }
+  ];
 
   var STAGES = [];
   var deals = [];
+  var activities = [];
   var loaded = false;
   var editingId = null;
+  var editingActivityId = null;
   var dragDealId = null;
+  var currentView = "pipeline";
+  var currentPipelineSub = "table";
+
+  var fmtWon = new Intl.NumberFormat("ko-KR");
+  function won(n){ return fmtWon.format(Math.round(n||0)) + "원"; }
+  function escapeHtml(s){
+    return String(s==null?"":s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  function stageById(id){
+    for(var i=0;i<STAGES.length;i++){ if(STAGES[i].id===id) return STAGES[i]; }
+    return STAGES[0] || { id:id, name:id||"-", color:"#9aa0ac", defaultProbability:0 };
+  }
+  function ownerInitial(name){ return (name||"?").trim().slice(0,1); }
+
+  function todayOnly(){
+    var d = new Date();
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  }
+  function parseDateOnly(s){
+    if(!s) return null;
+    var parts = String(s).slice(0,10).split("-");
+    if(parts.length !== 3) return null;
+    return new Date(Number(parts[0]), Number(parts[1])-1, Number(parts[2]));
+  }
+  function daysBetween(a, b){
+    return Math.round((b.getTime() - a.getTime()) / 86400000);
+  }
+  function ddayLabel(dday){
+    if(dday === 0) return "D-Day";
+    if(dday > 0) return "D-" + dday;
+    return "D+" + (-dday);
+  }
+
+  // 딜상태(자동) / 경과일(자동) / D-Day(자동) / 점검알림(자동)
+  function computeDealMeta(deal){
+    var stage = deal.stage;
+    var statusLabel = stage === "won" ? "수주" : stage === "lost" ? "실주" : stage === "hold" ? "보류" : "진행중";
+    var isActive = ACTIVE_STAGE_IDS.indexOf(stage) !== -1;
+    var meta = { statusLabel:statusLabel, isActive:isActive, elapsedDays:null, dday:null, ddayText:null, alert:null };
+    if(!isActive) return meta;
+
+    var today = todayOnly();
+    var updated = parseDateOnly(deal.updatedAt);
+    if(updated) meta.elapsedDays = Math.max(0, daysBetween(updated, today));
+
+    var nextDate = parseDateOnly(deal.nextActionDate);
+    if(nextDate){
+      var dday = daysBetween(today, nextDate);
+      meta.dday = dday;
+      meta.ddayText = ddayLabel(dday);
+      if(dday < 0){
+        meta.alert = { level:"overdue", label:"🔴 액션지연 " + (-dday) + "일", rank:0, sortDays:-dday };
+      } else if(meta.elapsedDays != null && meta.elapsedDays > ALERT_STALE_DAYS){
+        meta.alert = { level:"stale", label:"🟠 정체 " + meta.elapsedDays + "일", rank:2, sortDays:meta.elapsedDays };
+      } else if(dday <= ALERT_IMMINENT_DAYS){
+        meta.alert = { level:"imminent", label:"🟡 액션임박 " + meta.ddayText, rank:3, sortDays:dday };
+      }
+    } else {
+      meta.alert = { level:"idle", label:"⚪ 액션일 없음 · 방치 " + (meta.elapsedDays||0) + "일", rank:1, sortDays:meta.elapsedDays||0 };
+    }
+    return meta;
+  }
+
+  function alertBadgeClass(level){
+    if(level === "overdue") return "badge-alert-overdue";
+    if(level === "idle") return "badge-alert-idle";
+    if(level === "stale") return "badge-alert-stale";
+    if(level === "imminent") return "badge-alert-imminent";
+    return "badge-alert-none";
+  }
+  function statusBadgeClass(statusLabel){
+    if(statusLabel === "수주") return "badge-status-won";
+    if(statusLabel === "실주") return "badge-status-lost";
+    if(statusLabel === "보류") return "badge-status-hold";
+    return "badge-status-active";
+  }
 
   function mapRowToDeal(row){
     return {
       id: row.id,
+      dealCode: row.deal_code,
       company: row.company,
+      department: row.department,
       dealName: row.deal_name,
       amount: Number(row.amount),
       stage: row.stage_id,
       owner: row.owner,
       closeDate: row.expected_close_date,
-      probability: Number(row.probability)
+      probability: Number(row.probability),
+      nextActionDate: row.next_action_date,
+      nextActionNote: row.next_action_note,
+      competitor: row.competitor,
+      competitiveEdge: row.competitive_edge,
+      confirmedDate: row.confirmed_date,
+      memo: row.memo,
+      updatedAt: row.updated_at,
+      createdAt: row.created_at
     };
   }
-
   function dealToRow(data){
     return {
       company: data.company,
-      deal_name: data.dealName,
-      amount: data.amount,
+      department: data.department,
       stage_id: data.stage,
       owner: data.owner,
-      expected_close_date: data.closeDate,
-      probability: data.probability
+      amount: data.amount,
+      probability: data.probability,
+      expected_close_date: data.closeDate || null,
+      next_action_date: data.nextActionDate || null,
+      next_action_note: data.nextActionNote || null,
+      competitor: data.competitor || null,
+      competitive_edge: data.competitiveEdge || null,
+      confirmed_date: data.confirmedDate || null,
+      memo: data.memo || null,
+      updated_at: new Date().toISOString()
     };
+  }
+  function mapRowToActivity(row){
+    return {
+      id: row.id,
+      dealId: row.deal_id,
+      activityDate: row.activity_date,
+      activityType: row.activity_type,
+      content: row.content,
+      nextAction: row.next_action,
+      memo: row.memo
+    };
+  }
+  function activityToRow(data){
+    return {
+      deal_id: data.dealId,
+      activity_date: data.activityDate,
+      activity_type: data.activityType,
+      content: data.content || null,
+      next_action: data.nextAction || null,
+      memo: data.memo || null
+    };
+  }
+
+  function dealById(id){
+    return deals.find(function(d){ return d.id === id; });
+  }
+  function nextDealCode(){
+    var max = 0;
+    deals.forEach(function(d){
+      var m = /^D-(\d+)$/.exec(d.dealCode || "");
+      if(m) max = Math.max(max, parseInt(m[1], 10));
+    });
+    var n = max + 1;
+    return "D-" + (n < 100 ? ("0" + n).slice(-3) : String(n));
   }
 
   function showError(msg){
@@ -609,12 +903,10 @@
     el.textContent = msg;
     el.classList.add("show");
   }
-  function hideError(){
-    document.getElementById("errorBanner").classList.remove("show");
-  }
-  function setSyncing(on){
-    document.getElementById("syncTag").classList.toggle("show", !!on);
-  }
+  function hideError(){ document.getElementById("errorBanner").classList.remove("show"); }
+  function setSyncing(on){ document.getElementById("syncTag").classList.toggle("show", !!on); }
+
+  /* ---------- Data load ---------- */
 
   async function loadFromSupabase(){
     setSyncing(true);
@@ -623,24 +915,22 @@
       if(stagesRes.error) throw stagesRes.error;
       var dealsRes = await supabaseClient.from("deals").select("*").order("created_at", {ascending:true});
       if(dealsRes.error) throw dealsRes.error;
+      var activitiesRes = await supabaseClient.from("activities").select("*").order("activity_date", {ascending:false});
+      if(activitiesRes.error) throw activitiesRes.error;
 
       STAGES = stagesRes.data.map(function(s){
-        return {
-          id: s.id,
-          name: s.name,
-          color: STAGE_COLORS[s.id] || "#9aa0ac",
-          defaultProbability: Number(s.default_probability)
-        };
+        return { id:s.id, name:s.name, color:STAGE_COLORS[s.id] || "#9aa0ac", defaultProbability:Number(s.default_probability) };
       });
       deals = dealsRes.data.map(mapRowToDeal);
+      activities = activitiesRes.data.map(mapRowToActivity);
       loaded = true;
       hideError();
-      populateStageSelect();
-      render();
+      populateStaticSelects();
+      renderAll();
     }catch(err){
       loaded = false;
       showError("Supabase에서 데이터를 불러오지 못했습니다: " + (err && err.message ? err.message : err));
-      render();
+      renderAll();
     }finally{
       setSyncing(false);
     }
@@ -652,8 +942,9 @@
       var res = await supabaseClient.from("deals").delete().eq("id", id);
       if(res.error) throw res.error;
       deals = deals.filter(function(x){ return x.id !== id; });
+      activities = activities.filter(function(x){ return x.dealId !== id; });
       hideError();
-      render();
+      renderAll();
     }catch(err){
       showError("삭제하지 못했습니다: " + (err && err.message ? err.message : err));
     }finally{
@@ -661,63 +952,214 @@
     }
   }
 
-  var fmtWon = new Intl.NumberFormat("ko-KR");
-  function won(n){ return fmtWon.format(Math.round(n)) + "원"; }
-
-  function stageById(id){
-    for(var i=0;i<STAGES.length;i++){ if(STAGES[i].id===id) return STAGES[i]; }
-    return STAGES[0] || { id:id, name:id||"-", color:"#9aa0ac", defaultProbability:0 };
+  async function removeActivity(id){
+    setSyncing(true);
+    try{
+      var res = await supabaseClient.from("activities").delete().eq("id", id);
+      if(res.error) throw res.error;
+      activities = activities.filter(function(x){ return x.id !== id; });
+      hideError();
+      renderActivities();
+    }catch(err){
+      showError("삭제하지 못했습니다: " + (err && err.message ? err.message : err));
+    }finally{
+      setSyncing(false);
+    }
   }
 
-  function ownerInitial(name){
-    return (name||"?").trim().slice(0,1);
+  /* ---------- Render dispatch ---------- */
+
+  function renderAll(){
+    renderGuide();
+    renderPipelineFilters();
+    renderPipelineTable();
+    renderKanban();
+    renderActivities();
+    renderDashboard();
+    renderAnalysis();
   }
 
-  /* ---------- Rendering ---------- */
+  function switchView(view){
+    currentView = view;
+    document.querySelectorAll(".main-nav button").forEach(function(btn){
+      btn.classList.toggle("active", btn.dataset.view === view);
+    });
+    document.querySelectorAll(".view").forEach(function(sec){
+      sec.classList.toggle("active", sec.id === "view-" + view);
+    });
+  }
+  document.getElementById("mainNav").addEventListener("click", function(e){
+    var btn = e.target.closest("button[data-view]");
+    if(btn) switchView(btn.dataset.view);
+  });
 
-  function render(){
-    renderSummary();
-    renderBoard();
+  document.getElementById("pipelineSubtabs").addEventListener("click", function(e){
+    var btn = e.target.closest("button[data-sub]");
+    if(!btn) return;
+    currentPipelineSub = btn.dataset.sub;
+    document.querySelectorAll("#pipelineSubtabs button").forEach(function(b){
+      b.classList.toggle("active", b === btn);
+    });
+    document.getElementById("sub-table").classList.toggle("active", currentPipelineSub === "table");
+    document.getElementById("sub-kanban").classList.toggle("active", currentPipelineSub === "kanban");
+  });
+
+  /* ---------- 가이드 ---------- */
+
+  function renderGuide(){
+    var wrap = document.getElementById("guideContent");
+    var html = "";
+    STAGE_GUIDE.forEach(function(s){
+      html += '<div class="guide-card">' +
+        '<h3>' + s.icon + ' ' + s.name + ' <span class="prob">수주확률 ' + s.prob + '</span></h3>' +
+        '<div class="definition">' + escapeHtml(s.def) + '</div>' +
+        '<div class="guide-grid">' +
+          '<div><div class="g-label">진입 조건</div><div class="g-body">' + escapeHtml(s.entry) + '</div></div>' +
+          '<div><div class="g-label">이 단계에서 해야 할 일</div><div class="g-body">' + escapeHtml(s.todo) + '</div></div>' +
+          '<div><div class="g-label">다음 단계로 넘어가는 조건</div><div class="g-body">' + escapeHtml(s.next) + '</div></div>' +
+          '<div><div class="g-label">흔한 실수 / 주의사항</div><div class="g-warn">' + escapeHtml(s.warn) + '</div></div>' +
+          '<div><div class="g-label">예상 기간</div><div class="g-body">' + escapeHtml(s.dur) + '</div></div>' +
+        '</div>' +
+      '</div>';
+    });
+    html += '<div class="guide-card"><h3>▶ 단계 관리 핵심 원칙</h3>';
+    STAGE_PRINCIPLES.forEach(function(p){
+      html += '<div class="principle-item"><div><div class="p-title">' + escapeHtml(p.title) + '</div><div class="p-body">' + escapeHtml(p.body) + '</div></div></div>';
+    });
+    html += '</div>';
+    wrap.innerHTML = html;
   }
 
-  function renderSummary(){
-    var totalPipeline = 0, totalWeighted = 0;
-    deals.forEach(function(d){
-      if(d.stage !== "lost" && d.stage !== "hold"){
-        totalPipeline += Number(d.amount)||0;
-        totalWeighted += (Number(d.amount)||0) * (Number(d.probability)||0) / 100;
+  /* ---------- 딜 파이프라인 : 필터 ---------- */
+
+  function populateStaticSelects(){
+    // 모달 - 부서
+    var deptSelect = document.getElementById("f_department");
+    deptSelect.innerHTML = DEPARTMENTS.map(function(d){ return '<option value="'+escapeHtml(d)+'">'+escapeHtml(d)+'</option>'; }).join("");
+    // 모달 - 담당자
+    var ownerSelect = document.getElementById("f_owner");
+    ownerSelect.innerHTML = OWNERS.map(function(o){ return '<option value="'+escapeHtml(o.name)+'" data-dept="'+escapeHtml(o.dept)+'">'+escapeHtml(o.name)+' ('+escapeHtml(o.dept)+')</option>'; }).join("");
+    // 모달 - 단계
+    var stageSelect = document.getElementById("f_stage");
+    stageSelect.innerHTML = STAGES.map(function(s){ return '<option value="'+s.id+'">'+escapeHtml(s.name)+'</option>'; }).join("");
+    // 활동 모달 - 유형
+    var typeSelect = document.getElementById("a_type");
+    typeSelect.innerHTML = ACTIVITY_TYPES.map(function(t){ return '<option value="'+escapeHtml(t)+'">'+escapeHtml(t)+'</option>'; }).join("");
+    // 활동 모달 - 딜 목록
+    var dealSelect = document.getElementById("a_dealId");
+    dealSelect.innerHTML = '<option value="">선택하세요</option>' + deals.map(function(d){
+      return '<option value="'+d.id+'">'+escapeHtml(d.dealCode||"-")+' · '+escapeHtml(d.company)+'</option>';
+    }).join("");
+
+    // 필터 - 단계
+    var filterStage = document.getElementById("filterStage");
+    filterStage.innerHTML = '<option value="">전체 단계</option>' + STAGES.map(function(s){
+      return '<option value="'+s.id+'">'+escapeHtml(s.name)+'</option>';
+    }).join("");
+    // 필터 - 부서
+    var filterDept = document.getElementById("filterDept");
+    filterDept.innerHTML = '<option value="">전체 부서</option>' + DEPARTMENTS.map(function(d){
+      return '<option value="'+escapeHtml(d)+'">'+escapeHtml(d)+'</option>';
+    }).join("");
+  }
+
+  var filterState = { stage:"", dept:"", search:"" };
+  function renderPipelineFilters(){
+    document.getElementById("filterStage").addEventListener("change", function(e){ filterState.stage = e.target.value; renderPipelineTable(); });
+    document.getElementById("filterDept").addEventListener("change", function(e){ filterState.dept = e.target.value; renderPipelineTable(); });
+    document.getElementById("filterSearch").addEventListener("input", function(e){ filterState.search = e.target.value.trim(); renderPipelineTable(); });
+  }
+
+  function filteredDeals(){
+    return deals.filter(function(d){
+      if(filterState.stage && d.stage !== filterState.stage) return false;
+      if(filterState.dept && d.department !== filterState.dept) return false;
+      if(filterState.search){
+        var q = filterState.search.toLowerCase();
+        var hay = (d.company||"") + " " + (d.owner||"");
+        if(hay.toLowerCase().indexOf(q) === -1) return false;
       }
-    });
-    document.getElementById("totalPipeline").textContent = won(totalPipeline);
-    document.getElementById("totalWeighted").textContent = won(totalWeighted);
-
-    var stageWrap = document.getElementById("stageSummary");
-    stageWrap.innerHTML = "";
-    STAGES.forEach(function(stage){
-      var stageDeals = deals.filter(function(d){ return d.stage === stage.id; });
-      var amt = stageDeals.reduce(function(s,d){ return s + (Number(d.amount)||0); }, 0);
-      var weighted = stageDeals.reduce(function(s,d){ return s + (Number(d.amount)||0)*(Number(d.probability)||0)/100; }, 0);
-
-      var chip = document.createElement("div");
-      chip.className = "stage-chip";
-      chip.innerHTML =
-        '<div class="stage-name"><span class="dot" style="background:'+stage.color+'"></span>'+stage.name+'</div>' +
-        '<div class="amt">'+won(amt)+'</div>' +
-        '<div class="weighted">가중: '+won(weighted)+'</div>';
-      stageWrap.appendChild(chip);
+      return true;
     });
   }
 
-  function renderBoard(){
+  /* ---------- 딜 파이프라인 : 테이블 ---------- */
+
+  function dealCodeSortKey(code){
+    var m = /^D-(\d+)$/.exec(code || "");
+    return m ? parseInt(m[1],10) : 999999;
+  }
+
+  function renderPipelineTable(){
+    var table = document.getElementById("pipelineTable");
+    if(!loaded){
+      table.innerHTML = '<tbody><tr><td class="loading-hint">' + (document.getElementById("errorBanner").classList.contains("show") ? "데이터를 불러올 수 없습니다." : "Supabase에서 불러오는 중...") + '</td></tr></tbody>';
+      return;
+    }
+    var rows = filteredDeals().slice().sort(function(a,b){ return dealCodeSortKey(a.dealCode) - dealCodeSortKey(b.dealCode); });
+
+    var head = '<thead><tr>' +
+      '<th>딜ID</th><th>고객사명</th><th>영업부서</th><th>담당자</th><th>단계</th><th>딜상태</th>' +
+      '<th>예상금액</th><th>예상수주일</th><th>최종업데이트</th><th>경과일</th><th>다음액션일</th><th>D-Day</th>' +
+      '<th>다음 액션 내용</th><th>경쟁사</th><th>당사 경쟁우위</th><th>확정일</th><th>비고</th><th>점검알림</th><th></th>' +
+      '</tr></thead>';
+
+    var body = "";
+    if(rows.length === 0){
+      body = '<tbody><tr><td colspan="19" class="loading-hint">조건에 맞는 딜이 없습니다.</td></tr></tbody>';
+    } else {
+      body = "<tbody>" + rows.map(function(d){
+        var stage = stageById(d.stage);
+        var meta = computeDealMeta(d);
+        return '<tr>' +
+          '<td>' + escapeHtml(d.dealCode||"-") + '</td>' +
+          '<td class="wrap"><b>' + escapeHtml(d.company) + '</b></td>' +
+          '<td>' + escapeHtml(d.department||"-") + '</td>' +
+          '<td>' + escapeHtml(d.owner) + '</td>' +
+          '<td><span class="badge badge-stage" style="background:' + stage.color + '">' + escapeHtml(stage.name) + '</span></td>' +
+          '<td><span class="badge ' + statusBadgeClass(meta.statusLabel) + '">' + meta.statusLabel + '</span></td>' +
+          '<td>' + won(d.amount) + '</td>' +
+          '<td>' + (d.closeDate||"-") + '</td>' +
+          '<td>' + (d.updatedAt ? String(d.updatedAt).slice(0,10) : "-") + '</td>' +
+          '<td>' + (meta.elapsedDays!=null ? meta.elapsedDays+"일" : "-") + '</td>' +
+          '<td>' + (d.nextActionDate||"-") + '</td>' +
+          '<td>' + (meta.ddayText||"-") + '</td>' +
+          '<td class="wrap">' + escapeHtml(d.nextActionNote||"-") + '</td>' +
+          '<td>' + escapeHtml(d.competitor||"-") + '</td>' +
+          '<td class="wrap">' + escapeHtml(d.competitiveEdge||"-") + '</td>' +
+          '<td>' + (d.confirmedDate||"-") + '</td>' +
+          '<td class="wrap">' + escapeHtml(d.memo||"-") + '</td>' +
+          '<td>' + (meta.alert ? '<span class="badge '+alertBadgeClass(meta.alert.level)+'">'+meta.alert.label+'</span>' : '<span class="badge badge-alert-none">-</span>') + '</td>' +
+          '<td><div class="cell-actions">' +
+            '<button type="button" class="icon-btn edit-row-btn" data-id="'+d.id+'">수정</button>' +
+            '<button type="button" class="icon-btn del del-row-btn" data-id="'+d.id+'">삭제</button>' +
+          '</div></td>' +
+        '</tr>';
+      }).join("") + "</tbody>";
+    }
+    table.innerHTML = head + body;
+
+    table.querySelectorAll(".edit-row-btn").forEach(function(btn){
+      btn.addEventListener("click", function(){ openModal(btn.dataset.id); });
+    });
+    table.querySelectorAll(".del-row-btn").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var d = dealById(btn.dataset.id);
+        if(d && confirm('"'+d.company+'" 딜을 삭제할까요?')) removeDeal(d.id);
+      });
+    });
+  }
+
+  /* ---------- 딜 파이프라인 : 칸반 ---------- */
+
+  function renderKanban(){
     var board = document.getElementById("board");
     board.innerHTML = "";
 
     if(!loaded){
       var hint = document.createElement("div");
       hint.className = "loading-hint";
-      hint.textContent = document.getElementById("errorBanner").classList.contains("show")
-        ? "데이터를 불러올 수 없습니다."
-        : "Supabase에서 불러오는 중...";
+      hint.textContent = document.getElementById("errorBanner").classList.contains("show") ? "데이터를 불러올 수 없습니다." : "Supabase에서 불러오는 중...";
       board.appendChild(hint);
       return;
     }
@@ -725,7 +1167,6 @@
     STAGES.forEach(function(stage){
       var stageDeals = deals.filter(function(d){ return d.stage === stage.id; });
       var amt = stageDeals.reduce(function(s,d){ return s + (Number(d.amount)||0); }, 0);
-      var weighted = stageDeals.reduce(function(s,d){ return s + (Number(d.amount)||0)*(Number(d.probability)||0)/100; }, 0);
 
       var col = document.createElement("div");
       col.className = "column";
@@ -733,16 +1174,13 @@
       var header = document.createElement("div");
       header.className = "column-header";
       header.innerHTML =
-        '<div class="column-title-wrap">' +
-          '<span class="column-dot" style="background:'+stage.color+'"></span>' +
-          '<span class="column-title">'+stage.name+'</span>' +
-        '</div>' +
+        '<div class="column-title-wrap"><span class="column-dot" style="background:'+stage.color+'"></span><span class="column-title">'+escapeHtml(stage.name)+'</span></div>' +
         '<span class="column-count">'+stageDeals.length+'</span>';
       col.appendChild(header);
 
       var totals = document.createElement("div");
       totals.className = "column-totals";
-      totals.innerHTML = '합계 <b>'+won(amt)+'</b> · 가중 <b>'+won(weighted)+'</b>';
+      totals.innerHTML = '합계 <b>'+won(amt)+'</b>';
       col.appendChild(totals);
 
       var list = document.createElement("div");
@@ -750,42 +1188,35 @@
       list.dataset.stage = stage.id;
 
       if(stageDeals.length === 0){
-        var hint = document.createElement("div");
-        hint.className = "empty-hint";
-        hint.textContent = "카드를 여기로 드래그하세요";
-        list.appendChild(hint);
+        var empty = document.createElement("div");
+        empty.className = "empty-hint";
+        empty.textContent = "카드를 여기로 드래그하세요";
+        list.appendChild(empty);
       }
+      stageDeals.forEach(function(deal){ list.appendChild(renderCard(deal)); });
 
-      stageDeals.forEach(function(deal){
-        list.appendChild(renderCard(deal));
-      });
-
-      list.addEventListener("dragover", function(e){
-        e.preventDefault();
-        list.classList.add("drag-over");
-      });
-      list.addEventListener("dragleave", function(){
-        list.classList.remove("drag-over");
-      });
+      list.addEventListener("dragover", function(e){ e.preventDefault(); list.classList.add("drag-over"); });
+      list.addEventListener("dragleave", function(){ list.classList.remove("drag-over"); });
       list.addEventListener("drop", function(e){
         e.preventDefault();
         list.classList.remove("drag-over");
         if(!dragDealId) return;
         var movedId = dragDealId;
         dragDealId = null;
-        var d = deals.find(function(x){ return x.id === movedId; });
+        var d = dealById(movedId);
         if(!d || d.stage === stage.id) return;
-
         var prevStage = d.stage;
+        var prevProb = d.probability;
         d.stage = stage.id;
-        render();
-
-        supabaseClient.from("deals").update({ stage_id: stage.id }).eq("id", movedId)
+        d.probability = stage.defaultProbability;
+        renderAll();
+        supabaseClient.from("deals").update({ stage_id: stage.id, probability: stage.defaultProbability, updated_at: new Date().toISOString() }).eq("id", movedId)
           .then(function(res){
             if(res.error){
               d.stage = prevStage;
+              d.probability = prevProb;
               showError("단계 이동을 저장하지 못했습니다: " + res.error.message);
-              render();
+              renderAll();
             }
           });
       });
@@ -804,121 +1235,90 @@
 
   function renderCard(deal){
     var stage = stageById(deal.stage);
+    var meta = computeDealMeta(deal);
     var card = document.createElement("div");
     card.className = "deal-card";
     card.draggable = true;
     card.dataset.id = deal.id;
 
-    var dday = "";
-    if(deal.closeDate){
-      var diff = Math.ceil((new Date(deal.closeDate) - new Date(new Date().toDateString())) / 86400000);
-      if(diff < 0) dday = "마감 지남";
-      else if(diff === 0) dday = "오늘 마감";
-      else dday = "D-" + diff;
-    }
-
     card.innerHTML =
-      '<div class="deal-name"></div>' +
+      '<div class="deal-code"></div>' +
       '<div class="company"></div>' +
       '<div class="amount"></div>' +
-      '<div class="meta-row">' +
-        '<span class="owner-badge"><span class="owner-dot"></span><span class="owner-name"></span></span>' +
-        '<span class="due"></span>' +
-      '</div>' +
-      '<div class="prob-bar-wrap">' +
-        '<div class="prob-bar-bg"><div class="prob-bar-fill"></div></div>' +
-        '<span class="prob-text"></span>' +
-      '</div>' +
-      '<div class="card-actions">' +
-        '<button type="button" class="icon-btn edit-btn">수정</button>' +
-        '<button type="button" class="icon-btn del del-btn">삭제</button>' +
-      '</div>';
+      (meta.alert ? '<div class="card-alert"></div>' : '') +
+      '<div class="meta-row"><span class="owner-badge"><span class="owner-dot"></span><span class="owner-name"></span></span><span class="due"></span></div>' +
+      '<div class="card-actions"><button type="button" class="icon-btn edit-btn">수정</button><button type="button" class="icon-btn del del-btn">삭제</button></div>';
 
-    card.querySelector(".deal-name").textContent = deal.dealName;
+    card.querySelector(".deal-code").textContent = (deal.dealCode||"-") + " · " + (deal.department||"");
     card.querySelector(".company").textContent = deal.company;
     card.querySelector(".amount").textContent = won(deal.amount);
+    if(meta.alert){
+      var alertEl = card.querySelector(".card-alert");
+      alertEl.textContent = meta.alert.label;
+      alertEl.style.color = ({overdue:"#d5453f", idle:"#6b7280", stale:"#c46a12", imminent:"#9a7b06"})[meta.alert.level] || "#6b7280";
+    }
     card.querySelector(".owner-name").textContent = deal.owner;
-    card.querySelector(".owner-dot").textContent = ownerInitial(deal.owner);
-    card.querySelector(".owner-dot").style.background = stage.color;
-    card.querySelector(".due").textContent = (deal.closeDate || "") + (dday ? " · " + dday : "");
-    var fill = card.querySelector(".prob-bar-fill");
-    fill.style.width = (Number(deal.probability)||0) + "%";
-    fill.style.background = stage.color;
-    card.querySelector(".prob-text").textContent = (Number(deal.probability)||0) + "%";
+    var dot = card.querySelector(".owner-dot");
+    dot.textContent = ownerInitial(deal.owner);
+    dot.style.background = stage.color;
+    card.querySelector(".due").textContent = deal.closeDate || "";
 
     card.addEventListener("dragstart", function(e){
       dragDealId = deal.id;
       card.classList.add("dragging");
       e.dataTransfer.effectAllowed = "move";
     });
-    card.addEventListener("dragend", function(){
-      card.classList.remove("dragging");
-    });
-
-    card.querySelector(".edit-btn").addEventListener("click", function(){
-      openModal(deal.id);
-    });
+    card.addEventListener("dragend", function(){ card.classList.remove("dragging"); });
+    card.querySelector(".edit-btn").addEventListener("click", function(){ openModal(deal.id); });
     card.querySelector(".del-btn").addEventListener("click", function(){
-      if(confirm('"'+deal.dealName+'" 딜을 삭제할까요?')){
-        removeDeal(deal.id);
-      }
+      if(confirm('"'+deal.company+'" 딜을 삭제할까요?')) removeDeal(deal.id);
     });
-
     return card;
   }
 
-  /* ---------- Modal / Form ---------- */
+  /* ---------- 딜 모달 ---------- */
 
   var overlay = document.getElementById("overlay");
   var form = document.getElementById("dealForm");
-  var stageSelect = document.getElementById("f_stage");
-  var probRange = document.getElementById("f_probability");
-  var probVal = document.getElementById("probVal");
+  var stageSelectEl = document.getElementById("f_stage");
+  var ownerSelectEl = document.getElementById("f_owner");
   var deleteBtn = document.getElementById("deleteBtn");
 
-  function populateStageSelect(){
-    stageSelect.innerHTML = "";
-    STAGES.forEach(function(stage){
-      var opt = document.createElement("option");
-      opt.value = stage.id;
-      opt.textContent = stage.name;
-      stageSelect.appendChild(opt);
-    });
-  }
-
-  probRange.addEventListener("input", function(){
-    probVal.textContent = probRange.value + "%";
+  ownerSelectEl.addEventListener("change", function(){
+    var opt = ownerSelectEl.options[ownerSelectEl.selectedIndex];
+    if(opt && opt.dataset.dept) document.getElementById("f_department").value = opt.dataset.dept;
   });
-
-  stageSelect.addEventListener("change", function(){
-    if(editingId) return; // 수정 중에는 기존 확률 유지
-    var st = stageById(stageSelect.value);
-    probRange.value = st.defaultProbability != null ? st.defaultProbability : 50;
-    probVal.textContent = probRange.value + "%";
+  stageSelectEl.addEventListener("change", function(){
+    var st = stageById(stageSelectEl.value);
+    document.getElementById("f_probHint").textContent = "자동 확률: " + (st.defaultProbability!=null?st.defaultProbability:0) + "% (단계 기준값)";
   });
 
   function openModal(dealId, defaultStage){
     editingId = dealId;
-    var deal = dealId ? deals.find(function(d){ return d.id === dealId; }) : null;
+    var deal = dealId ? dealById(dealId) : null;
     var stageForDefault = deal ? deal.stage : (defaultStage || (STAGES[0] && STAGES[0].id));
-    var defaultProb = deal ? deal.probability : (stageById(stageForDefault).defaultProbability != null ? stageById(stageForDefault).defaultProbability : 50);
 
     document.getElementById("modalTitle").textContent = deal ? "딜 수정" : "새 딜 추가";
-    document.getElementById("f_dealName").value = deal ? deal.dealName : "";
+    document.getElementById("modalDealCode").textContent = deal ? (deal.dealCode||"-") : ("자동 채번 예정: " + nextDealCode());
     document.getElementById("f_company").value = deal ? deal.company : "";
+    document.getElementById("f_department").value = deal ? (deal.department||DEPARTMENTS[0]) : DEPARTMENTS[0];
+    document.getElementById("f_owner").value = deal ? deal.owner : (OWNERS[0] && OWNERS[0].name);
     document.getElementById("f_amount").value = deal ? deal.amount : "";
-    document.getElementById("f_owner").value = deal ? deal.owner : "";
-    document.getElementById("f_closeDate").value = deal ? deal.closeDate : "";
-    stageSelect.value = stageForDefault;
-    probRange.value = defaultProb;
-    probVal.textContent = probRange.value + "%";
+    document.getElementById("f_closeDate").value = deal ? (deal.closeDate||"") : "";
+    document.getElementById("f_nextActionDate").value = deal ? (deal.nextActionDate||"") : "";
+    document.getElementById("f_confirmedDate").value = deal ? (deal.confirmedDate||"") : "";
+    document.getElementById("f_nextActionNote").value = deal ? (deal.nextActionNote||"") : "";
+    document.getElementById("f_competitor").value = deal ? (deal.competitor||"") : "";
+    document.getElementById("f_competitiveEdge").value = deal ? (deal.competitiveEdge||"") : "";
+    document.getElementById("f_memo").value = deal ? (deal.memo||"") : "";
+    stageSelectEl.value = stageForDefault;
+    var st = stageById(stageForDefault);
+    document.getElementById("f_probHint").textContent = "자동 확률: " + (st.defaultProbability!=null?st.defaultProbability:0) + "% (단계 기준값)";
 
     deleteBtn.style.display = deal ? "inline-block" : "none";
-
     overlay.classList.add("open");
-    document.getElementById("f_dealName").focus();
+    document.getElementById("f_company").focus();
   }
-
   function closeModal(){
     overlay.classList.remove("open");
     editingId = null;
@@ -929,17 +1329,18 @@
     openModal(null, STAGES[0] && STAGES[0].id);
   });
   document.getElementById("cancelBtn").addEventListener("click", closeModal);
-  overlay.addEventListener("click", function(e){
-    if(e.target === overlay) closeModal();
-  });
+  overlay.addEventListener("click", function(e){ if(e.target === overlay) closeModal(); });
   document.addEventListener("keydown", function(e){
-    if(e.key === "Escape" && overlay.classList.contains("open")) closeModal();
+    if(e.key === "Escape"){
+      if(overlay.classList.contains("open")) closeModal();
+      if(activityOverlay.classList.contains("open")) closeActivityModal();
+    }
   });
 
   deleteBtn.addEventListener("click", function(){
     if(!editingId) return;
-    var deal = deals.find(function(d){ return d.id === editingId; });
-    if(deal && confirm('"'+deal.dealName+'" 딜을 삭제할까요?')){
+    var deal = dealById(editingId);
+    if(deal && confirm('"'+deal.company+'" 딜을 삭제할까요?')){
       var idToRemove = editingId;
       closeModal();
       removeDeal(idToRemove);
@@ -948,18 +1349,24 @@
 
   form.addEventListener("submit", async function(e){
     e.preventDefault();
+    var stageId = stageSelectEl.value;
+    var st = stageById(stageId);
     var data = {
-      dealName: document.getElementById("f_dealName").value.trim(),
       company: document.getElementById("f_company").value.trim(),
+      department: document.getElementById("f_department").value,
+      owner: document.getElementById("f_owner").value,
+      stage: stageId,
+      probability: st.defaultProbability != null ? st.defaultProbability : 0,
       amount: Number(document.getElementById("f_amount").value) || 0,
-      owner: document.getElementById("f_owner").value.trim(),
-      closeDate: document.getElementById("f_closeDate").value,
-      stage: stageSelect.value,
-      probability: Number(probRange.value)
+      closeDate: document.getElementById("f_closeDate").value || null,
+      nextActionDate: document.getElementById("f_nextActionDate").value || null,
+      confirmedDate: document.getElementById("f_confirmedDate").value || null,
+      nextActionNote: document.getElementById("f_nextActionNote").value.trim(),
+      competitor: document.getElementById("f_competitor").value.trim(),
+      competitiveEdge: document.getElementById("f_competitiveEdge").value.trim(),
+      memo: document.getElementById("f_memo").value.trim()
     };
-    if(!data.dealName || !data.company || !data.owner || !data.closeDate){
-      return;
-    }
+    if(!data.company){ return; }
 
     var saveBtn = form.querySelector('button[type="submit"]');
     saveBtn.disabled = true;
@@ -971,13 +1378,16 @@
         var idx = deals.findIndex(function(d){ return d.id === editingId; });
         if(idx > -1) deals[idx] = mapRowToDeal(res.data);
       } else {
-        var insertRes = await supabaseClient.from("deals").insert(dealToRow(data)).select().single();
+        var row = dealToRow(data);
+        row.deal_code = nextDealCode();
+        var insertRes = await supabaseClient.from("deals").insert(row).select().single();
         if(insertRes.error) throw insertRes.error;
         deals.push(mapRowToDeal(insertRes.data));
       }
       hideError();
       closeModal();
-      render();
+      populateStaticSelects();
+      renderAll();
     }catch(err){
       showError("저장하지 못했습니다: " + (err && err.message ? err.message : err));
     }finally{
@@ -986,9 +1396,321 @@
     }
   });
 
-  document.getElementById("refreshBtn").addEventListener("click", function(){
-    loadFromSupabase();
+  document.getElementById("refreshBtn").addEventListener("click", function(){ loadFromSupabase(); });
+
+  /* ---------- 활동 이력 ---------- */
+
+  var activityOverlay = document.getElementById("activityOverlay");
+  var activityForm = document.getElementById("activityForm");
+  var activityDeleteBtn = document.getElementById("activityDeleteBtn");
+  var a_dealId = document.getElementById("a_dealId");
+
+  function updateActivityDealPreview(){
+    var deal = dealById(a_dealId.value);
+    var box = document.getElementById("a_dealPreview");
+    if(!deal){ box.innerHTML = "딜을 선택하면 고객사·부서·담당자가 표시됩니다."; return; }
+    box.innerHTML = '<b>' + escapeHtml(deal.company) + '</b> · ' + escapeHtml(deal.department||"-") + ' · ' + escapeHtml(deal.owner);
+  }
+  a_dealId.addEventListener("change", updateActivityDealPreview);
+
+  function openActivityModal(activityId){
+    editingActivityId = activityId || null;
+    var act = editingActivityId ? activities.find(function(a){ return a.id === editingActivityId; }) : null;
+    document.getElementById("activityModalTitle").textContent = act ? "활동 수정" : "활동 추가";
+    a_dealId.value = act ? act.dealId : "";
+    document.getElementById("a_date").value = act ? act.activityDate : new Date().toISOString().slice(0,10);
+    document.getElementById("a_type").value = act ? act.activityType : ACTIVITY_TYPES[0];
+    document.getElementById("a_content").value = act ? (act.content||"") : "";
+    document.getElementById("a_nextAction").value = act ? (act.nextAction||"") : "";
+    document.getElementById("a_memo").value = act ? (act.memo||"") : "";
+    updateActivityDealPreview();
+    activityDeleteBtn.style.display = act ? "inline-block" : "none";
+    activityOverlay.classList.add("open");
+  }
+  function closeActivityModal(){
+    activityOverlay.classList.remove("open");
+    editingActivityId = null;
+    activityForm.reset();
+  }
+  document.getElementById("newActivityBtn").addEventListener("click", function(){ openActivityModal(null); });
+  document.getElementById("activityCancelBtn").addEventListener("click", closeActivityModal);
+  activityOverlay.addEventListener("click", function(e){ if(e.target === activityOverlay) closeActivityModal(); });
+
+  activityDeleteBtn.addEventListener("click", function(){
+    if(!editingActivityId) return;
+    if(confirm("이 활동 기록을 삭제할까요?")){
+      var id = editingActivityId;
+      closeActivityModal();
+      removeActivity(id);
+    }
   });
+
+  activityForm.addEventListener("submit", async function(e){
+    e.preventDefault();
+    var data = {
+      dealId: a_dealId.value,
+      activityDate: document.getElementById("a_date").value,
+      activityType: document.getElementById("a_type").value,
+      content: document.getElementById("a_content").value.trim(),
+      nextAction: document.getElementById("a_nextAction").value.trim(),
+      memo: document.getElementById("a_memo").value.trim()
+    };
+    if(!data.dealId || !data.activityDate){ return; }
+
+    var saveBtn = activityForm.querySelector('button[type="submit"]');
+    saveBtn.disabled = true;
+    setSyncing(true);
+    try{
+      if(editingActivityId){
+        var res = await supabaseClient.from("activities").update(activityToRow(data)).eq("id", editingActivityId).select().single();
+        if(res.error) throw res.error;
+        var idx = activities.findIndex(function(a){ return a.id === editingActivityId; });
+        if(idx > -1) activities[idx] = mapRowToActivity(res.data);
+      } else {
+        var insertRes = await supabaseClient.from("activities").insert(activityToRow(data)).select().single();
+        if(insertRes.error) throw insertRes.error;
+        activities.push(mapRowToActivity(insertRes.data));
+      }
+      hideError();
+      closeActivityModal();
+      renderActivities();
+    }catch(err){
+      showError("저장하지 못했습니다: " + (err && err.message ? err.message : err));
+    }finally{
+      saveBtn.disabled = false;
+      setSyncing(false);
+    }
+  });
+
+  function renderActivities(){
+    var table = document.getElementById("activitiesTable");
+    if(!loaded){
+      table.innerHTML = '<tbody><tr><td class="loading-hint">불러오는 중...</td></tr></tbody>';
+      return;
+    }
+    var head = '<thead><tr><th>딜ID</th><th>고객사명</th><th>영업부서</th><th>담당자</th><th>활동일</th><th>활동유형</th><th>활동내용</th><th>다음액션</th><th>비고</th><th></th></tr></thead>';
+    var rows = activities.slice().sort(function(a,b){ return (b.activityDate||"").localeCompare(a.activityDate||""); });
+    var body;
+    if(rows.length === 0){
+      body = '<tbody><tr><td colspan="10" class="loading-hint">활동 기록이 없습니다.</td></tr></tbody>';
+    } else {
+      body = "<tbody>" + rows.map(function(a){
+        var deal = dealById(a.dealId);
+        return '<tr>' +
+          '<td>' + escapeHtml(deal ? deal.dealCode : "-") + '</td>' +
+          '<td class="wrap"><b>' + escapeHtml(deal ? deal.company : "(삭제된 딜)") + '</b></td>' +
+          '<td>' + escapeHtml(deal ? deal.department : "-") + '</td>' +
+          '<td>' + escapeHtml(deal ? deal.owner : "-") + '</td>' +
+          '<td>' + escapeHtml(a.activityDate) + '</td>' +
+          '<td>' + escapeHtml(a.activityType) + '</td>' +
+          '<td class="wrap">' + escapeHtml(a.content||"-") + '</td>' +
+          '<td class="wrap">' + escapeHtml(a.nextAction||"-") + '</td>' +
+          '<td class="wrap">' + escapeHtml(a.memo||"-") + '</td>' +
+          '<td><div class="cell-actions">' +
+            '<button type="button" class="icon-btn edit-act-btn" data-id="'+a.id+'">수정</button>' +
+            '<button type="button" class="icon-btn del del-act-btn" data-id="'+a.id+'">삭제</button>' +
+          '</div></td>' +
+        '</tr>';
+      }).join("") + "</tbody>";
+    }
+    table.innerHTML = head + body;
+    table.querySelectorAll(".edit-act-btn").forEach(function(btn){
+      btn.addEventListener("click", function(){ openActivityModal(btn.dataset.id); });
+    });
+    table.querySelectorAll(".del-act-btn").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        if(confirm("이 활동 기록을 삭제할까요?")) removeActivity(btn.dataset.id);
+      });
+    });
+  }
+
+  /* ---------- 대시보드 ---------- */
+
+  function renderDashboard(){
+    if(!loaded) return;
+    var totalDeals = deals.length;
+    var activeDeals = deals.filter(function(d){ return ACTIVE_STAGE_IDS.indexOf(d.stage) !== -1; });
+    var activePipelineAmount = activeDeals.reduce(function(s,d){ return s + (Number(d.amount)||0); }, 0);
+    var wonDeals = deals.filter(function(d){ return d.stage === "won"; });
+    var wonAmount = wonDeals.reduce(function(s,d){ return s + (Number(d.amount)||0); }, 0);
+
+    var alertDeals = activeDeals.map(function(d){ return { deal:d, meta:computeDealMeta(d) }; }).filter(function(x){ return x.meta.alert; });
+
+    var kpis = [
+      { label:"전체 딜", value:totalDeals, unit:"건", cls:"" },
+      { label:"진행중 딜", value:activeDeals.length, unit:"건", cls:"accent" },
+      { label:"진행중 파이프라인", value:won(activePipelineAmount), unit:"", cls:"accent" },
+      { label:"수주 실적", value:wonDeals.length+"건 / "+won(wonAmount), unit:"", cls:"won" },
+      { label:"점검 필요 딜", value:alertDeals.length, unit:"건", cls:"warn" }
+    ];
+    document.getElementById("dashKpiRow").innerHTML = kpis.map(function(k){
+      return '<div class="kpi-card '+k.cls+'"><div class="label">'+k.label+'</div><div class="value">'+k.value+'<span class="unit">'+k.unit+'</span></div></div>';
+    }).join("");
+
+    // 단계별 현황 (진행중)
+    var stageTable = document.getElementById("dashStageTable");
+    var stageRows = ACTIVE_STAGE_IDS.map(function(sid){
+      var st = stageById(sid);
+      var list = activeDeals.filter(function(d){ return d.stage === sid; });
+      var amt = list.reduce(function(s,d){ return s + (Number(d.amount)||0); }, 0);
+      return { name:st.name, color:st.color, count:list.length, amount:amt };
+    });
+    var totalActiveAmt = stageRows.reduce(function(s,r){ return s+r.amount; }, 0) || 1;
+    stageTable.innerHTML = '<thead><tr><th>구분</th>' + stageRows.map(function(r){ return '<th>'+r.name+'</th>'; }).join("") + '<th>합계</th></tr></thead>' +
+      '<tbody>' +
+      '<tr><td>딜 건수</td>' + stageRows.map(function(r){ return '<td>'+r.count+'</td>'; }).join("") + '<td><b>'+activeDeals.length+'</b></td></tr>' +
+      '<tr><td>예상 금액</td>' + stageRows.map(function(r){ return '<td>'+won(r.amount)+'</td>'; }).join("") + '<td><b>'+won(totalActiveAmt===1?0:totalActiveAmt)+'</b></td></tr>' +
+      '<tr><td>금액 비중</td>' + stageRows.map(function(r){ return '<td>'+Math.round(r.amount/totalActiveAmt*100)+'%</td>'; }).join("") + '<td>100%</td></tr>' +
+      '</tbody>';
+
+    // TOP10 점검 필요 딜
+    var alertTable = document.getElementById("dashAlertTable");
+    var sortedAlerts = alertDeals.slice().sort(function(a,b){
+      if(a.meta.alert.rank !== b.meta.alert.rank) return a.meta.alert.rank - b.meta.alert.rank;
+      return b.meta.alert.sortDays - a.meta.alert.sortDays;
+    }).slice(0, 10);
+    var alertHead = '<thead><tr><th>딜ID</th><th>고객사</th><th>영업부서</th><th>담당자</th><th>단계</th><th>예상금액</th><th>최종업데이트</th><th>경과일</th><th>다음액션일</th><th>D-Day</th><th>다음 액션 내용</th><th>점검알림</th></tr></thead>';
+    var alertBody;
+    if(sortedAlerts.length === 0){
+      alertBody = '<tbody><tr><td colspan="12" class="loading-hint">점검이 필요한 딜이 없습니다.</td></tr></tbody>';
+    } else {
+      alertBody = "<tbody>" + sortedAlerts.map(function(x){
+        var d = x.deal, meta = x.meta, st = stageById(d.stage);
+        return '<tr>' +
+          '<td>'+escapeHtml(d.dealCode||"-")+'</td>' +
+          '<td class="wrap"><b>'+escapeHtml(d.company)+'</b></td>' +
+          '<td>'+escapeHtml(d.department||"-")+'</td>' +
+          '<td>'+escapeHtml(d.owner)+'</td>' +
+          '<td><span class="badge badge-stage" style="background:'+st.color+'">'+escapeHtml(st.name)+'</span></td>' +
+          '<td>'+won(d.amount)+'</td>' +
+          '<td>'+(d.updatedAt?String(d.updatedAt).slice(0,10):"-")+'</td>' +
+          '<td>'+(meta.elapsedDays!=null?meta.elapsedDays+"일":"-")+'</td>' +
+          '<td>'+(d.nextActionDate||"-")+'</td>' +
+          '<td>'+(meta.ddayText||"-")+'</td>' +
+          '<td class="wrap">'+escapeHtml(d.nextActionNote||"-")+'</td>' +
+          '<td><span class="badge '+alertBadgeClass(meta.alert.level)+'">'+meta.alert.label+'</span></td>' +
+        '</tr>';
+      }).join("") + "</tbody>";
+    }
+    alertTable.innerHTML = alertHead + alertBody;
+
+    // 부서별 x 단계별 현황
+    var deptTable = document.getElementById("dashDeptTable");
+    var deptHead = '<thead><tr><th>영업부서</th>' + ACTIVE_STAGE_IDS.map(function(sid){ return '<th colspan="2">'+stageById(sid).name+'</th>'; }).join("") + '<th colspan="2">진행 합계</th><th colspan="2">수주</th></tr>' +
+      '<tr><th></th>' + ACTIVE_STAGE_IDS.map(function(){ return '<th>건수</th><th>금액</th>'; }).join("") + '<th>건수</th><th>금액</th><th>건수</th><th>금액</th></tr></thead>';
+    var deptTotals = { byStage:{}, activeCount:0, activeAmt:0, wonCount:0, wonAmt:0 };
+    ACTIVE_STAGE_IDS.forEach(function(sid){ deptTotals.byStage[sid] = {count:0, amt:0}; });
+    var deptRows = DEPARTMENTS.map(function(dept){
+      var cells = ACTIVE_STAGE_IDS.map(function(sid){
+        var list = deals.filter(function(d){ return d.department===dept && d.stage===sid; });
+        var amt = list.reduce(function(s,d){ return s+(Number(d.amount)||0); },0);
+        deptTotals.byStage[sid].count += list.length;
+        deptTotals.byStage[sid].amt += amt;
+        return { count:list.length, amt:amt };
+      });
+      var activeList = deals.filter(function(d){ return d.department===dept && ACTIVE_STAGE_IDS.indexOf(d.stage)!==-1; });
+      var activeAmt = activeList.reduce(function(s,d){ return s+(Number(d.amount)||0); },0);
+      var wonList = deals.filter(function(d){ return d.department===dept && d.stage==="won"; });
+      var wonAmt = wonList.reduce(function(s,d){ return s+(Number(d.amount)||0); },0);
+      deptTotals.activeCount += activeList.length;
+      deptTotals.activeAmt += activeAmt;
+      deptTotals.wonCount += wonList.length;
+      deptTotals.wonAmt += wonAmt;
+      return '<tr><td><b>'+escapeHtml(dept)+'</b></td>' +
+        cells.map(function(c){ return '<td>'+(c.count||"-")+'</td><td>'+(c.amt?won(c.amt):"-")+'</td>'; }).join("") +
+        '<td>'+(activeList.length||"-")+'</td><td>'+(activeAmt?won(activeAmt):"-")+'</td>' +
+        '<td>'+(wonList.length||"-")+'</td><td>'+(wonAmt?won(wonAmt):"-")+'</td></tr>';
+    }).join("");
+    var deptFoot = '<tr><td>합계</td>' +
+      ACTIVE_STAGE_IDS.map(function(sid){ return '<td>'+(deptTotals.byStage[sid].count||"-")+'</td><td>'+(deptTotals.byStage[sid].amt?won(deptTotals.byStage[sid].amt):"-")+'</td>'; }).join("") +
+      '<td>'+deptTotals.activeCount+'</td><td>'+won(deptTotals.activeAmt)+'</td>' +
+      '<td>'+deptTotals.wonCount+'</td><td>'+won(deptTotals.wonAmt)+'</td></tr>';
+    deptTable.innerHTML = deptHead + '<tbody>' + deptRows + '</tbody><tfoot>' + deptFoot + '</tfoot>';
+  }
+
+  /* ---------- 분석 ---------- */
+
+  function renderAnalysis(){
+    if(!loaded) return;
+
+    // 1) 단계별 현황 (전체)
+    var stageTable = document.getElementById("analysisStageTable");
+    var total = deals.length || 1;
+    var totalAmt = deals.reduce(function(s,d){ return s+(Number(d.amount)||0); },0) || 1;
+    var stageRows = STAGES.map(function(st){
+      var list = deals.filter(function(d){ return d.stage===st.id; });
+      var amt = list.reduce(function(s,d){ return s+(Number(d.amount)||0); },0);
+      return { name:st.name, color:st.color, count:list.length, amt:amt };
+    });
+    var activeCount = deals.filter(function(d){ return ACTIVE_STAGE_IDS.indexOf(d.stage)!==-1; }).length;
+    var activeAmt = deals.filter(function(d){ return ACTIVE_STAGE_IDS.indexOf(d.stage)!==-1; }).reduce(function(s,d){ return s+(Number(d.amount)||0); },0);
+    stageTable.innerHTML = '<thead><tr><th>단계</th><th>딜 건수</th><th>금액</th><th>건수 비중</th><th>금액 비중</th></tr></thead><tbody>' +
+      stageRows.map(function(r){
+        return '<tr><td><span class="badge badge-stage" style="background:'+r.color+'">'+escapeHtml(r.name)+'</span></td><td>'+r.count+'</td><td>'+won(r.amt)+'</td><td>'+Math.round(r.count/total*100)+'%</td><td>'+Math.round(r.amt/totalAmt*100)+'%</td></tr>';
+      }).join("") +
+      '</tbody><tfoot>' +
+      '<tr><td>전체 합계</td><td>'+deals.length+'</td><td>'+won(deals.reduce(function(s,d){return s+(Number(d.amount)||0);},0))+'</td><td>100%</td><td>100%</td></tr>' +
+      '<tr><td>진행중 소계</td><td>'+activeCount+'</td><td>'+won(activeAmt)+'</td><td></td><td></td></tr>' +
+      '</tfoot>';
+
+    // 2) 부서별 성과
+    var deptTable = document.getElementById("analysisDeptTable");
+    var deptTotals = { activeCount:0, activeAmt:0, wonCount:0, wonAmt:0, lostCount:0, lostAmt:0, holdCount:0 };
+    var deptRows = DEPARTMENTS.map(function(dept){
+      var deptDeals = deals.filter(function(d){ return d.department===dept; });
+      var activeList = deptDeals.filter(function(d){ return ACTIVE_STAGE_IDS.indexOf(d.stage)!==-1; });
+      var activeAmt = activeList.reduce(function(s,d){return s+(Number(d.amount)||0);},0);
+      var wonList = deptDeals.filter(function(d){ return d.stage==="won"; });
+      var wonAmt = wonList.reduce(function(s,d){return s+(Number(d.amount)||0);},0);
+      var lostList = deptDeals.filter(function(d){ return d.stage==="lost"; });
+      var lostAmt = lostList.reduce(function(s,d){return s+(Number(d.amount)||0);},0);
+      var holdList = deptDeals.filter(function(d){ return d.stage==="hold"; });
+      var decided = wonList.length + lostList.length;
+      var winRateCount = decided ? Math.round(wonList.length/decided*100) : null;
+      var winRateAmt = (wonAmt+lostAmt) ? Math.round(wonAmt/(wonAmt+lostAmt)*100) : null;
+      var avgActive = activeList.length ? Math.round(activeAmt/activeList.length) : 0;
+      deptTotals.activeCount += activeList.length; deptTotals.activeAmt += activeAmt;
+      deptTotals.wonCount += wonList.length; deptTotals.wonAmt += wonAmt;
+      deptTotals.lostCount += lostList.length; deptTotals.lostAmt += lostAmt;
+      deptTotals.holdCount += holdList.length;
+      return '<tr><td><b>'+escapeHtml(dept)+'</b></td>' +
+        '<td>'+(activeList.length||"-")+'</td><td>'+(activeAmt?won(activeAmt):"-")+'</td>' +
+        '<td>'+(wonList.length||"-")+'</td><td>'+(wonAmt?won(wonAmt):"-")+'</td>' +
+        '<td>'+(lostList.length||"-")+'</td><td>'+(lostAmt?won(lostAmt):"-")+'</td>' +
+        '<td>'+(holdList.length||"-")+'</td>' +
+        '<td>'+(winRateCount!=null?winRateCount+"%":"-")+'</td>' +
+        '<td>'+(winRateAmt!=null?winRateAmt+"%":"-")+'</td>' +
+        '<td>'+(activeList.length?won(avgActive):"-")+'</td></tr>';
+    }).join("");
+    var totalDecided = deptTotals.wonCount + deptTotals.lostCount;
+    var totalWinRateCount = totalDecided ? Math.round(deptTotals.wonCount/totalDecided*100) : 0;
+    var totalWinRateAmt = (deptTotals.wonAmt+deptTotals.lostAmt) ? Math.round(deptTotals.wonAmt/(deptTotals.wonAmt+deptTotals.lostAmt)*100) : 0;
+    var totalAvg = deptTotals.activeCount ? Math.round(deptTotals.activeAmt/deptTotals.activeCount) : 0;
+    deptTable.innerHTML = '<thead><tr><th>부서</th><th>진행 건수</th><th>진행 금액</th><th>수주 건수</th><th>수주 금액</th><th>실주 건수</th><th>실주 금액</th><th>보류 건수</th><th>수주율(건수)</th><th>수주율(금액)</th><th>평균 진행 딜 금액</th></tr></thead>' +
+      '<tbody>' + deptRows + '</tbody>' +
+      '<tfoot><tr><td>합계</td><td>'+deptTotals.activeCount+'</td><td>'+won(deptTotals.activeAmt)+'</td><td>'+deptTotals.wonCount+'</td><td>'+won(deptTotals.wonAmt)+'</td><td>'+deptTotals.lostCount+'</td><td>'+won(deptTotals.lostAmt)+'</td><td>'+deptTotals.holdCount+'</td><td>'+totalWinRateCount+'%</td><td>'+totalWinRateAmt+'%</td><td>'+won(totalAvg)+'</td></tr></tfoot>';
+
+    // 3) 담당자별 x 단계별 현황
+    var ownerTable = document.getElementById("analysisOwnerTable");
+    var ownerRows = OWNERS.map(function(o){
+      var ownerDeals = deals.filter(function(d){ return d.owner===o.name; });
+      var stageCounts = ACTIVE_STAGE_IDS.map(function(sid){ return ownerDeals.filter(function(d){ return d.stage===sid; }).length; });
+      var activeList = ownerDeals.filter(function(d){ return ACTIVE_STAGE_IDS.indexOf(d.stage)!==-1; });
+      var activeAmt = activeList.reduce(function(s,d){return s+(Number(d.amount)||0);},0);
+      var wonCount = ownerDeals.filter(function(d){ return d.stage==="won"; }).length;
+      var lostCount = ownerDeals.filter(function(d){ return d.stage==="lost"; }).length;
+      var holdCount = ownerDeals.filter(function(d){ return d.stage==="hold"; }).length;
+      var decided = wonCount+lostCount;
+      var winRate = decided ? Math.round(wonCount/decided*100) : null;
+      var avgAmt = activeList.length ? Math.round(activeAmt/activeList.length) : 0;
+      return '<tr><td><b>'+escapeHtml(o.name)+'</b></td><td>'+escapeHtml(o.dept)+'</td>' +
+        stageCounts.map(function(c){ return '<td>'+(c||"-")+'</td>'; }).join("") +
+        '<td>'+(activeList.length||"-")+'</td><td>'+(activeAmt?won(activeAmt):"-")+'</td>' +
+        '<td>'+(wonCount||"-")+'</td><td>'+(lostCount||"-")+'</td><td>'+(holdCount||"-")+'</td>' +
+        '<td>'+(winRate!=null?winRate+"%":"-")+'</td><td>'+(activeList.length?won(avgAmt):"-")+'</td></tr>';
+    }).join("");
+    ownerTable.innerHTML = '<thead><tr><th>담당자</th><th>소속 부서</th><th>발굴</th><th>접촉</th><th>제안</th><th>협상</th><th>진행 합계(건)</th><th>진행 금액</th><th>수주</th><th>실주</th><th>보류</th><th>수주율(건수)</th><th>평균 진행 딜 금액</th></tr></thead><tbody>' + ownerRows + '</tbody>';
+  }
 
   loadFromSupabase();
 })();
