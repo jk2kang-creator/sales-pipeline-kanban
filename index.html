@@ -323,6 +323,54 @@
   }
   .tb-label{ font-size:11px; font-weight:700; color:var(--muted); white-space:nowrap; }
   .tb-divider{ width:1px; height:20px; background:var(--line); margin:0 2px; }
+  .dl-btn{
+    display:inline-flex; align-items:center; gap:6px; flex:none; margin-left:auto;
+    border:1px solid var(--line); background:var(--panel); color:var(--text);
+    font-size:12.5px; font-weight:700; padding:8px 12px; border-radius:8px; cursor:pointer;
+    white-space:nowrap;
+  }
+  .dl-btn:hover{ background:var(--mist); }
+  .dl-btn svg{ width:14px; height:14px; flex:none; }
+  .dl-btn-sm{ padding:5px 9px; font-size:11.5px; margin-left:0; }
+
+  /* ---------- 사용자 관리 ---------- */
+  .admin-name-input{
+    width:92px; padding:6px 8px; border:1px solid var(--border); border-radius:7px;
+    font-size:12.5px; color:var(--text); background:#fff;
+  }
+  .admin-name-input:focus{ outline:none; border-color:var(--brand2); }
+  .admin-select{
+    padding:6px 8px; border:1px solid var(--border); border-radius:7px; font-size:12.5px;
+    color:var(--text); background:#fff; cursor:pointer;
+  }
+  .admin-select:focus{ outline:none; border-color:var(--brand2); }
+  .admin-role-select{ border-left:3px solid var(--muted); font-weight:700; }
+  tr[data-role="admin"] .admin-role-select{ border-left-color:#7A3FB8; }
+  tr[data-role="manager"] .admin-role-select{ border-left-color:var(--brand2); }
+  tr[data-role="rep"] .admin-role-select{ border-left-color:var(--good); }
+  tr[data-role="viewer"] .admin-role-select{ border-left-color:var(--muted); }
+  tr[data-role="pending"] .admin-role-select{ border-left-color:var(--amber); }
+  .approve-toggle{
+    position:relative; display:inline-flex; align-items:center; gap:7px; cursor:pointer; user-select:none;
+  }
+  .approve-toggle input{ position:absolute; opacity:0; width:0; height:0; }
+  .approve-toggle .track{
+    width:34px; height:19px; border-radius:999px; background:#D8DEE6; transition:background .15s ease; flex:none; position:relative;
+  }
+  .approve-toggle .track::after{
+    content:""; position:absolute; top:2px; left:2px; width:15px; height:15px; border-radius:50%;
+    background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.25); transition:transform .15s ease;
+  }
+  .approve-toggle input:checked + .track{ background:var(--good); }
+  .approve-toggle input:checked + .track::after{ transform:translateX(15px); }
+  .approve-toggle .approve-label{ font-size:11.5px; font-weight:700; color:var(--muted); }
+  .approve-toggle input:checked ~ .approve-label{ color:var(--good); }
+  tr.admin-row-pending{ background:#FFF8ED; }
+  tr.admin-row-pending:hover{ background:#FFF2DC; }
+  .icon-btn.admin-save-btn{
+    border:1px solid var(--brand2); color:var(--brand2); background:#fff; font-weight:700;
+  }
+  .icon-btn.admin-save-btn:hover{ background:var(--brand2); color:#fff; }
 
   /* ---------- Bar chart ---------- */
   .barchart{ display:flex; flex-direction:column; gap:11px; padding:4px 2px 8px; }
@@ -374,6 +422,7 @@
   }
   table.data-table td:last-child{ border-right:none; }
   table.data-table td.wrap{ white-space:normal; min-width:160px; text-align:left; }
+  table.data-table td.num, table.data-table th.num{ text-align:right; font-variant-numeric:tabular-nums; }
   table.data-table tbody tr:hover{ background:var(--mist); }
   .col-resizer{
     position:absolute;
@@ -785,6 +834,12 @@
 
   <!-- ================= 대시보드 ================= -->
   <section class="view" id="view-dashboard">
+    <div class="toolbar" style="justify-content:flex-end;">
+      <button type="button" class="dl-btn" id="dashboardExportBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+        엑셀 다운로드
+      </button>
+    </div>
     <div class="kpi-row" id="dashKpiRow"></div>
 
     <div class="section-block">
@@ -825,6 +880,10 @@
         <select id="filterStage"><option value="">전체 단계</option></select>
         <select id="filterDept"><option value="">전체 부서</option></select>
         <select id="filterAlert"><option value="">전체 점검알림</option></select>
+        <button type="button" class="dl-btn" id="pipelineExportBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+          엑셀 다운로드
+        </button>
       </div>
       <div class="table-scroll"><table class="data-table" id="pipelineTable"></table></div>
     </div>
@@ -848,6 +907,10 @@
         <input type="date" id="actFilterFrom" title="시작일">
         <span class="tb-label">~</span>
         <input type="date" id="actFilterTo" title="종료일">
+        <button type="button" class="dl-btn" id="activitiesExportBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+          엑셀 다운로드
+        </button>
       </div>
       <button class="btn btn-primary" id="newActivityBtn">+ 활동 추가</button>
     </div>
@@ -861,10 +924,20 @@
       <button data-sub="chart">차트 보기</button>
     </div>
 
+    <div class="toolbar anl-table-view" style="justify-content:flex-end;">
+      <button type="button" class="dl-btn" id="analysisExportBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+        엑셀 다운로드
+      </button>
+    </div>
+
     <div class="section-block">
       <div class="section-title">단계별 현황 (전체 딜 · 사실 집계)</div>
       <div class="table-scroll anl-table-view"><table class="data-table" id="analysisStageTable"></table></div>
       <div class="barchart anl-chart-view" id="chartStage" style="display:none;"></div>
+      <div class="anl-chart-view" style="display:none;text-align:right;margin-top:8px;">
+        <button type="button" class="dl-btn dl-btn-sm" id="chartStageExportBtn">이미지 다운로드</button>
+      </div>
     </div>
     <div class="section-block">
       <div class="section-title">부서별 성과 (확정 결과 기준)</div>
@@ -876,6 +949,9 @@
       </div>
       <div class="table-scroll anl-table-view"><table class="data-table" id="analysisDeptTable"></table></div>
       <div class="barchart anl-chart-view" id="chartDept" style="display:none;"></div>
+      <div class="anl-chart-view" style="display:none;text-align:right;margin-top:8px;">
+        <button type="button" class="dl-btn dl-btn-sm" id="chartDeptExportBtn">이미지 다운로드</button>
+      </div>
     </div>
     <div class="section-block">
       <div class="section-title">담당자별 × 단계별 현황</div>
@@ -887,14 +963,29 @@
       </div>
       <div class="table-scroll anl-table-view"><table class="data-table" id="analysisOwnerTable"></table></div>
       <div class="barchart anl-chart-view" id="chartOwner" style="display:none;"></div>
+      <div class="anl-chart-view" style="display:none;text-align:right;margin-top:8px;">
+        <button type="button" class="dl-btn dl-btn-sm" id="chartOwnerExportBtn">이미지 다운로드</button>
+      </div>
     </div>
   </section>
 
   <!-- ================= 사용자 관리 (관리자 전용) ================= -->
   <section class="view" id="view-admin">
     <div class="section-block">
-      <div class="section-title">사용자 계정</div>
+      <div class="section-title" style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+        <span>사용자 계정 <span class="chip chip-muted" id="adminPendingBadge" style="display:none;"></span></span>
+        <button type="button" class="dl-btn dl-btn-sm" id="adminExportBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+          엑셀 다운로드
+        </button>
+      </div>
       <div class="section-sub">역할을 지정하고 승인해야 로그인한 사용자가 시스템을 사용할 수 있습니다.</div>
+      <div class="toolbar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+          <input type="text" id="adminFilterUser" placeholder="이름·이메일 검색">
+        </div>
+      </div>
       <div class="table-scroll"><table class="data-table" id="adminUsersTable"></table></div>
     </div>
     <div class="section-block">
@@ -948,6 +1039,7 @@
         <div class="field">
           <label>영업부서</label>
           <select id="f_department"></select>
+          <div class="hint" id="f_unitHint"></div>
         </div>
       </div>
       <div class="field-row">
@@ -1068,6 +1160,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
 (function(){
   "use strict";
@@ -1086,6 +1180,12 @@
   var ALERT_IMMINENT_DAYS = 7;
 
   var DEPARTMENTS = ["영업1팀","영업2팀","영업3팀","솔루션팀","파트너팀"];
+  var BUSINESS_UNITS = ["S&P사업본부"];
+  var UNIT_OF_DEPT = {
+    "영업1팀":"S&P사업본부", "영업2팀":"S&P사업본부", "영업3팀":"S&P사업본부",
+    "솔루션팀":"S&P사업본부", "파트너팀":"S&P사업본부"
+  };
+  function unitOfDept(dept){ return UNIT_OF_DEPT[dept] || "-"; }
   var OWNERS = [
     {name:"김철수", dept:"영업1팀"},
     {name:"박민준", dept:"영업1팀"},
@@ -1195,7 +1295,64 @@
     });
   }
 
+  // ---------- 다운로드: 엑셀 / 차트 이미지 ----------
+  function todayStamp(){
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  }
+  function downloadWorkbook(sheets, filenamePrefix){
+    if(typeof XLSX === "undefined"){ showError("엑셀 다운로드 라이브러리를 불러오지 못했습니다."); return; }
+    var wb = XLSX.utils.book_new();
+    sheets.forEach(function(s){
+      var ws = XLSX.utils.json_to_sheet(s.rows && s.rows.length ? s.rows : [{"안내":"데이터가 없습니다"}]);
+      XLSX.utils.book_append_sheet(wb, ws, s.name.slice(0,31));
+    });
+    XLSX.writeFile(wb, filenamePrefix + "_" + todayStamp() + ".xlsx");
+  }
+  async function downloadChartImage(containerId, filenamePrefix){
+    if(typeof html2canvas === "undefined"){ showError("이미지 다운로드 라이브러리를 불러오지 못했습니다."); return; }
+    var el = document.getElementById(containerId);
+    if(!el || !el.children.length){ showError("다운로드할 차트 데이터가 없습니다."); return; }
+    try{
+      var canvas = await html2canvas(el, { backgroundColor:"#ffffff", scale:2 });
+      var link = document.createElement("a");
+      link.download = filenamePrefix + "_" + todayStamp() + ".png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }catch(err){
+      showError("이미지 생성에 실패했습니다: " + (err && err.message ? err.message : err));
+    }
+  }
+
+  function buildDealsExportRows(list){
+    return list.map(function(d){
+      var stage = stageById(d.stage);
+      var meta = computeDealMeta(d);
+      return {
+        "딜ID": d.dealCode||"", "고객사명": d.company, "사업본부": unitOfDept(d.department), "영업부서": d.department||"",
+        "담당자": d.owner, "단계": stage.name, "딜상태": meta.statusLabel,
+        "예상금액(원)": d.amount||0, "예상수주일": d.closeDate||"", "최종업데이트": d.updatedAt ? String(d.updatedAt).slice(0,10) : "",
+        "경과일": meta.elapsedDays!=null ? meta.elapsedDays : "", "다음액션일": d.nextActionDate||"", "D-Day": meta.ddayText||"",
+        "다음액션내용": d.nextActionNote||"", "경쟁사": d.competitor||"", "당사경쟁우위": d.competitiveEdge||"",
+        "확정일": d.confirmedDate||"", "비고": d.memo||"", "점검알림": meta.alert ? meta.alert.label : ""
+      };
+    });
+  }
+  function buildActivitiesExportRows(list){
+    return list.map(function(a){
+      var deal = dealById(a.dealId);
+      return {
+        "딜ID": deal ? deal.dealCode : "", "고객사명": deal ? deal.company : "(삭제된 딜)", "영업부서": deal ? deal.department : "",
+        "담당자": deal ? deal.owner : "", "활동일": a.activityDate, "활동유형": a.activityType,
+        "활동내용": a.content||"", "다음액션": a.nextAction||"", "비고": a.memo||""
+      };
+    });
+  }
+
   // 열 너비 드래그 조정 — 테이블별로 폭을 기억해 재렌더링 후에도 유지
+  var lastAnalysisExport = { stage:[], dept:[], owner:[] };
+  var lastDashboardExport = { stage:[], alert:[], dept:[] };
+  var lastAdminExport = [];
   var columnWidths = {};
   function makeTableResizable(table){
     var headRows = table.querySelectorAll("thead tr");
@@ -1484,6 +1641,7 @@
     ["anlFilterDept","anlFilterOwner"].forEach(function(id){
       document.getElementById(id).addEventListener("input", function(){ renderAnalysis(); });
     });
+    document.getElementById("adminFilterUser").addEventListener("input", function(){ renderAdminUsersTable(); });
     document.getElementById("dashAlertViewAllLink").addEventListener("click", function(e){
       e.preventDefault();
       goToAlertFilteredPipeline();
@@ -1494,6 +1652,26 @@
       currentAnalysisSub = btn.dataset.sub;
       document.querySelectorAll("#analysisSubtabs button").forEach(function(b){ b.classList.toggle("active", b === btn); });
       applyAnalysisViewMode();
+    });
+    document.getElementById("analysisExportBtn").addEventListener("click", function(){
+      downloadWorkbook([
+        { name:"단계별현황", rows: lastAnalysisExport.stage },
+        { name:"부서별성과", rows: lastAnalysisExport.dept },
+        { name:"담당자별현황", rows: lastAnalysisExport.owner }
+      ], "분석");
+    });
+    document.getElementById("chartStageExportBtn").addEventListener("click", function(){ downloadChartImage("chartStage", "단계별현황_차트"); });
+    document.getElementById("chartDeptExportBtn").addEventListener("click", function(){ downloadChartImage("chartDept", "부서별성과_차트"); });
+    document.getElementById("chartOwnerExportBtn").addEventListener("click", function(){ downloadChartImage("chartOwner", "담당자별현황_차트"); });
+    document.getElementById("dashboardExportBtn").addEventListener("click", function(){
+      downloadWorkbook([
+        { name:"단계별현황", rows: lastDashboardExport.stage },
+        { name:"점검필요딜TOP10", rows: lastDashboardExport.alert },
+        { name:"부서별매트릭스", rows: lastDashboardExport.dept }
+      ], "대시보드");
+    });
+    document.getElementById("adminExportBtn").addEventListener("click", function(){
+      downloadWorkbook([{ name:"사용자목록", rows: lastAdminExport }], "사용자관리");
     });
   }
 
@@ -1617,7 +1795,7 @@
       deptOptions = DEPARTMENTS.filter(function(d){ return d === currentUser.department; });
     }
     var deptSelect = document.getElementById("f_department");
-    deptSelect.innerHTML = deptOptions.map(function(d){ return '<option value="'+escapeHtml(d)+'">'+escapeHtml(d)+'</option>'; }).join("");
+    deptSelect.innerHTML = deptOptGroups(null, deptOptions);
     // 모달 - 담당자: rep는 본인만 선택 가능
     var ownerOptions = OWNERS;
     if(role === "rep"){
@@ -1646,9 +1824,7 @@
     }).join("");
     // 필터 - 부서
     var filterDept = document.getElementById("filterDept");
-    filterDept.innerHTML = '<option value="">전체 부서</option>' + DEPARTMENTS.map(function(d){
-      return '<option value="'+escapeHtml(d)+'">'+escapeHtml(d)+'</option>';
-    }).join("");
+    filterDept.innerHTML = '<option value="">전체 부서</option>' + deptOptGroups(null, DEPARTMENTS);
     // 필터 - 점검알림
     var filterAlert = document.getElementById("filterAlert");
     filterAlert.innerHTML = '<option value="">전체 점검알림</option>' +
@@ -1665,7 +1841,7 @@
     // 회원가입 / 프로필 - 부서
     ["signup_department","profile_department"].forEach(function(id){
       var el = document.getElementById(id);
-      if(el) el.innerHTML = DEPARTMENTS.map(function(d){ return '<option value="'+escapeHtml(d)+'">'+escapeHtml(d)+'</option>'; }).join("");
+      if(el) el.innerHTML = deptOptGroups(null, DEPARTMENTS);
     });
   }
 
@@ -1730,7 +1906,7 @@
 
     var head = '<thead><tr>' +
       '<th>딜ID</th><th>고객사명</th><th>영업부서</th><th>담당자</th><th>단계</th><th>딜상태</th>' +
-      '<th>예상금액</th><th>예상수주일</th><th>최종업데이트</th><th>경과일</th><th>다음액션일</th><th>D-Day</th>' +
+      '<th class="num">예상금액</th><th>예상수주일</th><th>최종업데이트</th><th class="num">경과일</th><th>다음액션일</th><th>D-Day</th>' +
       '<th>다음 액션 내용</th><th>경쟁사</th><th>당사 경쟁우위</th><th>확정일</th><th>비고</th><th>점검알림</th><th></th>' +
       '</tr></thead>';
 
@@ -1749,10 +1925,10 @@
           '<td>' + escapeHtml(d.owner) + '</td>' +
           '<td>' + stageChip(stage) + '</td>' +
           '<td>' + statusChip(meta.statusLabel) + '</td>' +
-          '<td>' + won(d.amount) + '</td>' +
+          '<td class="num">' + won(d.amount) + '</td>' +
           '<td>' + (d.closeDate||"-") + '</td>' +
           '<td>' + (d.updatedAt ? String(d.updatedAt).slice(0,10) : "-") + '</td>' +
-          '<td>' + (meta.elapsedDays!=null ? meta.elapsedDays+"일" : "-") + '</td>' +
+          '<td class="num">' + (meta.elapsedDays!=null ? meta.elapsedDays+"일" : "-") + '</td>' +
           '<td>' + (d.nextActionDate||"-") + '</td>' +
           '<td>' + (meta.ddayText||"-") + '</td>' +
           '<td class="wrap">' + escapeHtml(d.nextActionNote||"-") + '</td>' +
@@ -1932,12 +2108,18 @@
   var form = document.getElementById("dealForm");
   var stageSelectEl = document.getElementById("f_stage");
   var ownerSelectEl = document.getElementById("f_owner");
+  var deptSelectEl = document.getElementById("f_department");
   var deleteBtn = document.getElementById("deleteBtn");
 
+  function updateUnitHint(){
+    document.getElementById("f_unitHint").textContent = "소속 사업본부: " + unitOfDept(deptSelectEl.value);
+  }
   ownerSelectEl.addEventListener("change", function(){
     var opt = ownerSelectEl.options[ownerSelectEl.selectedIndex];
-    if(opt && opt.dataset.dept) document.getElementById("f_department").value = opt.dataset.dept;
+    if(opt && opt.dataset.dept) deptSelectEl.value = opt.dataset.dept;
+    updateUnitHint();
   });
+  deptSelectEl.addEventListener("change", updateUnitHint);
   stageSelectEl.addEventListener("change", function(){
     var st = stageById(stageSelectEl.value);
     document.getElementById("f_probHint").textContent = "자동 확률: " + (st.defaultProbability!=null?st.defaultProbability:0) + "% (단계 기준값)";
@@ -1955,6 +2137,7 @@
     document.getElementById("f_company").value = deal ? deal.company : "";
     document.getElementById("f_department").value = deal ? (deal.department||defaultDept) : defaultDept;
     document.getElementById("f_owner").value = deal ? deal.owner : defaultOwner;
+    updateUnitHint();
     document.getElementById("f_amount").value = deal ? deal.amount : "";
     document.getElementById("f_closeDate").value = deal ? (deal.closeDate||"") : "";
     document.getElementById("f_nextActionDate").value = deal ? (deal.nextActionDate||"") : "";
@@ -1979,6 +2162,9 @@
 
   document.getElementById("newDealBtn").addEventListener("click", function(){
     openModal(null, STAGES[0] && STAGES[0].id);
+  });
+  document.getElementById("pipelineExportBtn").addEventListener("click", function(){
+    downloadWorkbook([{ name:"딜파이프라인", rows: buildDealsExportRows(filteredDeals()) }], "영업파이프라인");
   });
   document.getElementById("cancelBtn").addEventListener("click", closeModal);
   overlay.addEventListener("click", function(e){ if(e.target === overlay) closeModal(); });
@@ -2094,6 +2280,9 @@
     activityForm.reset();
   }
   document.getElementById("newActivityBtn").addEventListener("click", function(){ openActivityModal(null); });
+  document.getElementById("activitiesExportBtn").addEventListener("click", function(){
+    downloadWorkbook([{ name:"활동이력", rows: buildActivitiesExportRows(filteredActivities()) }], "활동이력");
+  });
   document.getElementById("activityCancelBtn").addEventListener("click", closeActivityModal);
   activityOverlay.addEventListener("click", function(e){ if(e.target === activityOverlay) closeActivityModal(); });
 
@@ -2169,18 +2358,12 @@
     }
   });
 
-  function renderActivities(){
-    var table = document.getElementById("activitiesTable");
-    if(!loaded){
-      table.innerHTML = '<tbody><tr><td class="loading-hint">불러오는 중...</td></tr></tbody>';
-      return;
-    }
-    var head = '<thead><tr><th>딜ID</th><th>고객사명</th><th>영업부서</th><th>담당자</th><th>활동일</th><th>활동유형</th><th>활동내용</th><th>다음액션</th><th>비고</th><th></th></tr></thead>';
+  function filteredActivities(){
     var q = (document.getElementById("actFilterSearch").value||"").trim().toLowerCase();
     var typeF = document.getElementById("actFilterType").value;
     var fromF = document.getElementById("actFilterFrom").value;
     var toF = document.getElementById("actFilterTo").value;
-    var rows = activities.filter(function(a){
+    return activities.filter(function(a){
       var deal = dealById(a.dealId);
       if(q){
         var hay = ((deal?deal.company:"") + " " + (deal?deal.owner:"")).toLowerCase();
@@ -2191,6 +2374,16 @@
       if(toF && a.activityDate > toF) return false;
       return true;
     }).sort(function(a,b){ return (b.activityDate||"").localeCompare(a.activityDate||""); });
+  }
+
+  function renderActivities(){
+    var table = document.getElementById("activitiesTable");
+    if(!loaded){
+      table.innerHTML = '<tbody><tr><td class="loading-hint">불러오는 중...</td></tr></tbody>';
+      return;
+    }
+    var head = '<thead><tr><th>딜ID</th><th>고객사명</th><th>영업부서</th><th>담당자</th><th>활동일</th><th>활동유형</th><th>활동내용</th><th>다음액션</th><th>비고</th><th></th></tr></thead>';
+    var rows = filteredActivities();
     var body;
     if(rows.length === 0){
       body = '<tbody><tr><td colspan="10" class="loading-hint">활동 기록이 없습니다.</td></tr></tbody>';
@@ -2259,11 +2452,11 @@
       return { name:st.name, color:st.color, count:list.length, amount:amt };
     });
     var totalActiveAmt = stageRows.reduce(function(s,r){ return s+r.amount; }, 0) || 1;
-    stageTable.innerHTML = '<thead><tr><th>구분</th>' + stageRows.map(function(r){ return '<th>'+r.name+'</th>'; }).join("") + '<th>합계</th></tr></thead>' +
+    stageTable.innerHTML = '<thead><tr><th>구분</th>' + stageRows.map(function(r){ return '<th class="num">'+r.name+'</th>'; }).join("") + '<th class="num">합계</th></tr></thead>' +
       '<tbody>' +
-      '<tr><td>딜 건수</td>' + stageRows.map(function(r){ return '<td>'+r.count+'</td>'; }).join("") + '<td><b>'+activeDeals.length+'</b></td></tr>' +
-      '<tr><td>예상 금액</td>' + stageRows.map(function(r){ return '<td>'+won(r.amount)+'</td>'; }).join("") + '<td><b>'+won(totalActiveAmt===1?0:totalActiveAmt)+'</b></td></tr>' +
-      '<tr><td>금액 비중</td>' + stageRows.map(function(r){ return '<td>'+Math.round(r.amount/totalActiveAmt*100)+'%</td>'; }).join("") + '<td>100%</td></tr>' +
+      '<tr><td>딜 건수</td>' + stageRows.map(function(r){ return '<td class="num">'+r.count+'</td>'; }).join("") + '<td class="num"><b>'+activeDeals.length+'</b></td></tr>' +
+      '<tr><td>예상 금액</td>' + stageRows.map(function(r){ return '<td class="num">'+won(r.amount)+'</td>'; }).join("") + '<td class="num"><b>'+won(totalActiveAmt===1?0:totalActiveAmt)+'</b></td></tr>' +
+      '<tr><td>금액 비중</td>' + stageRows.map(function(r){ return '<td class="num">'+Math.round(r.amount/totalActiveAmt*100)+'%</td>'; }).join("") + '<td class="num">100%</td></tr>' +
       '</tbody>';
     makeTableResizable(stageTable);
 
@@ -2273,7 +2466,7 @@
       if(a.meta.alert.rank !== b.meta.alert.rank) return a.meta.alert.rank - b.meta.alert.rank;
       return b.meta.alert.sortDays - a.meta.alert.sortDays;
     }).slice(0, 10);
-    var alertHead = '<thead><tr><th>딜ID</th><th>고객사</th><th>영업부서</th><th>담당자</th><th>단계</th><th>예상금액</th><th>최종업데이트</th><th>경과일</th><th>다음액션일</th><th>D-Day</th><th>다음 액션 내용</th><th>점검알림</th></tr></thead>';
+    var alertHead = '<thead><tr><th>딜ID</th><th>고객사</th><th>영업부서</th><th>담당자</th><th>단계</th><th class="num">예상금액</th><th>최종업데이트</th><th class="num">경과일</th><th>다음액션일</th><th>D-Day</th><th>다음 액션 내용</th><th>점검알림</th></tr></thead>';
     var alertBody;
     if(sortedAlerts.length === 0){
       alertBody = '<tbody><tr><td colspan="12" class="loading-hint">점검이 필요한 딜이 없습니다.</td></tr></tbody>';
@@ -2286,9 +2479,9 @@
           '<td>'+escapeHtml(d.department||"-")+'</td>' +
           '<td>'+escapeHtml(d.owner)+'</td>' +
           '<td>'+stageChip(st)+'</td>' +
-          '<td>'+won(d.amount)+'</td>' +
+          '<td class="num">'+won(d.amount)+'</td>' +
           '<td>'+(d.updatedAt?String(d.updatedAt).slice(0,10):"-")+'</td>' +
-          '<td>'+(meta.elapsedDays!=null?meta.elapsedDays+"일":"-")+'</td>' +
+          '<td class="num">'+(meta.elapsedDays!=null?meta.elapsedDays+"일":"-")+'</td>' +
           '<td>'+(d.nextActionDate||"-")+'</td>' +
           '<td>'+(meta.ddayText||"-")+'</td>' +
           '<td class="wrap">'+escapeHtml(d.nextActionNote||"-")+'</td>' +
@@ -2302,7 +2495,7 @@
     // 부서별 x 단계별 현황
     var deptTable = document.getElementById("dashDeptTable");
     var deptHead = '<thead><tr><th>영업부서</th>' + ACTIVE_STAGE_IDS.map(function(sid){ return '<th colspan="2">'+stageById(sid).name+'</th>'; }).join("") + '<th colspan="2">진행 합계</th><th colspan="2">수주</th></tr>' +
-      '<tr><th></th>' + ACTIVE_STAGE_IDS.map(function(){ return '<th>건수</th><th>금액</th>'; }).join("") + '<th>건수</th><th>금액</th><th>건수</th><th>금액</th></tr></thead>';
+      '<tr><th></th>' + ACTIVE_STAGE_IDS.map(function(){ return '<th class="num">건수</th><th class="num">금액</th>'; }).join("") + '<th class="num">건수</th><th class="num">금액</th><th class="num">건수</th><th class="num">금액</th></tr></thead>';
     var deptTotals = { byStage:{}, activeCount:0, activeAmt:0, wonCount:0, wonAmt:0 };
     ACTIVE_STAGE_IDS.forEach(function(sid){ deptTotals.byStage[sid] = {count:0, amt:0}; });
     var deptRows = DEPARTMENTS.map(function(dept){
@@ -2322,15 +2515,49 @@
       deptTotals.wonCount += wonList.length;
       deptTotals.wonAmt += wonAmt;
       return '<tr><td><b>'+escapeHtml(dept)+'</b></td>' +
-        cells.map(function(c){ return '<td>'+(c.count||"-")+'</td><td>'+(c.amt?won(c.amt):"-")+'</td>'; }).join("") +
-        '<td>'+(activeList.length||"-")+'</td><td>'+(activeAmt?won(activeAmt):"-")+'</td>' +
-        '<td>'+(wonList.length||"-")+'</td><td>'+(wonAmt?won(wonAmt):"-")+'</td></tr>';
+        cells.map(function(c){ return '<td class="num">'+(c.count||"-")+'</td><td class="num">'+(c.amt?won(c.amt):"-")+'</td>'; }).join("") +
+        '<td class="num">'+(activeList.length||"-")+'</td><td class="num">'+(activeAmt?won(activeAmt):"-")+'</td>' +
+        '<td class="num">'+(wonList.length||"-")+'</td><td class="num">'+(wonAmt?won(wonAmt):"-")+'</td></tr>';
     }).join("");
     var deptFoot = '<tr><td>합계</td>' +
-      ACTIVE_STAGE_IDS.map(function(sid){ return '<td>'+(deptTotals.byStage[sid].count||"-")+'</td><td>'+(deptTotals.byStage[sid].amt?won(deptTotals.byStage[sid].amt):"-")+'</td>'; }).join("") +
-      '<td>'+deptTotals.activeCount+'</td><td>'+won(deptTotals.activeAmt)+'</td>' +
-      '<td>'+deptTotals.wonCount+'</td><td>'+won(deptTotals.wonAmt)+'</td></tr>';
+      ACTIVE_STAGE_IDS.map(function(sid){ return '<td class="num">'+(deptTotals.byStage[sid].count||"-")+'</td><td class="num">'+(deptTotals.byStage[sid].amt?won(deptTotals.byStage[sid].amt):"-")+'</td>'; }).join("") +
+      '<td class="num">'+deptTotals.activeCount+'</td><td class="num">'+won(deptTotals.activeAmt)+'</td>' +
+      '<td class="num">'+deptTotals.wonCount+'</td><td class="num">'+won(deptTotals.wonAmt)+'</td></tr>';
     deptTable.innerHTML = deptHead + '<tbody>' + deptRows + '</tbody><tfoot>' + deptFoot + '</tfoot>';
+
+    lastDashboardExport = {
+      stage: stageRows.map(function(r){
+        return { "단계":r.name, "딜 건수":r.count, "예상 금액":r.amount, "금액 비중(%)":Math.round(r.amount/totalActiveAmt*100) };
+      }),
+      alert: sortedAlerts.map(function(x){
+        var d = x.deal, meta = x.meta, st = stageById(d.stage);
+        return {
+          "딜ID": d.dealCode||"", "고객사명": d.company, "영업부서": d.department||"", "담당자": d.owner,
+          "단계": st.name, "예상금액": d.amount||0, "최종업데이트": d.updatedAt?String(d.updatedAt).slice(0,10):"",
+          "경과일": meta.elapsedDays!=null?meta.elapsedDays:"", "다음액션일": d.nextActionDate||"", "D-Day": meta.ddayText||"",
+          "다음액션내용": d.nextActionNote||"", "점검알림": meta.alert.label
+        };
+      }),
+      dept: DEPARTMENTS.map(function(dept){
+        var activeList = deals.filter(function(d){ return d.department===dept && ACTIVE_STAGE_IDS.indexOf(d.stage)!==-1; });
+        var activeAmt = activeList.reduce(function(s,d){ return s+(Number(d.amount)||0); },0);
+        var wonList = deals.filter(function(d){ return d.department===dept && d.stage==="won"; });
+        var wonAmt = wonList.reduce(function(s,d){ return s+(Number(d.amount)||0); },0);
+        var row = { "사업본부": unitOfDept(dept), "영업부서": dept };
+        ACTIVE_STAGE_IDS.forEach(function(sid){
+          var list = deals.filter(function(d){ return d.department===dept && d.stage===sid; });
+          var amt = list.reduce(function(s,d){ return s+(Number(d.amount)||0); },0);
+          var name = stageById(sid).name;
+          row[name+" 건수"] = list.length;
+          row[name+" 금액"] = amt;
+        });
+        row["진행 합계 건수"] = activeList.length;
+        row["진행 합계 금액"] = activeAmt;
+        row["수주 건수"] = wonList.length;
+        row["수주 금액"] = wonAmt;
+        return row;
+      })
+    };
   }
 
   /* ---------- 분석 ---------- */
@@ -2349,13 +2576,13 @@
     });
     var activeCount = deals.filter(function(d){ return ACTIVE_STAGE_IDS.indexOf(d.stage)!==-1; }).length;
     var activeAmt = deals.filter(function(d){ return ACTIVE_STAGE_IDS.indexOf(d.stage)!==-1; }).reduce(function(s,d){ return s+(Number(d.amount)||0); },0);
-    stageTable.innerHTML = '<thead><tr><th>단계</th><th>딜 건수</th><th>금액</th><th>건수 비중</th><th>금액 비중</th></tr></thead><tbody>' +
+    stageTable.innerHTML = '<thead><tr><th>단계</th><th class="num">딜 건수</th><th class="num">금액</th><th class="num">건수 비중</th><th class="num">금액 비중</th></tr></thead><tbody>' +
       stageRows.map(function(r){
-        return '<tr><td>'+chip(r.name, r.color)+'</td><td>'+r.count+'</td><td>'+won(r.amt)+'</td><td>'+Math.round(r.count/total*100)+'%</td><td>'+Math.round(r.amt/totalAmt*100)+'%</td></tr>';
+        return '<tr><td>'+chip(r.name, r.color)+'</td><td class="num">'+r.count+'</td><td class="num">'+won(r.amt)+'</td><td class="num">'+Math.round(r.count/total*100)+'%</td><td class="num">'+Math.round(r.amt/totalAmt*100)+'%</td></tr>';
       }).join("") +
       '</tbody><tfoot>' +
-      '<tr><td>전체 합계</td><td>'+deals.length+'</td><td>'+won(deals.reduce(function(s,d){return s+(Number(d.amount)||0);},0))+'</td><td>100%</td><td>100%</td></tr>' +
-      '<tr><td>진행중 소계</td><td>'+activeCount+'</td><td>'+won(activeAmt)+'</td><td></td><td></td></tr>' +
+      '<tr><td>전체 합계</td><td class="num">'+deals.length+'</td><td class="num">'+won(deals.reduce(function(s,d){return s+(Number(d.amount)||0);},0))+'</td><td class="num">100%</td><td class="num">100%</td></tr>' +
+      '<tr><td>진행중 소계</td><td class="num">'+activeCount+'</td><td class="num">'+won(activeAmt)+'</td><td></td><td></td></tr>' +
       '</tfoot>';
     makeTableResizable(stageTable);
 
@@ -2365,6 +2592,7 @@
     var deptFilterQ = (document.getElementById("anlFilterDept").value||"").trim().toLowerCase();
     var filteredDepartments = DEPARTMENTS.filter(function(d){ return !deptFilterQ || d.toLowerCase().indexOf(deptFilterQ) !== -1; });
     var deptChartData = [];
+    var deptExportRows = [];
     var deptRows = filteredDepartments.map(function(dept, di){
       var deptDeals = deals.filter(function(d){ return d.department===dept; });
       var activeList = deptDeals.filter(function(d){ return ACTIVE_STAGE_IDS.indexOf(d.stage)!==-1; });
@@ -2383,22 +2611,31 @@
       deptTotals.lostCount += lostList.length; deptTotals.lostAmt += lostAmt;
       deptTotals.holdCount += holdList.length;
       deptChartData.push({ label:dept, value:activeAmt, color:CHART_PALETTE[di % CHART_PALETTE.length] });
-      return '<tr><td><b>'+escapeHtml(dept)+'</b></td>' +
-        '<td>'+(activeList.length||"-")+'</td><td>'+(activeAmt?won(activeAmt):"-")+'</td>' +
-        '<td>'+(wonList.length||"-")+'</td><td>'+(wonAmt?won(wonAmt):"-")+'</td>' +
-        '<td>'+(lostList.length||"-")+'</td><td>'+(lostAmt?won(lostAmt):"-")+'</td>' +
-        '<td>'+(holdList.length||"-")+'</td>' +
-        '<td>'+(winRateCount!=null?winRateCount+"%":"-")+'</td>' +
-        '<td>'+(winRateAmt!=null?winRateAmt+"%":"-")+'</td>' +
-        '<td>'+(activeList.length?won(avgActive):"-")+'</td></tr>';
+      deptExportRows.push({
+        "사업본부": unitOfDept(dept), "부서": dept,
+        "진행 건수": activeList.length, "진행 금액": activeAmt,
+        "수주 건수": wonList.length, "수주 금액": wonAmt,
+        "실주 건수": lostList.length, "실주 금액": lostAmt,
+        "보류 건수": holdList.length,
+        "수주율(건수,%)": winRateCount!=null?winRateCount:"", "수주율(금액,%)": winRateAmt!=null?winRateAmt:"",
+        "평균 진행 딜 금액": activeList.length?avgActive:""
+      });
+      return '<tr><td>'+escapeHtml(unitOfDept(dept))+'</td><td><b>'+escapeHtml(dept)+'</b></td>' +
+        '<td class="num">'+(activeList.length||"-")+'</td><td class="num">'+(activeAmt?won(activeAmt):"-")+'</td>' +
+        '<td class="num">'+(wonList.length||"-")+'</td><td class="num">'+(wonAmt?won(wonAmt):"-")+'</td>' +
+        '<td class="num">'+(lostList.length||"-")+'</td><td class="num">'+(lostAmt?won(lostAmt):"-")+'</td>' +
+        '<td class="num">'+(holdList.length||"-")+'</td>' +
+        '<td class="num">'+(winRateCount!=null?winRateCount+"%":"-")+'</td>' +
+        '<td class="num">'+(winRateAmt!=null?winRateAmt+"%":"-")+'</td>' +
+        '<td class="num">'+(activeList.length?won(avgActive):"-")+'</td></tr>';
     }).join("");
     var totalDecided = deptTotals.wonCount + deptTotals.lostCount;
     var totalWinRateCount = totalDecided ? Math.round(deptTotals.wonCount/totalDecided*100) : 0;
     var totalWinRateAmt = (deptTotals.wonAmt+deptTotals.lostAmt) ? Math.round(deptTotals.wonAmt/(deptTotals.wonAmt+deptTotals.lostAmt)*100) : 0;
     var totalAvg = deptTotals.activeCount ? Math.round(deptTotals.activeAmt/deptTotals.activeCount) : 0;
-    deptTable.innerHTML = '<thead><tr><th>부서</th><th>진행 건수</th><th>진행 금액</th><th>수주 건수</th><th>수주 금액</th><th>실주 건수</th><th>실주 금액</th><th>보류 건수</th><th>수주율(건수)</th><th>수주율(금액)</th><th>평균 진행 딜 금액</th></tr></thead>' +
+    deptTable.innerHTML = '<thead><tr><th>사업본부</th><th>부서</th><th class="num">진행 건수</th><th class="num">진행 금액</th><th class="num">수주 건수</th><th class="num">수주 금액</th><th class="num">실주 건수</th><th class="num">실주 금액</th><th class="num">보류 건수</th><th class="num">수주율(건수)</th><th class="num">수주율(금액)</th><th class="num">평균 진행 딜 금액</th></tr></thead>' +
       '<tbody>' + deptRows + '</tbody>' +
-      '<tfoot><tr><td>합계</td><td>'+deptTotals.activeCount+'</td><td>'+won(deptTotals.activeAmt)+'</td><td>'+deptTotals.wonCount+'</td><td>'+won(deptTotals.wonAmt)+'</td><td>'+deptTotals.lostCount+'</td><td>'+won(deptTotals.lostAmt)+'</td><td>'+deptTotals.holdCount+'</td><td>'+totalWinRateCount+'%</td><td>'+totalWinRateAmt+'%</td><td>'+won(totalAvg)+'</td></tr></tfoot>';
+      '<tfoot><tr><td colspan="2">합계</td><td class="num">'+deptTotals.activeCount+'</td><td class="num">'+won(deptTotals.activeAmt)+'</td><td class="num">'+deptTotals.wonCount+'</td><td class="num">'+won(deptTotals.wonAmt)+'</td><td class="num">'+deptTotals.lostCount+'</td><td class="num">'+won(deptTotals.lostAmt)+'</td><td class="num">'+deptTotals.holdCount+'</td><td class="num">'+totalWinRateCount+'%</td><td class="num">'+totalWinRateAmt+'%</td><td class="num">'+won(totalAvg)+'</td></tr></tfoot>';
     makeTableResizable(deptTable);
 
     // 3) 담당자별 x 단계별 현황
@@ -2408,6 +2645,7 @@
       return !ownerFilterQ || o.name.toLowerCase().indexOf(ownerFilterQ) !== -1 || o.dept.toLowerCase().indexOf(ownerFilterQ) !== -1;
     });
     var ownerChartData = [];
+    var ownerExportRows = [];
     var ownerRows = filteredOwners.map(function(o, oi){
       var ownerDeals = deals.filter(function(d){ return d.owner===o.name; });
       var stageCounts = ACTIVE_STAGE_IDS.map(function(sid){ return ownerDeals.filter(function(d){ return d.stage===sid; }).length; });
@@ -2420,14 +2658,29 @@
       var winRate = decided ? Math.round(wonCount/decided*100) : null;
       var avgAmt = activeList.length ? Math.round(activeAmt/activeList.length) : 0;
       ownerChartData.push({ label:o.name+' ('+o.dept+')', value:activeAmt, color:CHART_PALETTE[oi % CHART_PALETTE.length] });
+      ownerExportRows.push({
+        "담당자": o.name, "소속 부서": o.dept,
+        "발굴": stageCounts[0]||0, "접촉": stageCounts[1]||0, "제안": stageCounts[2]||0, "협상": stageCounts[3]||0,
+        "진행 합계(건)": activeList.length, "진행 금액": activeAmt,
+        "수주": wonCount, "실주": lostCount, "보류": holdCount,
+        "수주율(건수,%)": winRate!=null?winRate:"", "평균 진행 딜 금액": activeList.length?avgAmt:""
+      });
       return '<tr><td><b>'+escapeHtml(o.name)+'</b></td><td>'+escapeHtml(o.dept)+'</td>' +
-        stageCounts.map(function(c){ return '<td>'+(c||"-")+'</td>'; }).join("") +
-        '<td>'+(activeList.length||"-")+'</td><td>'+(activeAmt?won(activeAmt):"-")+'</td>' +
-        '<td>'+(wonCount||"-")+'</td><td>'+(lostCount||"-")+'</td><td>'+(holdCount||"-")+'</td>' +
-        '<td>'+(winRate!=null?winRate+"%":"-")+'</td><td>'+(activeList.length?won(avgAmt):"-")+'</td></tr>';
+        stageCounts.map(function(c){ return '<td class="num">'+(c||"-")+'</td>'; }).join("") +
+        '<td class="num">'+(activeList.length||"-")+'</td><td class="num">'+(activeAmt?won(activeAmt):"-")+'</td>' +
+        '<td class="num">'+(wonCount||"-")+'</td><td class="num">'+(lostCount||"-")+'</td><td class="num">'+(holdCount||"-")+'</td>' +
+        '<td class="num">'+(winRate!=null?winRate+"%":"-")+'</td><td class="num">'+(activeList.length?won(avgAmt):"-")+'</td></tr>';
     }).join("");
-    ownerTable.innerHTML = '<thead><tr><th>담당자</th><th>소속 부서</th><th>발굴</th><th>접촉</th><th>제안</th><th>협상</th><th>진행 합계(건)</th><th>진행 금액</th><th>수주</th><th>실주</th><th>보류</th><th>수주율(건수)</th><th>평균 진행 딜 금액</th></tr></thead><tbody>' + ownerRows + '</tbody>';
+    ownerTable.innerHTML = '<thead><tr><th>담당자</th><th>소속 부서</th><th class="num">발굴</th><th class="num">접촉</th><th class="num">제안</th><th class="num">협상</th><th class="num">진행 합계(건)</th><th class="num">진행 금액</th><th class="num">수주</th><th class="num">실주</th><th class="num">보류</th><th class="num">수주율(건수)</th><th class="num">평균 진행 딜 금액</th></tr></thead><tbody>' + ownerRows + '</tbody>';
     makeTableResizable(ownerTable);
+
+    lastAnalysisExport = {
+      stage: stageRows.map(function(r){
+        return { "단계":r.name, "딜 건수":r.count, "금액":r.amt, "건수 비중(%)":Math.round(r.count/total*100), "금액 비중(%)":Math.round(r.amt/totalAmt*100) };
+      }),
+      dept: deptExportRows,
+      owner: ownerExportRows
+    };
 
     // 차트 뷰
     renderBarChart("chartStage", stageRows.map(function(r){ return { label:r.name, value:r.amt, color:r.color, dot:true }; }), { fmt:won });
@@ -2503,51 +2756,98 @@
 
   /* ---------- 사용자 관리 (관리자 전용, FR-AUTH-01/02) ---------- */
 
+  var adminUsersRaw = [];
+
+  function deptOptGroups(selected, list){
+    list = list || DEPARTMENTS;
+    return BUSINESS_UNITS.map(function(unit){
+      var opts = list.filter(function(d){ return unitOfDept(d) === unit; })
+        .map(function(d){ return '<option value="'+escapeHtml(d)+'"'+(d===selected?' selected':'')+'>'+escapeHtml(d)+'</option>'; }).join("");
+      return opts ? '<optgroup label="'+escapeHtml(unit)+'">'+opts+'</optgroup>' : "";
+    }).join("");
+  }
+
+  function renderAdminUsersTable(){
+    var usersTable = document.getElementById("adminUsersTable");
+    var q = (document.getElementById("adminFilterUser").value||"").trim().toLowerCase();
+    var list = adminUsersRaw.filter(function(u){
+      if(!q) return true;
+      var hay = ((u.name||"") + " " + (u.email||"")).toLowerCase();
+      return hay.indexOf(q) !== -1;
+    });
+    var pendingCount = adminUsersRaw.filter(function(u){ return !u.is_approved; }).length;
+    var badge = document.getElementById("adminPendingBadge");
+    if(pendingCount){ badge.style.display = ""; badge.textContent = "승인 대기 " + pendingCount + "명"; }
+    else { badge.style.display = "none"; }
+
+    var head = '<thead><tr><th>이메일</th><th>이름</th><th>부서</th><th>역할</th><th>승인</th><th>가입일</th><th></th></tr></thead>';
+    var body = "<tbody>" + (list.length ? list.map(function(u){
+      var deptOpts = '<option value=""' + (!u.department?' selected':'') + '>-</option>' + deptOptGroups(u.department);
+      var roleOpts = Object.keys(ROLE_LABELS).map(function(r){ return '<option value="'+r+'"'+(r===u.role?' selected':'')+'>'+ROLE_LABELS[r]+'</option>'; }).join("");
+      return '<tr data-uid="'+u.id+'" data-role="'+u.role+'"'+(!u.is_approved?' class="admin-row-pending"':'')+'>' +
+        '<td class="wrap">'+escapeHtml(u.email)+'</td>' +
+        '<td><input type="text" class="admin-name-input" value="'+escapeHtml(u.name||"")+'"></td>' +
+        '<td><select class="admin-select admin-dept-select">'+deptOpts+'</select></td>' +
+        '<td><select class="admin-select admin-role-select">'+roleOpts+'</select></td>' +
+        '<td><label class="approve-toggle"><input type="checkbox" class="admin-approved-check" '+(u.is_approved?'checked':'')+'><span class="track"></span><span class="approve-label">'+(u.is_approved?'승인됨':'대기중')+'</span></label></td>' +
+        '<td>'+escapeHtml(String(u.created_at).slice(0,10))+'</td>' +
+        '<td><button type="button" class="icon-btn admin-save-btn">저장</button></td>' +
+      '</tr>';
+    }).join("") : '<tr><td colspan="7" class="loading-hint">검색 결과가 없습니다.</td></tr>') + "</tbody>";
+    usersTable.innerHTML = head + body;
+    makeTableResizable(usersTable);
+
+    usersTable.querySelectorAll(".admin-role-select").forEach(function(sel){
+      sel.addEventListener("change", function(){ sel.closest("tr").dataset.role = sel.value; });
+    });
+    usersTable.querySelectorAll(".admin-approved-check").forEach(function(chk){
+      chk.addEventListener("change", function(){
+        chk.closest("tr").querySelector(".approve-label").textContent = chk.checked ? "승인됨" : "대기중";
+      });
+    });
+    usersTable.querySelectorAll(".admin-save-btn").forEach(function(btn){
+      btn.addEventListener("click", async function(){
+        var tr = btn.closest("tr");
+        var uid = tr.dataset.uid;
+        var name = tr.querySelector(".admin-name-input").value.trim();
+        var department = tr.querySelector(".admin-dept-select").value;
+        var role = tr.querySelector(".admin-role-select").value;
+        var isApprovedVal = tr.querySelector(".admin-approved-check").checked;
+        btn.disabled = true;
+        try{
+          var res = await supabaseClient.from("app_users").update({
+            name: name || null, department: department || null, role: role, is_approved: isApprovedVal
+          }).eq("id", uid);
+          if(res.error) throw res.error;
+          hideError();
+          var raw = adminUsersRaw.find(function(u){ return u.id === uid; });
+          if(raw){ raw.name = name || null; raw.department = department || null; raw.role = role; raw.is_approved = isApprovedVal; }
+          renderAdminUsersTable();
+        }catch(err){
+          showError("사용자 저장 실패: " + (err && err.message ? err.message : err));
+        }finally{
+          btn.disabled = false;
+        }
+      });
+    });
+
+    lastAdminExport = adminUsersRaw.map(function(u){
+      return {
+        "이메일": u.email, "이름": u.name||"", "사업본부": unitOfDept(u.department), "부서": u.department||"",
+        "역할": ROLE_LABELS[u.role]||u.role, "승인여부": u.is_approved ? "승인됨" : "대기중",
+        "가입일": String(u.created_at).slice(0,10)
+      };
+    });
+  }
+
   async function renderAdmin(){
     var usersTable = document.getElementById("adminUsersTable");
     var accessTable = document.getElementById("adminAccessTable");
     try{
       var usersRes = await supabaseClient.from("app_users").select("*").order("created_at", {ascending:false});
       if(usersRes.error) throw usersRes.error;
-      var head = '<thead><tr><th>이메일</th><th>이름</th><th>부서</th><th>역할</th><th>승인</th><th>가입일</th><th></th></tr></thead>';
-      var body = "<tbody>" + usersRes.data.map(function(u){
-        var deptOpts = '<option value=""' + (!u.department?' selected':'') + '>-</option>' +
-          DEPARTMENTS.map(function(d){ return '<option value="'+escapeHtml(d)+'"'+(d===u.department?' selected':'')+'>'+escapeHtml(d)+'</option>'; }).join("");
-        var roleOpts = Object.keys(ROLE_LABELS).map(function(r){ return '<option value="'+r+'"'+(r===u.role?' selected':'')+'>'+ROLE_LABELS[r]+'</option>'; }).join("");
-        return '<tr data-uid="'+u.id+'">' +
-          '<td class="wrap">'+escapeHtml(u.email)+'</td>' +
-          '<td><input type="text" class="admin-name-input" value="'+escapeHtml(u.name||"")+'" style="width:88px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;"></td>' +
-          '<td><select class="admin-dept-select">'+deptOpts+'</select></td>' +
-          '<td><select class="admin-role-select">'+roleOpts+'</select></td>' +
-          '<td><input type="checkbox" class="admin-approved-check" '+(u.is_approved?'checked':'')+' style="width:auto;"></td>' +
-          '<td>'+escapeHtml(String(u.created_at).slice(0,10))+'</td>' +
-          '<td><button type="button" class="icon-btn admin-save-btn">저장</button></td>' +
-        '</tr>';
-      }).join("") + "</tbody>";
-      usersTable.innerHTML = head + body;
-      makeTableResizable(usersTable);
-      usersTable.querySelectorAll(".admin-save-btn").forEach(function(btn){
-        btn.addEventListener("click", async function(){
-          var tr = btn.closest("tr");
-          var uid = tr.dataset.uid;
-          var name = tr.querySelector(".admin-name-input").value.trim();
-          var department = tr.querySelector(".admin-dept-select").value;
-          var role = tr.querySelector(".admin-role-select").value;
-          var isApprovedVal = tr.querySelector(".admin-approved-check").checked;
-          btn.disabled = true;
-          try{
-            var res = await supabaseClient.from("app_users").update({
-              name: name || null, department: department || null, role: role, is_approved: isApprovedVal
-            }).eq("id", uid);
-            if(res.error) throw res.error;
-            hideError();
-          }catch(err){
-            showError("사용자 저장 실패: " + (err && err.message ? err.message : err));
-          }finally{
-            btn.disabled = false;
-          }
-        });
-      });
+      adminUsersRaw = usersRes.data;
+      renderAdminUsersTable();
     }catch(err){
       usersTable.innerHTML = '<tbody><tr><td class="loading-hint">사용자 목록을 불러오지 못했습니다.</td></tr></tbody>';
     }
@@ -2594,7 +2894,7 @@
   function populateAuthSelects(){
     ["signup_department","profile_department"].forEach(function(id){
       var el = document.getElementById(id);
-      if(el) el.innerHTML = DEPARTMENTS.map(function(d){ return '<option value="'+escapeHtml(d)+'">'+escapeHtml(d)+'</option>'; }).join("");
+      if(el) el.innerHTML = deptOptGroups(null, DEPARTMENTS);
     });
   }
 
