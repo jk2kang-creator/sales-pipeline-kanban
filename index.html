@@ -132,7 +132,7 @@
   .rail-inner{
     display:flex;
     align-items:center;
-    gap:12px;
+    gap:10px;
     margin-top:-20px;
     position:relative;
     z-index:5;
@@ -141,8 +141,32 @@
     border-radius:14px;
     padding:8px 14px;
     box-shadow:0 8px 24px rgba(11,42,69,.10);
-    overflow-x:auto;
   }
+  .rail-scroll{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    overflow-x:auto;
+    min-width:0;
+    flex:1 1 auto;
+  }
+  .guide-trigger{
+    flex:none;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid var(--line);
+    background:var(--mist);
+    color:var(--brand);
+    font-size:12.5px;
+    font-weight:700;
+    padding:8px 13px;
+    border-radius:9px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .guide-trigger:hover{ background:#dfeaf7; }
+  .guide-trigger svg{ width:15px; height:15px; flex:none; }
   .brand-logo{
     width:130px;
     height:20.2px;
@@ -232,6 +256,8 @@
   .kpi-card.accent{ background:linear-gradient(135deg,var(--accent-dim),var(--accent-dim-2)); border-color:#c3ddf5; }
   .kpi-card.won{ background:linear-gradient(135deg,#e9faf0,#f7fffb); border-color:#c9f0da; }
   .kpi-card.warn{ background:linear-gradient(135deg,#fff6e9,#fffdf7); border-color:#f3e0bd; }
+  .kpi-clickable{ cursor:pointer; transition:transform .12s, box-shadow .12s; }
+  .kpi-clickable:hover{ transform:translateY(-1px); box-shadow:0 4px 12px rgba(11,42,69,.10); }
 
   .section-block{
     background:var(--panel);
@@ -253,8 +279,65 @@
     margin:0 0 14px;
   }
 
+  /* ---------- Toolbar (search / filters) ---------- */
+  .toolbar{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:9px 10px;
+    margin-bottom:14px;
+    box-shadow:0 1px 2px rgba(11,42,69,.05);
+  }
+  .toolbar.spread{ justify-content:space-between; }
+  .toolbar .tb-group{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .search-box{ position:relative; flex:1 1 190px; min-width:150px; }
+  .search-box svg{
+    position:absolute; left:9px; top:50%; transform:translateY(-50%);
+    width:14px; height:14px; color:var(--muted); pointer-events:none;
+  }
+  .search-box input{
+    width:100%;
+    padding:8px 10px 8px 30px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:12.5px;
+    font-family:inherit;
+    background:var(--paper);
+    color:var(--text);
+  }
+  .toolbar select, .toolbar input[type=date]{
+    padding:8px 10px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:12.5px;
+    font-family:inherit;
+    background:var(--paper);
+    color:var(--text);
+  }
+  .search-box input:focus, .toolbar select:focus, .toolbar input[type=date]:focus{
+    outline:none; border-color:var(--brand2); background:#fff;
+  }
+  .tb-label{ font-size:11px; font-weight:700; color:var(--muted); white-space:nowrap; }
+  .tb-divider{ width:1px; height:20px; background:var(--line); margin:0 2px; }
+
+  /* ---------- Bar chart ---------- */
+  .barchart{ display:flex; flex-direction:column; gap:11px; padding:4px 2px 8px; }
+  .barchart .bc-row{ display:grid; grid-template-columns:130px 1fr 96px; align-items:center; gap:10px; }
+  .barchart .bc-label{
+    display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--text);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .barchart .bc-track{ background:var(--mist); border-radius:6px; height:15px; overflow:hidden; }
+  .barchart .bc-fill{ height:100%; border-radius:6px; min-width:2px; transition:width .35s ease; }
+  .barchart .bc-value{ text-align:right; font-size:12px; font-weight:700; color:var(--text); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .barchart .bc-empty{ font-size:12px; color:var(--text-dim); padding:14px 0; text-align:center; }
+
   /* ---------- Tables ---------- */
-  .table-scroll{ overflow-x:auto; }
+  .table-scroll{ overflow:auto; max-height:62vh; border-radius:8px; }
   table.data-table{
     width:100%;
     border-collapse:collapse;
@@ -366,50 +449,46 @@
   .subview{ display:none; }
   .subview.active{ display:block; }
 
-  /* ---------- Guide ---------- */
+  /* ---------- Guide modal ---------- */
+  .modal.modal-lg{ max-width:880px; }
+  .guide-modal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+  .guide-modal-head h2{ margin:0; font-size:18px; font-weight:800; }
+
+  .stage-tracker{ display:flex; align-items:flex-start; margin-bottom:26px; overflow-x:auto; padding:2px 2px 6px; }
+  .stage-tracker .st-step{ display:flex; flex-direction:column; align-items:center; flex:1; min-width:72px; cursor:pointer; }
+  .stage-tracker .st-circle{
+    width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:800; font-size:12.5px; box-shadow:0 0 0 3px #fff;
+  }
+  .stage-tracker .st-name{ font-size:11px; font-weight:700; color:var(--text); margin-top:7px; white-space:nowrap; }
+  .stage-tracker .st-prob{ font-size:10px; color:var(--muted); margin-top:1px; }
+  .stage-tracker .st-line{ flex:1; height:2px; background:var(--line); margin-top:16px; min-width:14px; }
+
+  .guide-step{ display:flex; gap:14px; }
+  .guide-step .gs-rail{ display:flex; flex-direction:column; align-items:center; flex:none; }
+  .guide-step .gs-node{
+    width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:800; font-size:12.5px; flex:none;
+  }
+  .guide-step .gs-connector{ width:2px; flex:1; background:var(--line); margin:2px 0; min-height:16px; }
+  .guide-step:last-of-type .gs-connector{ display:none; }
   .guide-card{
-    background:var(--panel);
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    padding:16px 18px;
-    margin-bottom:12px;
+    flex:1; min-width:0; background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:15px 17px; margin-bottom:18px;
   }
-  .guide-card h3{
-    margin:0 0 4px;
-    font-size:15px;
-    font-weight:800;
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-  .stage-dot{ width:9px; height:9px; border-radius:50%; display:inline-block; flex:none; }
-  .guide-card .prob{
-    font-size:11.5px;
-    font-weight:700;
-    color:#fff;
-    background:var(--accent);
-    padding:2px 9px;
-    border-radius:20px;
-  }
-  .guide-card .definition{ font-size:13px; color:var(--text-dim); margin:2px 0 12px; }
-  .guide-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
-    gap:12px;
-    font-size:12px;
-  }
-  .guide-grid .g-label{ font-weight:700; color:var(--text-dim); margin-bottom:4px; }
+  .guide-card h3{ margin:0 0 4px; font-size:15px; font-weight:800; display:flex; align-items:center; gap:8px; }
+  .guide-card .prob{ font-size:11px; font-weight:700; color:#fff; background:var(--brand); padding:2px 9px; border-radius:20px; }
+  .guide-card .definition{ font-size:12.5px; color:var(--text-dim); margin:2px 0 12px; }
+  .guide-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(210px,1fr)); gap:12px; font-size:12px; }
+  .guide-grid .g-label{ font-weight:700; color:var(--muted); margin-bottom:4px; }
   .guide-grid .g-body{ white-space:pre-line; line-height:1.6; color:var(--text); }
-  .guide-grid .g-warn{ white-space:pre-line; line-height:1.6; color:#b3661e; }
-  .principle-item{
-    display:flex;
-    gap:10px;
-    padding:10px 0;
-    border-bottom:1px solid #f0f1f4;
-  }
+  .guide-grid .g-warn{ white-space:pre-line; line-height:1.6; color:#a5620f; }
+  .guide-principles{ background:var(--mist); border-radius:12px; padding:16px 18px; }
+  .guide-principles h3{ margin:0 0 8px; font-size:14px; font-weight:800; color:var(--text); }
+  .principle-item{ display:flex; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); }
   .principle-item:last-child{ border-bottom:none; }
-  .principle-item .p-title{ font-weight:700; font-size:13px; margin-bottom:2px; }
-  .principle-item .p-body{ font-size:12px; color:var(--text-dim); }
+  .principle-item .p-title{ font-weight:700; font-size:12.5px; margin-bottom:2px; }
+  .principle-item .p-body{ font-size:11.5px; color:var(--text-dim); }
 
   /* ---------- Kanban (reused) ---------- */
   .board-wrap{ overflow-x:auto; }
@@ -683,26 +762,26 @@
 </header>
 <nav class="rail">
   <div class="rail-inner">
+   <div class="rail-scroll">
     <img class="brand-logo" alt="ETEVERS" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAhwAAABUCAYAAADJau5UAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MTkzREUwNENDNjg3MTFFQzk4QkNGOUI1NkFEODE0MUIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MTkzREUwNERDNjg3MTFFQzk4QkNGOUI1NkFEODE0MUIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDoxOTNERTA0QUM2ODcxMUVDOThCQ0Y5QjU2QUQ4MTQxQiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDoxOTNERTA0QkM2ODcxMUVDOThCQ0Y5QjU2QUQ4MTQxQiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pu57yPEAABpvSURBVHja7J0JmBXF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">
     <span class="rail-divider"></span>
     <div class="main-nav" id="mainNav">
-      <button data-view="guide">단계 정의 가이드</button>
       <button data-view="dashboard">대시보드</button>
       <button data-view="pipeline" class="active">딜 파이프라인</button>
       <button data-view="activities">활동 이력</button>
       <button data-view="analysis">분석</button>
       <button data-view="admin" id="adminNavBtn" style="display:none;">사용자 관리</button>
     </div>
+   </div>
+    <button type="button" class="guide-trigger" id="guideTriggerBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9.5"/><path d="M9.5 9.2a2.5 2.5 0 0 1 4.9.8c0 1.7-2.4 2-2.4 3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="16.8" r="0.4" fill="currentColor"/></svg>
+      단계 정의 가이드
+    </button>
   </div>
 </nav>
 <div class="error-wrap"><div class="error-banner" id="errorBanner"></div></div>
 
 <main id="app">
-
-  <!-- ================= 가이드 ================= -->
-  <section class="view" id="view-guide">
-    <div id="guideContent"></div>
-  </section>
 
   <!-- ================= 대시보드 ================= -->
   <section class="view" id="view-dashboard">
@@ -715,7 +794,10 @@
     </div>
 
     <div class="section-block">
-      <div class="section-title">점검 필요 딜 TOP 10</div>
+      <div class="section-title" style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;">
+        <span>점검 필요 딜 TOP 10</span>
+        <a href="#" id="dashAlertViewAllLink" style="font-size:11.5px;font-weight:700;color:var(--brand2);text-decoration:none;">전체 보기 →</a>
+      </div>
       <div class="section-sub">위험도 순: 액션지연 → 액션일 없음 → 정체 → 임박</div>
       <div class="table-scroll"><table class="data-table" id="dashAlertTable"></table></div>
     </div>
@@ -735,10 +817,14 @@
     </div>
 
     <div class="subview active" id="sub-table">
-      <div class="filter-row">
+      <div class="toolbar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+          <input type="text" id="filterSearch" placeholder="고객사·담당자 검색">
+        </div>
         <select id="filterStage"><option value="">전체 단계</option></select>
         <select id="filterDept"><option value="">전체 부서</option></select>
-        <input type="text" id="filterSearch" placeholder="고객사·담당자 검색">
+        <select id="filterAlert"><option value="">전체 점검알림</option></select>
       </div>
       <div class="table-scroll"><table class="data-table" id="pipelineTable"></table></div>
     </div>
@@ -750,11 +836,17 @@
 
   <!-- ================= 활동 이력 ================= -->
   <section class="view" id="view-activities">
-    <div class="header-actions" style="margin-bottom:14px; justify-content:space-between;">
-      <div class="filter-row" style="margin-bottom:0;">
-        <input type="text" id="actFilterSearch" placeholder="고객사·담당자 검색">
+    <div class="toolbar spread">
+      <div class="tb-group">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+          <input type="text" id="actFilterSearch" placeholder="고객사·담당자 검색">
+        </div>
         <select id="actFilterType"><option value="">전체 유형</option></select>
+        <span class="tb-divider"></span>
+        <span class="tb-label">기간</span>
         <input type="date" id="actFilterFrom" title="시작일">
+        <span class="tb-label">~</span>
         <input type="date" id="actFilterTo" title="종료일">
       </div>
       <button class="btn btn-primary" id="newActivityBtn">+ 활동 추가</button>
@@ -764,19 +856,37 @@
 
   <!-- ================= 분석 ================= -->
   <section class="view" id="view-analysis">
+    <div class="subtabs" id="analysisSubtabs">
+      <button data-sub="table" class="active">테이블 보기</button>
+      <button data-sub="chart">차트 보기</button>
+    </div>
+
     <div class="section-block">
       <div class="section-title">단계별 현황 (전체 딜 · 사실 집계)</div>
-      <div class="table-scroll"><table class="data-table" id="analysisStageTable"></table></div>
+      <div class="table-scroll anl-table-view"><table class="data-table" id="analysisStageTable"></table></div>
+      <div class="barchart anl-chart-view" id="chartStage" style="display:none;"></div>
     </div>
     <div class="section-block">
       <div class="section-title">부서별 성과 (확정 결과 기준)</div>
-      <div class="filter-row"><input type="text" id="anlFilterDept" placeholder="부서 검색"></div>
-      <div class="table-scroll"><table class="data-table" id="analysisDeptTable"></table></div>
+      <div class="toolbar anl-table-view">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+          <input type="text" id="anlFilterDept" placeholder="부서 검색">
+        </div>
+      </div>
+      <div class="table-scroll anl-table-view"><table class="data-table" id="analysisDeptTable"></table></div>
+      <div class="barchart anl-chart-view" id="chartDept" style="display:none;"></div>
     </div>
     <div class="section-block">
       <div class="section-title">담당자별 × 단계별 현황</div>
-      <div class="filter-row"><input type="text" id="anlFilterOwner" placeholder="담당자·부서 검색"></div>
-      <div class="table-scroll"><table class="data-table" id="analysisOwnerTable"></table></div>
+      <div class="toolbar anl-table-view">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+          <input type="text" id="anlFilterOwner" placeholder="담당자·부서 검색">
+        </div>
+      </div>
+      <div class="table-scroll anl-table-view"><table class="data-table" id="analysisOwnerTable"></table></div>
+      <div class="barchart anl-chart-view" id="chartOwner" style="display:none;"></div>
     </div>
   </section>
 
@@ -800,6 +910,17 @@
 </div>
 
 </div><!-- /appShell -->
+
+<!-- ============ 단계 정의 가이드 모달 ============ -->
+<div class="overlay" id="guideOverlay">
+  <div class="modal modal-lg">
+    <div class="guide-modal-head">
+      <h2>단계 정의 가이드</h2>
+      <button type="button" class="btn" id="guideCloseBtn">닫기</button>
+    </div>
+    <div id="guideContent"></div>
+  </div>
+</div>
 
 <!-- ============ 딜 변경 이력 모달 ============ -->
 <div class="overlay" id="historyOverlay">
@@ -960,6 +1081,7 @@
     negotiation:"#004B87", won:"#2E7D5B", lost:"#C0392B", hold:"#C9A24B"
   };
   var ACTIVE_STAGE_IDS = ["discovery","contact","proposal","negotiation"];
+  var CHART_PALETTE = ["#004B87","#2E73AE","#5A97C9","#9CC0E0","#2E7D5B","#C9A24B","#C0392B"];
   var ALERT_STALE_DAYS = 45;
   var ALERT_IMMINENT_DAYS = 7;
 
@@ -1185,6 +1307,26 @@
     return chip(stage.name, stage.color);
   }
 
+  function renderBarChart(containerId, rows, opts){
+    opts = opts || {};
+    var container = document.getElementById(containerId);
+    if(!container) return;
+    var filtered = rows.filter(function(r){ return r.value > 0; });
+    if(!filtered.length){
+      container.innerHTML = '<div class="bc-empty">표시할 데이터가 없습니다.</div>';
+      return;
+    }
+    var max = Math.max.apply(null, filtered.map(function(r){ return r.value; })) || 1;
+    container.innerHTML = filtered.map(function(r){
+      var pct = Math.max(2, Math.round(r.value / max * 100));
+      return '<div class="bc-row">' +
+        '<div class="bc-label">' + (r.dot ? '<span class="chip-dot" style="background:'+r.color+'"></span>' : '') + escapeHtml(r.label) + '</div>' +
+        '<div class="bc-track"><div class="bc-fill" style="width:'+pct+'%;background:'+r.color+'"></div></div>' +
+        '<div class="bc-value">' + (opts.fmt ? opts.fmt(r.value) : r.value) + '</div>' +
+      '</div>';
+    }).join("");
+  }
+
   function mapRowToDeal(row){
     return {
       id: row.id,
@@ -1342,6 +1484,24 @@
     ["anlFilterDept","anlFilterOwner"].forEach(function(id){
       document.getElementById(id).addEventListener("input", function(){ renderAnalysis(); });
     });
+    document.getElementById("dashAlertViewAllLink").addEventListener("click", function(e){
+      e.preventDefault();
+      goToAlertFilteredPipeline();
+    });
+    document.getElementById("analysisSubtabs").addEventListener("click", function(e){
+      var btn = e.target.closest("button[data-sub]");
+      if(!btn) return;
+      currentAnalysisSub = btn.dataset.sub;
+      document.querySelectorAll("#analysisSubtabs button").forEach(function(b){ b.classList.toggle("active", b === btn); });
+      applyAnalysisViewMode();
+    });
+  }
+
+  var currentAnalysisSub = "table";
+  function applyAnalysisViewMode(){
+    var showChart = currentAnalysisSub === "chart";
+    document.querySelectorAll(".anl-table-view").forEach(function(el){ el.style.display = showChart ? "none" : ""; });
+    document.querySelectorAll(".anl-chart-view").forEach(function(el){ el.style.display = showChart ? "block" : "none"; });
   }
 
   function renderAll(){
@@ -1386,27 +1546,66 @@
 
   function renderGuide(){
     var wrap = document.getElementById("guideContent");
-    var html = "";
-    STAGE_GUIDE.forEach(function(s){
-      html += '<div class="guide-card">' +
-        '<h3><span class="stage-dot" style="background:' + (STAGE_COLORS[s.stageId]||"#9aa0ac") + '"></span>' + s.name + ' <span class="prob">수주확률 ' + s.prob + '</span></h3>' +
-        '<div class="definition">' + escapeHtml(s.def) + '</div>' +
-        '<div class="guide-grid">' +
-          '<div><div class="g-label">진입 조건</div><div class="g-body">' + escapeHtml(s.entry) + '</div></div>' +
-          '<div><div class="g-label">이 단계에서 해야 할 일</div><div class="g-body">' + escapeHtml(s.todo) + '</div></div>' +
-          '<div><div class="g-label">다음 단계로 넘어가는 조건</div><div class="g-body">' + escapeHtml(s.next) + '</div></div>' +
-          '<div><div class="g-label">흔한 실수 / 주의사항</div><div class="g-warn">' + escapeHtml(s.warn) + '</div></div>' +
-          '<div><div class="g-label">예상 기간</div><div class="g-body">' + escapeHtml(s.dur) + '</div></div>' +
+    if(!wrap || wrap.dataset.rendered === "1") return; // 정적 콘텐츠 - 최초 1회만 렌더링
+    wrap.dataset.rendered = "1";
+
+    // 상단 미니 단계 트래커
+    var tracker = '<div class="stage-tracker">' + STAGE_GUIDE.map(function(s, i){
+      var color = STAGE_COLORS[s.stageId] || "#9aa0ac";
+      return (i > 0 ? '<div class="st-line"></div>' : '') +
+        '<div class="st-step" data-jump="gs-'+s.stageId+'">' +
+          '<div class="st-circle" style="background:'+color+'">'+(i+1)+'</div>' +
+          '<div class="st-name">'+escapeHtml(s.name)+'</div>' +
+          '<div class="st-prob">'+escapeHtml(s.prob)+'</div>' +
+        '</div>';
+    }).join("") + '</div>';
+
+    // 세로 타임라인 상세 카드
+    var timeline = '<div class="guide-timeline">' + STAGE_GUIDE.map(function(s, i){
+      var color = STAGE_COLORS[s.stageId] || "#9aa0ac";
+      return '<div class="guide-step" id="gs-'+s.stageId+'">' +
+        '<div class="gs-rail"><div class="gs-node" style="background:'+color+'">'+(i+1)+'</div><div class="gs-connector"></div></div>' +
+        '<div class="guide-card">' +
+          '<h3>' + escapeHtml(s.name) + ' <span class="prob">수주확률 ' + s.prob + '</span></h3>' +
+          '<div class="definition">' + escapeHtml(s.def) + '</div>' +
+          '<div class="guide-grid">' +
+            '<div><div class="g-label">진입 조건</div><div class="g-body">' + escapeHtml(s.entry) + '</div></div>' +
+            '<div><div class="g-label">이 단계에서 해야 할 일</div><div class="g-body">' + escapeHtml(s.todo) + '</div></div>' +
+            '<div><div class="g-label">다음 단계로 넘어가는 조건</div><div class="g-body">' + escapeHtml(s.next) + '</div></div>' +
+            '<div><div class="g-label">흔한 실수 / 주의사항</div><div class="g-warn">' + escapeHtml(s.warn) + '</div></div>' +
+            '<div><div class="g-label">예상 기간</div><div class="g-body">' + escapeHtml(s.dur) + '</div></div>' +
+          '</div>' +
         '</div>' +
       '</div>';
+    }).join("") + '</div>';
+
+    var principles = '<div class="guide-principles"><h3>단계 관리 핵심 원칙</h3>' +
+      STAGE_PRINCIPLES.map(function(p){
+        return '<div class="principle-item"><div><div class="p-title">' + escapeHtml(p.title) + '</div><div class="p-body">' + escapeHtml(p.body) + '</div></div></div>';
+      }).join("") + '</div>';
+
+    wrap.innerHTML = tracker + timeline + principles;
+
+    wrap.querySelectorAll(".st-step").forEach(function(el){
+      el.addEventListener("click", function(){
+        var target = document.getElementById(el.dataset.jump);
+        if(target) target.scrollIntoView({ behavior:"smooth", block:"start" });
+      });
     });
-    html += '<div class="guide-card"><h3>단계 관리 핵심 원칙</h3>';
-    STAGE_PRINCIPLES.forEach(function(p){
-      html += '<div class="principle-item"><div><div class="p-title">' + escapeHtml(p.title) + '</div><div class="p-body">' + escapeHtml(p.body) + '</div></div></div>';
-    });
-    html += '</div>';
-    wrap.innerHTML = html;
   }
+
+  function openGuideModal(){
+    renderGuide();
+    document.getElementById("guideOverlay").classList.add("open");
+  }
+  function closeGuideModal(){
+    document.getElementById("guideOverlay").classList.remove("open");
+  }
+  document.getElementById("guideTriggerBtn").addEventListener("click", openGuideModal);
+  document.getElementById("guideCloseBtn").addEventListener("click", closeGuideModal);
+  document.getElementById("guideOverlay").addEventListener("click", function(e){
+    if(e.target === document.getElementById("guideOverlay")) closeGuideModal();
+  });
 
   /* ---------- 딜 파이프라인 : 필터 ---------- */
 
@@ -1450,6 +1649,14 @@
     filterDept.innerHTML = '<option value="">전체 부서</option>' + DEPARTMENTS.map(function(d){
       return '<option value="'+escapeHtml(d)+'">'+escapeHtml(d)+'</option>';
     }).join("");
+    // 필터 - 점검알림
+    var filterAlert = document.getElementById("filterAlert");
+    filterAlert.innerHTML = '<option value="">전체 점검알림</option>' +
+      '<option value="any">알림 있음 (전체)</option>' +
+      '<option value="overdue">액션지연</option>' +
+      '<option value="idle">액션일 없음</option>' +
+      '<option value="stale">정체</option>' +
+      '<option value="imminent">액션임박</option>';
     // 활동 필터 - 유형
     var actFilterType = document.getElementById("actFilterType");
     actFilterType.innerHTML = '<option value="">전체 유형</option>' + ACTIVITY_TYPES.map(function(t){
@@ -1462,17 +1669,41 @@
     });
   }
 
-  var filterState = { stage:"", dept:"", search:"" };
+  var filterState = { stage:"", dept:"", search:"", alert:"" };
+  var pipelineFiltersBound = false;
   function renderPipelineFilters(){
+    document.getElementById("filterStage").value = filterState.stage;
+    document.getElementById("filterDept").value = filterState.dept;
+    document.getElementById("filterAlert").value = filterState.alert;
+    document.getElementById("filterSearch").value = filterState.search;
+    if(pipelineFiltersBound) return;
+    pipelineFiltersBound = true;
     document.getElementById("filterStage").addEventListener("change", function(e){ filterState.stage = e.target.value; renderPipelineTable(); });
     document.getElementById("filterDept").addEventListener("change", function(e){ filterState.dept = e.target.value; renderPipelineTable(); });
+    document.getElementById("filterAlert").addEventListener("change", function(e){ filterState.alert = e.target.value; renderPipelineTable(); });
     document.getElementById("filterSearch").addEventListener("input", function(e){ filterState.search = e.target.value.trim(); renderPipelineTable(); });
+  }
+
+  function goToAlertFilteredPipeline(){
+    filterState.stage = ""; filterState.dept = ""; filterState.search = ""; filterState.alert = "any";
+    switchView("pipeline");
+    currentPipelineSub = "table";
+    document.querySelectorAll("#pipelineSubtabs button").forEach(function(b){ b.classList.toggle("active", b.dataset.sub === "table"); });
+    document.getElementById("sub-table").classList.add("active");
+    document.getElementById("sub-kanban").classList.remove("active");
+    renderPipelineFilters();
+    renderPipelineTable();
   }
 
   function filteredDeals(){
     return deals.filter(function(d){
       if(filterState.stage && d.stage !== filterState.stage) return false;
       if(filterState.dept && d.department !== filterState.dept) return false;
+      if(filterState.alert){
+        var meta = computeDealMeta(d);
+        if(filterState.alert === "any"){ if(!meta.alert) return false; }
+        else if(!meta.alert || meta.alert.level !== filterState.alert) return false;
+      }
       if(filterState.search){
         var q = filterState.search.toLowerCase();
         var hay = (d.company||"") + " " + (d.owner||"");
@@ -1755,6 +1986,8 @@
     if(e.key === "Escape"){
       if(overlay.classList.contains("open")) closeModal();
       if(activityOverlay.classList.contains("open")) closeActivityModal();
+      if(document.getElementById("guideOverlay").classList.contains("open")) closeGuideModal();
+      if(document.getElementById("historyOverlay").classList.contains("open")) document.getElementById("historyOverlay").classList.remove("open");
     }
   });
 
@@ -2009,11 +2242,13 @@
       { label:"진행중 딜", value:activeDeals.length, unit:"건", cls:"accent" },
       { label:"진행중 파이프라인", value:won(activePipelineAmount), unit:"", cls:"accent" },
       { label:"수주 실적", value:wonDeals.length+"건 / "+won(wonAmount), unit:"", cls:"won" },
-      { label:"점검 필요 딜", value:alertDeals.length, unit:"건", cls:"warn" }
+      { label:"점검 필요 딜", value:alertDeals.length, unit:"건", cls:"warn", clickable:true }
     ];
     document.getElementById("dashKpiRow").innerHTML = kpis.map(function(k){
-      return '<div class="kpi-card '+k.cls+'"><div class="label">'+k.label+'</div><div class="value">'+k.value+'<span class="unit">'+k.unit+'</span></div></div>';
+      return '<div class="kpi-card '+k.cls+(k.clickable?' kpi-clickable':'')+'"'+(k.clickable?' id="kpiAlertCard"':'')+'><div class="label">'+k.label+'</div><div class="value">'+k.value+'<span class="unit">'+k.unit+'</span></div></div>';
     }).join("");
+    var kpiAlertCard = document.getElementById("kpiAlertCard");
+    if(kpiAlertCard) kpiAlertCard.addEventListener("click", function(){ goToAlertFilteredPipeline(); });
 
     // 단계별 현황 (진행중)
     var stageTable = document.getElementById("dashStageTable");
@@ -2129,7 +2364,8 @@
     var deptTotals = { activeCount:0, activeAmt:0, wonCount:0, wonAmt:0, lostCount:0, lostAmt:0, holdCount:0 };
     var deptFilterQ = (document.getElementById("anlFilterDept").value||"").trim().toLowerCase();
     var filteredDepartments = DEPARTMENTS.filter(function(d){ return !deptFilterQ || d.toLowerCase().indexOf(deptFilterQ) !== -1; });
-    var deptRows = filteredDepartments.map(function(dept){
+    var deptChartData = [];
+    var deptRows = filteredDepartments.map(function(dept, di){
       var deptDeals = deals.filter(function(d){ return d.department===dept; });
       var activeList = deptDeals.filter(function(d){ return ACTIVE_STAGE_IDS.indexOf(d.stage)!==-1; });
       var activeAmt = activeList.reduce(function(s,d){return s+(Number(d.amount)||0);},0);
@@ -2146,6 +2382,7 @@
       deptTotals.wonCount += wonList.length; deptTotals.wonAmt += wonAmt;
       deptTotals.lostCount += lostList.length; deptTotals.lostAmt += lostAmt;
       deptTotals.holdCount += holdList.length;
+      deptChartData.push({ label:dept, value:activeAmt, color:CHART_PALETTE[di % CHART_PALETTE.length] });
       return '<tr><td><b>'+escapeHtml(dept)+'</b></td>' +
         '<td>'+(activeList.length||"-")+'</td><td>'+(activeAmt?won(activeAmt):"-")+'</td>' +
         '<td>'+(wonList.length||"-")+'</td><td>'+(wonAmt?won(wonAmt):"-")+'</td>' +
@@ -2170,7 +2407,8 @@
     var filteredOwners = OWNERS.filter(function(o){
       return !ownerFilterQ || o.name.toLowerCase().indexOf(ownerFilterQ) !== -1 || o.dept.toLowerCase().indexOf(ownerFilterQ) !== -1;
     });
-    var ownerRows = filteredOwners.map(function(o){
+    var ownerChartData = [];
+    var ownerRows = filteredOwners.map(function(o, oi){
       var ownerDeals = deals.filter(function(d){ return d.owner===o.name; });
       var stageCounts = ACTIVE_STAGE_IDS.map(function(sid){ return ownerDeals.filter(function(d){ return d.stage===sid; }).length; });
       var activeList = ownerDeals.filter(function(d){ return ACTIVE_STAGE_IDS.indexOf(d.stage)!==-1; });
@@ -2181,6 +2419,7 @@
       var decided = wonCount+lostCount;
       var winRate = decided ? Math.round(wonCount/decided*100) : null;
       var avgAmt = activeList.length ? Math.round(activeAmt/activeList.length) : 0;
+      ownerChartData.push({ label:o.name+' ('+o.dept+')', value:activeAmt, color:CHART_PALETTE[oi % CHART_PALETTE.length] });
       return '<tr><td><b>'+escapeHtml(o.name)+'</b></td><td>'+escapeHtml(o.dept)+'</td>' +
         stageCounts.map(function(c){ return '<td>'+(c||"-")+'</td>'; }).join("") +
         '<td>'+(activeList.length||"-")+'</td><td>'+(activeAmt?won(activeAmt):"-")+'</td>' +
@@ -2189,6 +2428,12 @@
     }).join("");
     ownerTable.innerHTML = '<thead><tr><th>담당자</th><th>소속 부서</th><th>발굴</th><th>접촉</th><th>제안</th><th>협상</th><th>진행 합계(건)</th><th>진행 금액</th><th>수주</th><th>실주</th><th>보류</th><th>수주율(건수)</th><th>평균 진행 딜 금액</th></tr></thead><tbody>' + ownerRows + '</tbody>';
     makeTableResizable(ownerTable);
+
+    // 차트 뷰
+    renderBarChart("chartStage", stageRows.map(function(r){ return { label:r.name, value:r.amt, color:r.color, dot:true }; }), { fmt:won });
+    renderBarChart("chartDept", deptChartData, { fmt:won });
+    renderBarChart("chartOwner", ownerChartData, { fmt:won });
+    applyAnalysisViewMode();
   }
 
   /* ---------- 딜 변경 이력 (FR-DEAL-04) ---------- */
