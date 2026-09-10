@@ -658,6 +658,14 @@
   }
   .auth-tab.active{ background:#fff; color:var(--text); box-shadow:0 1px 3px rgba(11,42,69,.12); }
   .auth-form .field{ margin-bottom:12px; }
+  .auth-row-between{
+    display:flex; align-items:center; justify-content:space-between;
+    margin:-2px 0 12px; font-size:11.5px;
+  }
+  .auth-remember{ display:flex; align-items:center; gap:6px; color:var(--muted); cursor:pointer; user-select:none; }
+  .auth-remember input{ width:auto; margin:0; cursor:pointer; }
+  .auth-link{ color:var(--brand2); font-weight:700; text-decoration:none; }
+  .auth-link:hover{ text-decoration:underline; }
   .auth-msg{
     font-size:12px;
     font-weight:600;
@@ -729,7 +737,7 @@
 <div class="auth-screen" id="authScreen">
   <div class="auth-card">
     <img class="brand-logo" alt="ETEVERS" style="width:150px;height:23.3px;margin-bottom:18px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAhwAAABUCAYAAADJau5UAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MTkzREUwNENDNjg3MTFFQzk4QkNGOUI1NkFEODE0MUIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MTkzREUwNERDNjg3MTFFQzk4QkNGOUI1NkFEODE0MUIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDoxOTNERTA0QUM2ODcxMUVDOThCQ0Y5QjU2QUQ4MTQxQiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDoxOTNERTA0QkM2ODcxMUVDOThCQ0Y5QjU2QUQ4MTQxQiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pu57yPEAABpvSURBVHja7J0JmBXF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">
-    <div class="auth-tabs">
+    <div class="auth-tabs" id="authTabs">
       <button type="button" class="auth-tab active" data-tab="login">로그인</button>
       <button type="button" class="auth-tab" data-tab="signup">회원가입</button>
     </div>
@@ -742,6 +750,10 @@
       <div class="field">
         <label>비밀번호</label>
         <input type="password" id="login_password" required autocomplete="current-password">
+      </div>
+      <div class="auth-row-between">
+        <label class="auth-remember"><input type="checkbox" id="login_remember"> 이메일 저장</label>
+        <a href="#" id="forgotPasswordLink" class="auth-link">비밀번호를 잊으셨나요?</a>
       </div>
       <div class="auth-msg" id="loginMsg"></div>
       <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">로그인</button>
@@ -766,6 +778,31 @@
       </div>
       <div class="auth-msg" id="signupMsg"></div>
       <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">회원가입</button>
+    </form>
+
+    <form id="forgotForm" class="auth-form" style="display:none;">
+      <p style="margin:0 0 14px;color:var(--text-dim);font-size:12.5px;">가입하신 이메일로 비밀번호 재설정 링크를 보내드립니다.</p>
+      <div class="field">
+        <label>이메일</label>
+        <input type="email" id="forgot_email" required autocomplete="username">
+      </div>
+      <div class="auth-msg" id="forgotMsg"></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">재설정 메일 보내기</button>
+      <button type="button" class="btn" id="forgotBackBtn" style="width:100%;justify-content:center;margin-top:8px;">로그인으로 돌아가기</button>
+    </form>
+
+    <form id="newPasswordForm" class="auth-form" style="display:none;">
+      <p style="margin:0 0 14px;color:var(--text-dim);font-size:12.5px;">사용할 새 비밀번호를 입력해주세요.</p>
+      <div class="field">
+        <label>새 비밀번호 (6자 이상)</label>
+        <input type="password" id="newpw_password" required minlength="6" autocomplete="new-password">
+      </div>
+      <div class="field">
+        <label>새 비밀번호 확인</label>
+        <input type="password" id="newpw_password2" required minlength="6" autocomplete="new-password">
+      </div>
+      <div class="auth-msg" id="newpwMsg"></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">비밀번호 변경</button>
     </form>
   </div>
 </div>
@@ -2941,6 +2978,12 @@
   async function initAuth(){
     populateAuthSelects();
     supabaseClient.auth.onAuthStateChange(function(event, s){
+      if(event === "PASSWORD_RECOVERY"){
+        authSession = s;
+        showScreen("auth");
+        showAuthForm("newpw");
+        return;
+      }
       var isNewLogin = event === "SIGNED_IN" && (!authSession || !s || authSession.user.id !== s.user.id);
       authSession = s;
       if(isNewLogin && s){
@@ -2950,13 +2993,37 @@
     });
   }
 
+  var SAVED_EMAIL_KEY = "etevers_saved_login_email";
+
+  function showAuthForm(which){
+    document.getElementById("authTabs").style.display = (which === "login" || which === "signup") ? "" : "none";
+    document.querySelectorAll(".auth-tab").forEach(function(t){ t.classList.toggle("active", t.dataset.tab === which); });
+    document.getElementById("loginForm").style.display = which === "login" ? "block" : "none";
+    document.getElementById("signupForm").style.display = which === "signup" ? "block" : "none";
+    document.getElementById("forgotForm").style.display = which === "forgot" ? "block" : "none";
+    document.getElementById("newPasswordForm").style.display = which === "newpw" ? "block" : "none";
+  }
+
   document.querySelectorAll(".auth-tab").forEach(function(tab){
-    tab.addEventListener("click", function(){
-      document.querySelectorAll(".auth-tab").forEach(function(t){ t.classList.toggle("active", t === tab); });
-      document.getElementById("loginForm").style.display = tab.dataset.tab === "login" ? "block" : "none";
-      document.getElementById("signupForm").style.display = tab.dataset.tab === "signup" ? "block" : "none";
-    });
+    tab.addEventListener("click", function(){ showAuthForm(tab.dataset.tab); });
   });
+
+  document.getElementById("forgotPasswordLink").addEventListener("click", function(e){
+    e.preventDefault();
+    document.getElementById("forgot_email").value = document.getElementById("login_email").value.trim();
+    document.getElementById("forgotMsg").textContent = "";
+    document.getElementById("forgotMsg").className = "auth-msg";
+    showAuthForm("forgot");
+  });
+  document.getElementById("forgotBackBtn").addEventListener("click", function(){ showAuthForm("login"); });
+
+  try{
+    var savedEmail = localStorage.getItem(SAVED_EMAIL_KEY);
+    if(savedEmail){
+      document.getElementById("login_email").value = savedEmail;
+      document.getElementById("login_remember").checked = true;
+    }
+  }catch(e){ /* localStorage 접근 불가 시 무시 */ }
 
   document.getElementById("loginForm").addEventListener("submit", async function(e){
     e.preventDefault();
@@ -2969,8 +3036,68 @@
     try{
       var res = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
       if(res.error) throw res.error;
+      try{
+        if(document.getElementById("login_remember").checked){
+          localStorage.setItem(SAVED_EMAIL_KEY, email);
+        } else {
+          localStorage.removeItem(SAVED_EMAIL_KEY);
+        }
+      }catch(e){ /* localStorage 접근 불가 시 무시 */ }
     }catch(err){
       msg.textContent = "로그인 실패: " + (err && err.message ? err.message : err);
+      msg.className = "auth-msg error";
+    }finally{
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById("forgotForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    var msg = document.getElementById("forgotMsg");
+    msg.textContent = ""; msg.className = "auth-msg";
+    var email = document.getElementById("forgot_email").value.trim();
+    var btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    try{
+      var res = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + window.location.pathname
+      });
+      if(res.error) throw res.error;
+      msg.textContent = "비밀번호 재설정 메일을 보냈습니다. 메일함을 확인해주세요.";
+      msg.className = "auth-msg ok";
+    }catch(err){
+      msg.textContent = "요청 실패: " + (err && err.message ? err.message : err);
+      msg.className = "auth-msg error";
+    }finally{
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById("newPasswordForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    var msg = document.getElementById("newpwMsg");
+    msg.textContent = ""; msg.className = "auth-msg";
+    var pw1 = document.getElementById("newpw_password").value;
+    var pw2 = document.getElementById("newpw_password2").value;
+    if(pw1 !== pw2){
+      msg.textContent = "비밀번호가 일치하지 않습니다.";
+      msg.className = "auth-msg error";
+      return;
+    }
+    var btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    try{
+      var res = await supabaseClient.auth.updateUser({ password: pw1 });
+      if(res.error) throw res.error;
+      msg.textContent = "비밀번호가 변경되었습니다. 다시 로그인해주세요.";
+      msg.className = "auth-msg ok";
+      e.target.reset();
+      setTimeout(async function(){
+        await supabaseClient.auth.signOut();
+        showAuthForm("login");
+      }, 1200);
+    }catch(err){
+      msg.textContent = "변경 실패: " + (err && err.message ? err.message : err);
       msg.className = "auth-msg error";
     }finally{
       btn.disabled = false;
