@@ -99,11 +99,17 @@
   .btn:hover{background:#f6f7fa;}
   .btn:active{transform:scale(0.98);}
   .btn-primary{
+    background:var(--brand);
+    border-color:var(--brand);
+    color:#fff;
+  }
+  .btn-primary:hover{background:#003a70;}
+  .btn-invert{
     background:#fff;
     border-color:#fff;
     color:var(--brand);
   }
-  .btn-primary:hover{background:#e7f0fa;}
+  .btn-invert:hover{background:#e7f0fa;}
   .btn-ghost{
     background:rgba(255,255,255,.08);
     border:1px solid rgba(255,255,255,.35);
@@ -486,6 +492,73 @@
   .icon-btn.del:hover{ background:#fdeeee; color:#d5453f; }
   .empty-hint{ font-size:11px; color:#b3b6c0; text-align:center; padding:18px 8px; }
 
+  /* ---------- Auth ---------- */
+  .auth-screen{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(120deg,#003866 0%,#004B87 55%,#0a5a9e 100%);
+    padding:20px;
+  }
+  .auth-card{
+    background:#fff;
+    border-radius:16px;
+    padding:32px 30px;
+    width:100%;
+    max-width:360px;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+  }
+  .auth-tabs{
+    display:flex;
+    gap:2px;
+    background:var(--mist);
+    padding:3px;
+    border-radius:10px;
+    margin-bottom:18px;
+  }
+  .auth-tab{
+    flex:1;
+    border:none;
+    background:transparent;
+    color:var(--muted);
+    font-size:13px;
+    font-weight:700;
+    padding:8px 0;
+    border-radius:8px;
+    cursor:pointer;
+  }
+  .auth-tab.active{ background:#fff; color:var(--text); box-shadow:0 1px 3px rgba(11,42,69,.12); }
+  .auth-form .field{ margin-bottom:12px; }
+  .auth-msg{
+    font-size:12px;
+    font-weight:600;
+    margin-bottom:10px;
+    min-height:0;
+  }
+  .auth-msg.error{ color:#C0392B; }
+  .auth-msg.ok{ color:var(--good); }
+  .pending-badge{
+    display:inline-block;
+    font-size:11px;
+    font-weight:700;
+    color:#b07a1f;
+    background:#fff4e2;
+    padding:3px 10px;
+    border-radius:20px;
+  }
+  .user-badge{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    line-height:1.3;
+    color:#fff;
+    font-size:11.5px;
+    margin-right:2px;
+  }
+  .user-badge b{ font-size:12.5px; }
+  .user-badge span{ color:#cfe1f2; }
+
   /* ---------- Modal ---------- */
   .overlay{
     position:fixed; inset:0; background:rgba(20,22,30,.45);
@@ -524,6 +597,74 @@
 </head>
 <body>
 
+<!-- ================= 로그인 / 회원가입 ================= -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-card">
+    <img class="brand-logo" alt="ETEVERS" style="width:150px;height:23.3px;margin-bottom:18px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAhwAAABUCAYAAADJau5UAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MTkzREUwNENDNjg3MTFFQzk4QkNGOUI1NkFEODE0MUIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MTkzREUwNERDNjg3MTFFQzk4QkNGOUI1NkFEODE0MUIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDoxOTNERTA0QUM2ODcxMUVDOThCQ0Y5QjU2QUQ4MTQxQiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDoxOTNERTA0QkM2ODcxMUVDOThCQ0Y5QjU2QUQ4MTQxQiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pu57yPEAABpvSURBVHja7J0JmBXF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">
+    <div class="auth-tabs">
+      <button type="button" class="auth-tab active" data-tab="login">로그인</button>
+      <button type="button" class="auth-tab" data-tab="signup">회원가입</button>
+    </div>
+
+    <form id="loginForm" class="auth-form">
+      <div class="field">
+        <label>이메일</label>
+        <input type="email" id="login_email" required autocomplete="username">
+      </div>
+      <div class="field">
+        <label>비밀번호</label>
+        <input type="password" id="login_password" required autocomplete="current-password">
+      </div>
+      <div class="auth-msg" id="loginMsg"></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">로그인</button>
+    </form>
+
+    <form id="signupForm" class="auth-form" style="display:none;">
+      <div class="field">
+        <label>이메일</label>
+        <input type="email" id="signup_email" required autocomplete="username">
+      </div>
+      <div class="field">
+        <label>비밀번호 (6자 이상)</label>
+        <input type="password" id="signup_password" required minlength="6" autocomplete="new-password">
+      </div>
+      <div class="field">
+        <label>이름</label>
+        <input type="text" id="signup_name" required placeholder="예: 김철수">
+      </div>
+      <div class="field">
+        <label>영업부서</label>
+        <select id="signup_department"></select>
+      </div>
+      <div class="auth-msg" id="signupMsg"></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">회원가입</button>
+    </form>
+  </div>
+</div>
+
+<!-- ================= 승인 대기 ================= -->
+<div class="auth-screen" id="pendingScreen" style="display:none;">
+  <div class="auth-card">
+    <div class="pending-badge">승인 대기중</div>
+    <h2 style="margin:10px 0 6px;font-size:17px;">관리자 승인을 기다리고 있습니다</h2>
+    <p style="margin:0 0 18px;color:var(--text-dim);font-size:12.5px;">시스템 관리자가 계정 역할을 지정하면 이용할 수 있습니다. 아래 정보를 최신 상태로 유지해주세요.</p>
+    <form id="profileForm" class="auth-form">
+      <div class="field">
+        <label>이름</label>
+        <input type="text" id="profile_name" required>
+      </div>
+      <div class="field">
+        <label>영업부서</label>
+        <select id="profile_department"></select>
+      </div>
+      <div class="auth-msg" id="profileMsg"></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">정보 저장</button>
+    </form>
+    <button type="button" class="btn" id="pendingLogoutBtn" style="width:100%;justify-content:center;margin-top:10px;">로그아웃</button>
+  </div>
+</div>
+
+<div id="appShell" style="display:none;">
 <header class="top">
   <div class="top-wrap">
     <div class="top-text">
@@ -533,8 +674,10 @@
     </div>
     <div class="top-actions">
       <span class="sync-tag" id="syncTag">저장 중...</span>
+      <div class="user-badge" id="userBadge"></div>
       <button class="btn btn-ghost" id="refreshBtn">새로고침</button>
-      <button class="btn btn-primary" id="newDealBtn">+ 새 딜 추가</button>
+      <button class="btn btn-invert" id="newDealBtn">+ 새 딜 추가</button>
+      <button class="btn btn-ghost" id="logoutBtn">로그아웃</button>
     </div>
   </div>
 </header>
@@ -548,6 +691,7 @@
       <button data-view="pipeline" class="active">딜 파이프라인</button>
       <button data-view="activities">활동 이력</button>
       <button data-view="analysis">분석</button>
+      <button data-view="admin" id="adminNavBtn" style="display:none;">사용자 관리</button>
     </div>
   </div>
 </nav>
@@ -606,7 +750,13 @@
 
   <!-- ================= 활동 이력 ================= -->
   <section class="view" id="view-activities">
-    <div class="header-actions" style="margin-bottom:14px;">
+    <div class="header-actions" style="margin-bottom:14px; justify-content:space-between;">
+      <div class="filter-row" style="margin-bottom:0;">
+        <input type="text" id="actFilterSearch" placeholder="고객사·담당자 검색">
+        <select id="actFilterType"><option value="">전체 유형</option></select>
+        <input type="date" id="actFilterFrom" title="시작일">
+        <input type="date" id="actFilterTo" title="종료일">
+      </div>
       <button class="btn btn-primary" id="newActivityBtn">+ 활동 추가</button>
     </div>
     <div class="table-scroll"><table class="data-table" id="activitiesTable"></table></div>
@@ -620,11 +770,26 @@
     </div>
     <div class="section-block">
       <div class="section-title">부서별 성과 (확정 결과 기준)</div>
+      <div class="filter-row"><input type="text" id="anlFilterDept" placeholder="부서 검색"></div>
       <div class="table-scroll"><table class="data-table" id="analysisDeptTable"></table></div>
     </div>
     <div class="section-block">
       <div class="section-title">담당자별 × 단계별 현황</div>
+      <div class="filter-row"><input type="text" id="anlFilterOwner" placeholder="담당자·부서 검색"></div>
       <div class="table-scroll"><table class="data-table" id="analysisOwnerTable"></table></div>
+    </div>
+  </section>
+
+  <!-- ================= 사용자 관리 (관리자 전용) ================= -->
+  <section class="view" id="view-admin">
+    <div class="section-block">
+      <div class="section-title">사용자 계정</div>
+      <div class="section-sub">역할을 지정하고 승인해야 로그인한 사용자가 시스템을 사용할 수 있습니다.</div>
+      <div class="table-scroll"><table class="data-table" id="adminUsersTable"></table></div>
+    </div>
+    <div class="section-block">
+      <div class="section-title">접속 이력</div>
+      <div class="table-scroll"><table class="data-table" id="adminAccessTable"></table></div>
     </div>
   </section>
 
@@ -632,6 +797,20 @@
 
 <div class="app-footer">
   <p><b>산출 기준</b> · 점검알림은 다음액션일·최종업데이트일 기준 자동 판정(정체 45일 초과 · 임박 7일 이내) · 가중 예상매출은 칸반 보기에서만 참고용으로 제공(대시보드·분석은 가중치 없는 사실 집계).</p>
+</div>
+
+</div><!-- /appShell -->
+
+<!-- ============ 딜 변경 이력 모달 ============ -->
+<div class="overlay" id="historyOverlay">
+  <div class="modal">
+    <h2>딜 변경 이력</h2>
+    <p class="modal-sub" id="historyDealLabel"></p>
+    <div class="table-scroll"><table class="data-table" id="historyTable"></table></div>
+    <div class="modal-actions" style="justify-content:flex-end;">
+      <button type="button" class="btn" id="historyCloseBtn">닫기</button>
+    </div>
+  </div>
 </div>
 
 <!-- ============ 딜 추가/수정 모달 ============ -->
@@ -735,9 +914,21 @@
         <label>활동 내용</label>
         <textarea id="a_content" placeholder="예: 솔루션 PoC 결과 공유 미팅 진행"></textarea>
       </div>
+      <div class="field-row">
+        <div class="field">
+          <label>다음 액션</label>
+          <input type="text" id="a_nextAction" placeholder="예: 경영진 보고회 8/28 진행">
+        </div>
+        <div class="field">
+          <label>다음 액션일</label>
+          <input type="date" id="a_nextActionDate">
+        </div>
+      </div>
       <div class="field">
-        <label>다음 액션</label>
-        <input type="text" id="a_nextAction" placeholder="예: 경영진 보고회 8/28 진행">
+        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;">
+          <input type="checkbox" id="a_syncDeal" checked style="width:auto;">
+          이 딜의 다음 액션 정보도 함께 갱신
+        </label>
       </div>
       <div class="field">
         <label>비고</label>
@@ -851,6 +1042,28 @@
   var dragDealId = null;
   var currentView = "pipeline";
   var currentPipelineSub = "table";
+  var currentUser = null; // {id,email,name,department,role,isApproved}
+  var authSession = null;
+
+  var FIELD_LABELS = {
+    company:"고객사명", department:"영업부서", owner:"담당자", stage:"단계",
+    amount:"예상금액", closeDate:"예상수주일", nextActionDate:"다음액션일",
+    nextActionNote:"다음액션내용", competitor:"경쟁사", competitiveEdge:"당사경쟁우위",
+    confirmedDate:"확정일", memo:"비고"
+  };
+  var ROLE_LABELS = { admin:"관리자", manager:"매니저", rep:"담당자", viewer:"조회전용", pending:"승인대기" };
+
+  function isApproved(){ return !!(currentUser && currentUser.isApproved); }
+  function canEditDeal(deal){
+    if(!currentUser) return false;
+    if(currentUser.role === "admin") return true;
+    if(currentUser.role === "manager") return deal.department === currentUser.department;
+    if(currentUser.role === "rep") return deal.department === currentUser.department && deal.owner === currentUser.name;
+    return false;
+  }
+  function canCreateDeal(){
+    return !!currentUser && ["admin","manager","rep"].indexOf(currentUser.role) !== -1;
+  }
 
   var fmtWon = new Intl.NumberFormat("ko-KR");
   function won(n){ return fmtWon.format(Math.round(n||0)) + "원"; }
@@ -1118,7 +1331,22 @@
 
   /* ---------- Render dispatch ---------- */
 
+  var filtersBound = false;
+  function bindFiltersOnce(){
+    if(filtersBound) return;
+    filtersBound = true;
+    ["actFilterSearch","actFilterType","actFilterFrom","actFilterTo"].forEach(function(id){
+      var evt = id === "actFilterSearch" ? "input" : "change";
+      document.getElementById(id).addEventListener(evt, function(){ renderActivities(); });
+    });
+    ["anlFilterDept","anlFilterOwner"].forEach(function(id){
+      document.getElementById(id).addEventListener("input", function(){ renderAnalysis(); });
+    });
+  }
+
   function renderAll(){
+    bindFiltersOnce();
+    applyRoleUI();
     renderGuide();
     renderPipelineFilters();
     renderPipelineTable();
@@ -1126,6 +1354,7 @@
     renderActivities();
     renderDashboard();
     renderAnalysis();
+    if(currentUser && currentUser.role === "admin") renderAdmin();
   }
 
   function switchView(view){
@@ -1182,21 +1411,32 @@
   /* ---------- 딜 파이프라인 : 필터 ---------- */
 
   function populateStaticSelects(){
-    // 모달 - 부서
+    var role = currentUser ? currentUser.role : null;
+    // 모달 - 부서: rep/manager는 본인 부서만 선택 가능
+    var deptOptions = DEPARTMENTS;
+    if(role === "manager" || role === "rep"){
+      deptOptions = DEPARTMENTS.filter(function(d){ return d === currentUser.department; });
+    }
     var deptSelect = document.getElementById("f_department");
-    deptSelect.innerHTML = DEPARTMENTS.map(function(d){ return '<option value="'+escapeHtml(d)+'">'+escapeHtml(d)+'</option>'; }).join("");
-    // 모달 - 담당자
+    deptSelect.innerHTML = deptOptions.map(function(d){ return '<option value="'+escapeHtml(d)+'">'+escapeHtml(d)+'</option>'; }).join("");
+    // 모달 - 담당자: rep는 본인만 선택 가능
+    var ownerOptions = OWNERS;
+    if(role === "rep"){
+      ownerOptions = OWNERS.filter(function(o){ return o.name === currentUser.name; });
+    } else if(role === "manager"){
+      ownerOptions = OWNERS.filter(function(o){ return o.dept === currentUser.department; });
+    }
     var ownerSelect = document.getElementById("f_owner");
-    ownerSelect.innerHTML = OWNERS.map(function(o){ return '<option value="'+escapeHtml(o.name)+'" data-dept="'+escapeHtml(o.dept)+'">'+escapeHtml(o.name)+' ('+escapeHtml(o.dept)+')</option>'; }).join("");
+    ownerSelect.innerHTML = ownerOptions.map(function(o){ return '<option value="'+escapeHtml(o.name)+'" data-dept="'+escapeHtml(o.dept)+'">'+escapeHtml(o.name)+' ('+escapeHtml(o.dept)+')</option>'; }).join("");
     // 모달 - 단계
     var stageSelect = document.getElementById("f_stage");
     stageSelect.innerHTML = STAGES.map(function(s){ return '<option value="'+s.id+'">'+escapeHtml(s.name)+'</option>'; }).join("");
     // 활동 모달 - 유형
     var typeSelect = document.getElementById("a_type");
     typeSelect.innerHTML = ACTIVITY_TYPES.map(function(t){ return '<option value="'+escapeHtml(t)+'">'+escapeHtml(t)+'</option>'; }).join("");
-    // 활동 모달 - 딜 목록
+    // 활동 모달 - 딜 목록 (수정 권한이 있는 딜만)
     var dealSelect = document.getElementById("a_dealId");
-    dealSelect.innerHTML = '<option value="">선택하세요</option>' + deals.map(function(d){
+    dealSelect.innerHTML = '<option value="">선택하세요</option>' + deals.filter(canEditDeal).map(function(d){
       return '<option value="'+d.id+'">'+escapeHtml(d.dealCode||"-")+' · '+escapeHtml(d.company)+'</option>';
     }).join("");
 
@@ -1210,6 +1450,16 @@
     filterDept.innerHTML = '<option value="">전체 부서</option>' + DEPARTMENTS.map(function(d){
       return '<option value="'+escapeHtml(d)+'">'+escapeHtml(d)+'</option>';
     }).join("");
+    // 활동 필터 - 유형
+    var actFilterType = document.getElementById("actFilterType");
+    actFilterType.innerHTML = '<option value="">전체 유형</option>' + ACTIVITY_TYPES.map(function(t){
+      return '<option value="'+escapeHtml(t)+'">'+escapeHtml(t)+'</option>';
+    }).join("");
+    // 회원가입 / 프로필 - 부서
+    ["signup_department","profile_department"].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.innerHTML = DEPARTMENTS.map(function(d){ return '<option value="'+escapeHtml(d)+'">'+escapeHtml(d)+'</option>'; }).join("");
+    });
   }
 
   var filterState = { stage:"", dept:"", search:"" };
@@ -1260,6 +1510,7 @@
       body = "<tbody>" + rows.map(function(d){
         var stage = stageById(d.stage);
         var meta = computeDealMeta(d);
+        var editable = canEditDeal(d);
         return '<tr>' +
           '<td>' + escapeHtml(d.dealCode||"-") + '</td>' +
           '<td class="wrap"><b>' + escapeHtml(d.company) + '</b></td>' +
@@ -1280,8 +1531,8 @@
           '<td class="wrap">' + escapeHtml(d.memo||"-") + '</td>' +
           '<td>' + (meta.alert ? chip(meta.alert.label, ALERT_COLORS[meta.alert.level]||"#9aa0ac") : '-') + '</td>' +
           '<td><div class="cell-actions">' +
-            '<button type="button" class="icon-btn edit-row-btn" data-id="'+d.id+'">수정</button>' +
-            '<button type="button" class="icon-btn del del-row-btn" data-id="'+d.id+'">삭제</button>' +
+            (editable ? '<button type="button" class="icon-btn edit-row-btn" data-id="'+d.id+'">수정</button><button type="button" class="icon-btn del del-row-btn" data-id="'+d.id+'">삭제</button>' : '') +
+            '<button type="button" class="icon-btn hist-row-btn" data-id="'+d.id+'">이력</button>' +
           '</div></td>' +
         '</tr>';
       }).join("") + "</tbody>";
@@ -1291,6 +1542,9 @@
 
     table.querySelectorAll(".edit-row-btn").forEach(function(btn){
       btn.addEventListener("click", function(){ openModal(btn.dataset.id); });
+    });
+    table.querySelectorAll(".hist-row-btn").forEach(function(btn){
+      btn.addEventListener("click", function(){ openHistoryModal(btn.dataset.id); });
     });
     table.querySelectorAll(".del-row-btn").forEach(function(btn){
       btn.addEventListener("click", function(){
@@ -1355,6 +1609,10 @@
         dragDealId = null;
         var d = dealById(movedId);
         if(!d || d.stage === stage.id) return;
+        if(!canEditDeal(d)){
+          showError("이 딜을 수정할 권한이 없습니다.");
+          return;
+        }
         var prevStage = d.stage;
         var prevProb = d.probability;
         d.stage = stage.id;
@@ -1367,17 +1625,21 @@
               d.probability = prevProb;
               showError("단계 이동을 저장하지 못했습니다: " + res.error.message);
               renderAll();
+            } else {
+              logDealHistory(movedId, [{field:"stage", oldVal:prevStage, newVal:stage.id}], "stage_changed");
             }
           });
       });
 
       col.appendChild(list);
 
-      var addBtn = document.createElement("button");
-      addBtn.className = "add-card-btn";
-      addBtn.textContent = "+ 딜 추가";
-      addBtn.addEventListener("click", function(){ openModal(null, stage.id); });
-      col.appendChild(addBtn);
+      if(canCreateDeal()){
+        var addBtn = document.createElement("button");
+        addBtn.className = "add-card-btn";
+        addBtn.textContent = "+ 딜 추가";
+        addBtn.addEventListener("click", function(){ openModal(null, stage.id); });
+        col.appendChild(addBtn);
+      }
 
       board.appendChild(col);
     });
@@ -1386,9 +1648,10 @@
   function renderCard(deal){
     var stage = stageById(deal.stage);
     var meta = computeDealMeta(deal);
+    var editable = canEditDeal(deal);
     var card = document.createElement("div");
     card.className = "deal-card";
-    card.draggable = true;
+    card.draggable = editable;
     card.dataset.id = deal.id;
 
     card.innerHTML =
@@ -1397,7 +1660,10 @@
       '<div class="amount"></div>' +
       (meta.alert ? '<div class="card-alert"></div>' : '') +
       '<div class="meta-row"><span class="owner-badge"><span class="owner-dot"></span><span class="owner-name"></span></span><span class="due"></span></div>' +
-      '<div class="card-actions"><button type="button" class="icon-btn edit-btn">수정</button><button type="button" class="icon-btn del del-btn">삭제</button></div>';
+      '<div class="card-actions">' +
+        (editable ? '<button type="button" class="icon-btn edit-btn">수정</button><button type="button" class="icon-btn del del-btn">삭제</button>' : '') +
+        '<button type="button" class="icon-btn hist-btn">이력</button>' +
+      '</div>';
 
     card.querySelector(".deal-code").textContent = (deal.dealCode||"-") + " · " + (deal.department||"");
     card.querySelector(".company").textContent = deal.company;
@@ -1419,10 +1685,13 @@
       e.dataTransfer.effectAllowed = "move";
     });
     card.addEventListener("dragend", function(){ card.classList.remove("dragging"); });
-    card.querySelector(".edit-btn").addEventListener("click", function(){ openModal(deal.id); });
-    card.querySelector(".del-btn").addEventListener("click", function(){
+    var editBtn = card.querySelector(".edit-btn");
+    if(editBtn) editBtn.addEventListener("click", function(){ openModal(deal.id); });
+    var delBtn = card.querySelector(".del-btn");
+    if(delBtn) delBtn.addEventListener("click", function(){
       if(confirm('"'+deal.company+'" 딜을 삭제할까요?')) removeDeal(deal.id);
     });
+    card.querySelector(".hist-btn").addEventListener("click", function(){ openHistoryModal(deal.id); });
     return card;
   }
 
@@ -1450,9 +1719,11 @@
 
     document.getElementById("modalTitle").textContent = deal ? "딜 수정" : "새 딜 추가";
     document.getElementById("modalDealCode").textContent = deal ? (deal.dealCode||"-") : ("자동 채번 예정: " + nextDealCode());
+    var defaultDept = (currentUser && (currentUser.role === "rep" || currentUser.role === "manager")) ? currentUser.department : DEPARTMENTS[0];
+    var defaultOwner = (currentUser && currentUser.role === "rep") ? currentUser.name : (OWNERS[0] && OWNERS[0].name);
     document.getElementById("f_company").value = deal ? deal.company : "";
-    document.getElementById("f_department").value = deal ? (deal.department||DEPARTMENTS[0]) : DEPARTMENTS[0];
-    document.getElementById("f_owner").value = deal ? deal.owner : (OWNERS[0] && OWNERS[0].name);
+    document.getElementById("f_department").value = deal ? (deal.department||defaultDept) : defaultDept;
+    document.getElementById("f_owner").value = deal ? deal.owner : defaultOwner;
     document.getElementById("f_amount").value = deal ? deal.amount : "";
     document.getElementById("f_closeDate").value = deal ? (deal.closeDate||"") : "";
     document.getElementById("f_nextActionDate").value = deal ? (deal.nextActionDate||"") : "";
@@ -1523,16 +1794,21 @@
     setSyncing(true);
     try{
       if(editingId){
+        var prevSnapshot = dealById(editingId);
         var res = await supabaseClient.from("deals").update(dealToRow(data)).eq("id", editingId).select().single();
         if(res.error) throw res.error;
         var idx = deals.findIndex(function(d){ return d.id === editingId; });
-        if(idx > -1) deals[idx] = mapRowToDeal(res.data);
+        var updatedDeal = mapRowToDeal(res.data);
+        if(idx > -1) deals[idx] = updatedDeal;
+        logDealHistory(editingId, diffDealFields(prevSnapshot, updatedDeal), "updated");
       } else {
         var row = dealToRow(data);
         row.deal_code = nextDealCode();
         var insertRes = await supabaseClient.from("deals").insert(row).select().single();
         if(insertRes.error) throw insertRes.error;
-        deals.push(mapRowToDeal(insertRes.data));
+        var newDeal = mapRowToDeal(insertRes.data);
+        deals.push(newDeal);
+        logDealHistory(newDeal.id, [{field:"company", oldVal:null, newVal:newDeal.company}], "created");
       }
       hideError();
       closeModal();
@@ -1572,6 +1848,8 @@
     document.getElementById("a_type").value = act ? act.activityType : ACTIVITY_TYPES[0];
     document.getElementById("a_content").value = act ? (act.content||"") : "";
     document.getElementById("a_nextAction").value = act ? (act.nextAction||"") : "";
+    document.getElementById("a_nextActionDate").value = "";
+    document.getElementById("a_syncDeal").checked = true;
     document.getElementById("a_memo").value = act ? (act.memo||"") : "";
     updateActivityDealPreview();
     activityDeleteBtn.style.display = act ? "inline-block" : "none";
@@ -1605,6 +1883,8 @@
       nextAction: document.getElementById("a_nextAction").value.trim(),
       memo: document.getElementById("a_memo").value.trim()
     };
+    var nextActionDateVal = document.getElementById("a_nextActionDate").value || null;
+    var syncDeal = document.getElementById("a_syncDeal").checked;
     if(!data.dealId || !data.activityDate){ return; }
 
     var saveBtn = activityForm.querySelector('button[type="submit"]');
@@ -1621,9 +1901,33 @@
         if(insertRes.error) throw insertRes.error;
         activities.push(mapRowToActivity(insertRes.data));
       }
+
+      // FR-ACT-02: 활동의 다음 액션을 딜의 다음 액션 정보로 동기화
+      if(syncDeal && (nextActionDateVal || data.nextAction)){
+        var linkedDeal = dealById(data.dealId);
+        if(linkedDeal){
+          var prevSnap = { nextActionDate: linkedDeal.nextActionDate, nextActionNote: linkedDeal.nextActionNote };
+          var syncPatch = {
+            next_action_date: nextActionDateVal || linkedDeal.nextActionDate || null,
+            next_action_note: data.nextAction || linkedDeal.nextActionNote || null,
+            updated_at: new Date().toISOString()
+          };
+          var syncRes = await supabaseClient.from("deals").update(syncPatch).eq("id", data.dealId).select().single();
+          if(!syncRes.error){
+            var dIdx = deals.findIndex(function(d){ return d.id === data.dealId; });
+            var updated = mapRowToDeal(syncRes.data);
+            if(dIdx > -1) deals[dIdx] = updated;
+            logDealHistory(data.dealId, diffDealFields(
+              { nextActionDate: prevSnap.nextActionDate, nextActionNote: prevSnap.nextActionNote },
+              { nextActionDate: updated.nextActionDate, nextActionNote: updated.nextActionNote }
+            ), "updated");
+          }
+        }
+      }
+
       hideError();
       closeActivityModal();
-      renderActivities();
+      renderAll();
     }catch(err){
       showError("저장하지 못했습니다: " + (err && err.message ? err.message : err));
     }finally{
@@ -1639,7 +1943,21 @@
       return;
     }
     var head = '<thead><tr><th>딜ID</th><th>고객사명</th><th>영업부서</th><th>담당자</th><th>활동일</th><th>활동유형</th><th>활동내용</th><th>다음액션</th><th>비고</th><th></th></tr></thead>';
-    var rows = activities.slice().sort(function(a,b){ return (b.activityDate||"").localeCompare(a.activityDate||""); });
+    var q = (document.getElementById("actFilterSearch").value||"").trim().toLowerCase();
+    var typeF = document.getElementById("actFilterType").value;
+    var fromF = document.getElementById("actFilterFrom").value;
+    var toF = document.getElementById("actFilterTo").value;
+    var rows = activities.filter(function(a){
+      var deal = dealById(a.dealId);
+      if(q){
+        var hay = ((deal?deal.company:"") + " " + (deal?deal.owner:"")).toLowerCase();
+        if(hay.indexOf(q) === -1) return false;
+      }
+      if(typeF && a.activityType !== typeF) return false;
+      if(fromF && a.activityDate < fromF) return false;
+      if(toF && a.activityDate > toF) return false;
+      return true;
+    }).sort(function(a,b){ return (b.activityDate||"").localeCompare(a.activityDate||""); });
     var body;
     if(rows.length === 0){
       body = '<tbody><tr><td colspan="10" class="loading-hint">활동 기록이 없습니다.</td></tr></tbody>';
@@ -1657,8 +1975,7 @@
           '<td class="wrap">' + escapeHtml(a.nextAction||"-") + '</td>' +
           '<td class="wrap">' + escapeHtml(a.memo||"-") + '</td>' +
           '<td><div class="cell-actions">' +
-            '<button type="button" class="icon-btn edit-act-btn" data-id="'+a.id+'">수정</button>' +
-            '<button type="button" class="icon-btn del del-act-btn" data-id="'+a.id+'">삭제</button>' +
+            (deal && canEditDeal(deal) ? '<button type="button" class="icon-btn edit-act-btn" data-id="'+a.id+'">수정</button><button type="button" class="icon-btn del del-act-btn" data-id="'+a.id+'">삭제</button>' : '') +
           '</div></td>' +
         '</tr>';
       }).join("") + "</tbody>";
@@ -1810,7 +2127,9 @@
     // 2) 부서별 성과
     var deptTable = document.getElementById("analysisDeptTable");
     var deptTotals = { activeCount:0, activeAmt:0, wonCount:0, wonAmt:0, lostCount:0, lostAmt:0, holdCount:0 };
-    var deptRows = DEPARTMENTS.map(function(dept){
+    var deptFilterQ = (document.getElementById("anlFilterDept").value||"").trim().toLowerCase();
+    var filteredDepartments = DEPARTMENTS.filter(function(d){ return !deptFilterQ || d.toLowerCase().indexOf(deptFilterQ) !== -1; });
+    var deptRows = filteredDepartments.map(function(dept){
       var deptDeals = deals.filter(function(d){ return d.department===dept; });
       var activeList = deptDeals.filter(function(d){ return ACTIVE_STAGE_IDS.indexOf(d.stage)!==-1; });
       var activeAmt = activeList.reduce(function(s,d){return s+(Number(d.amount)||0);},0);
@@ -1847,7 +2166,11 @@
 
     // 3) 담당자별 x 단계별 현황
     var ownerTable = document.getElementById("analysisOwnerTable");
-    var ownerRows = OWNERS.map(function(o){
+    var ownerFilterQ = (document.getElementById("anlFilterOwner").value||"").trim().toLowerCase();
+    var filteredOwners = OWNERS.filter(function(o){
+      return !ownerFilterQ || o.name.toLowerCase().indexOf(ownerFilterQ) !== -1 || o.dept.toLowerCase().indexOf(ownerFilterQ) !== -1;
+    });
+    var ownerRows = filteredOwners.map(function(o){
       var ownerDeals = deals.filter(function(d){ return d.owner===o.name; });
       var stageCounts = ACTIVE_STAGE_IDS.map(function(sid){ return ownerDeals.filter(function(d){ return d.stage===sid; }).length; });
       var activeList = ownerDeals.filter(function(d){ return ACTIVE_STAGE_IDS.indexOf(d.stage)!==-1; });
@@ -1868,7 +2191,297 @@
     makeTableResizable(ownerTable);
   }
 
-  loadFromSupabase();
+  /* ---------- 딜 변경 이력 (FR-DEAL-04) ---------- */
+
+  function fmtHistoryValue(field, val){
+    if(val===undefined || val===null || val==="") return "(없음)";
+    if(field==="stage") return stageById(val).name;
+    if(field==="amount") return won(val);
+    return String(val);
+  }
+  function diffDealFields(oldD, newD){
+    var fields = ["company","department","owner","stage","amount","closeDate","nextActionDate","nextActionNote","competitor","competitiveEdge","confirmedDate","memo"];
+    var changes = [];
+    fields.forEach(function(f){
+      var ov = oldD ? oldD[f] : undefined;
+      var nv = newD ? newD[f] : undefined;
+      if(String(ov==null?"":ov) !== String(nv==null?"":nv)) changes.push({field:f, oldVal:ov, newVal:nv});
+    });
+    return changes;
+  }
+  async function logDealHistory(dealId, changes, changeType){
+    if(!changes || !changes.length) return;
+    var rows = changes.map(function(c){
+      return {
+        deal_id: dealId,
+        change_type: changeType || "updated",
+        field_changed: FIELD_LABELS[c.field] || c.field,
+        old_value: fmtHistoryValue(c.field, c.oldVal),
+        new_value: fmtHistoryValue(c.field, c.newVal)
+      };
+    });
+    try{ await supabaseClient.from("deal_history").insert(rows); }catch(e){ /* 이력 기록 실패는 무시 */ }
+  }
+
+  async function openHistoryModal(dealId){
+    var deal = dealById(dealId);
+    document.getElementById("historyDealLabel").textContent = deal ? (deal.dealCode + " · " + deal.company) : "";
+    var table = document.getElementById("historyTable");
+    table.innerHTML = '<tbody><tr><td class="loading-hint">불러오는 중...</td></tr></tbody>';
+    document.getElementById("historyOverlay").classList.add("open");
+    try{
+      var res = await supabaseClient.from("deal_history")
+        .select("*, app_users(name,email)")
+        .eq("deal_id", dealId)
+        .order("changed_at", {ascending:false});
+      if(res.error) throw res.error;
+      var rows = res.data || [];
+      var head = '<thead><tr><th>일시</th><th>변경자</th><th>항목</th><th>이전</th><th>이후</th></tr></thead>';
+      var body = rows.length ? "<tbody>" + rows.map(function(h){
+        var who = h.app_users ? (h.app_users.name || h.app_users.email) : "-";
+        var fieldLabel = h.field_changed || (h.change_type === "created" ? "생성" : "-");
+        return '<tr><td>'+escapeHtml(String(h.changed_at).slice(0,16).replace("T"," "))+'</td><td>'+escapeHtml(who)+'</td>' +
+          '<td>'+escapeHtml(fieldLabel)+'</td>' +
+          '<td class="wrap">'+escapeHtml(h.old_value||"-")+'</td><td class="wrap">'+escapeHtml(h.new_value||"-")+'</td></tr>';
+      }).join("") + "</tbody>" : '<tbody><tr><td colspan="5" class="loading-hint">변경 이력이 없습니다.</td></tr></tbody>';
+      table.innerHTML = head + body;
+    }catch(err){
+      table.innerHTML = '<tbody><tr><td class="loading-hint">이력을 불러오지 못했습니다.</td></tr></tbody>';
+    }
+  }
+  document.getElementById("historyCloseBtn").addEventListener("click", function(){
+    document.getElementById("historyOverlay").classList.remove("open");
+  });
+  document.getElementById("historyOverlay").addEventListener("click", function(e){
+    if(e.target === document.getElementById("historyOverlay")) document.getElementById("historyOverlay").classList.remove("open");
+  });
+
+  /* ---------- 사용자 관리 (관리자 전용, FR-AUTH-01/02) ---------- */
+
+  async function renderAdmin(){
+    var usersTable = document.getElementById("adminUsersTable");
+    var accessTable = document.getElementById("adminAccessTable");
+    try{
+      var usersRes = await supabaseClient.from("app_users").select("*").order("created_at", {ascending:false});
+      if(usersRes.error) throw usersRes.error;
+      var head = '<thead><tr><th>이메일</th><th>이름</th><th>부서</th><th>역할</th><th>승인</th><th>가입일</th><th></th></tr></thead>';
+      var body = "<tbody>" + usersRes.data.map(function(u){
+        var deptOpts = '<option value=""' + (!u.department?' selected':'') + '>-</option>' +
+          DEPARTMENTS.map(function(d){ return '<option value="'+escapeHtml(d)+'"'+(d===u.department?' selected':'')+'>'+escapeHtml(d)+'</option>'; }).join("");
+        var roleOpts = Object.keys(ROLE_LABELS).map(function(r){ return '<option value="'+r+'"'+(r===u.role?' selected':'')+'>'+ROLE_LABELS[r]+'</option>'; }).join("");
+        return '<tr data-uid="'+u.id+'">' +
+          '<td class="wrap">'+escapeHtml(u.email)+'</td>' +
+          '<td><input type="text" class="admin-name-input" value="'+escapeHtml(u.name||"")+'" style="width:88px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;"></td>' +
+          '<td><select class="admin-dept-select">'+deptOpts+'</select></td>' +
+          '<td><select class="admin-role-select">'+roleOpts+'</select></td>' +
+          '<td><input type="checkbox" class="admin-approved-check" '+(u.is_approved?'checked':'')+' style="width:auto;"></td>' +
+          '<td>'+escapeHtml(String(u.created_at).slice(0,10))+'</td>' +
+          '<td><button type="button" class="icon-btn admin-save-btn">저장</button></td>' +
+        '</tr>';
+      }).join("") + "</tbody>";
+      usersTable.innerHTML = head + body;
+      makeTableResizable(usersTable);
+      usersTable.querySelectorAll(".admin-save-btn").forEach(function(btn){
+        btn.addEventListener("click", async function(){
+          var tr = btn.closest("tr");
+          var uid = tr.dataset.uid;
+          var name = tr.querySelector(".admin-name-input").value.trim();
+          var department = tr.querySelector(".admin-dept-select").value;
+          var role = tr.querySelector(".admin-role-select").value;
+          var isApprovedVal = tr.querySelector(".admin-approved-check").checked;
+          btn.disabled = true;
+          try{
+            var res = await supabaseClient.from("app_users").update({
+              name: name || null, department: department || null, role: role, is_approved: isApprovedVal
+            }).eq("id", uid);
+            if(res.error) throw res.error;
+            hideError();
+          }catch(err){
+            showError("사용자 저장 실패: " + (err && err.message ? err.message : err));
+          }finally{
+            btn.disabled = false;
+          }
+        });
+      });
+    }catch(err){
+      usersTable.innerHTML = '<tbody><tr><td class="loading-hint">사용자 목록을 불러오지 못했습니다.</td></tr></tbody>';
+    }
+
+    try{
+      var accRes = await supabaseClient.from("access_log").select("*, app_users(name,email)").order("created_at",{ascending:false}).limit(50);
+      if(accRes.error) throw accRes.error;
+      var ahead = '<thead><tr><th>일시</th><th>사용자</th><th>이벤트</th></tr></thead>';
+      var abody = "<tbody>" + accRes.data.map(function(a){
+        var who = a.app_users ? (a.app_users.name || a.app_users.email) : "-";
+        return '<tr><td>'+escapeHtml(String(a.created_at).slice(0,16).replace("T"," "))+'</td><td>'+escapeHtml(who)+'</td><td>'+escapeHtml(a.event_type)+'</td></tr>';
+      }).join("") + "</tbody>";
+      accessTable.innerHTML = ahead + abody;
+      makeTableResizable(accessTable);
+    }catch(err){
+      accessTable.innerHTML = '<tbody><tr><td class="loading-hint">접속 이력을 불러오지 못했습니다.</td></tr></tbody>';
+    }
+  }
+
+  /* ---------- 역할 기반 UI 제어 ---------- */
+
+  function applyRoleUI(){
+    if(!currentUser) return;
+    document.getElementById("userBadge").innerHTML =
+      "<b>" + escapeHtml(currentUser.name || currentUser.email) + "</b><span>" +
+      escapeHtml(ROLE_LABELS[currentUser.role] || currentUser.role) +
+      (currentUser.department ? " · " + escapeHtml(currentUser.department) : "") + "</span>";
+
+    var isViewer = currentUser.role === "viewer";
+    document.querySelectorAll('.main-nav button[data-view="pipeline"], .main-nav button[data-view="activities"]').forEach(function(btn){
+      btn.style.display = isViewer ? "none" : "";
+    });
+    document.getElementById("adminNavBtn").style.display = currentUser.role === "admin" ? "" : "none";
+    document.getElementById("newDealBtn").style.display = canCreateDeal() ? "" : "none";
+    document.getElementById("newActivityBtn").style.display = canCreateDeal() ? "" : "none";
+
+    if(isViewer && (currentView === "pipeline" || currentView === "activities")){
+      switchView("dashboard");
+    }
+  }
+
+  /* ---------- 인증 (FR-AUTH) ---------- */
+
+  function populateAuthSelects(){
+    ["signup_department","profile_department"].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.innerHTML = DEPARTMENTS.map(function(d){ return '<option value="'+escapeHtml(d)+'">'+escapeHtml(d)+'</option>'; }).join("");
+    });
+  }
+
+  function showScreen(name){
+    document.getElementById("authScreen").style.display = name === "auth" ? "flex" : "none";
+    document.getElementById("pendingScreen").style.display = name === "pending" ? "flex" : "none";
+    document.getElementById("appShell").style.display = name === "app" ? "block" : "none";
+  }
+
+  async function fetchProfile(userId){
+    var res = await supabaseClient.from("app_users").select("*").eq("id", userId).single();
+    if(res.error) return null;
+    return res.data;
+  }
+
+  async function handleAuthChange(){
+    if(!authSession){
+      currentUser = null;
+      showScreen("auth");
+      return;
+    }
+    var profile = await fetchProfile(authSession.user.id);
+    if(!profile){
+      showScreen("pending");
+      return;
+    }
+    currentUser = {
+      id: profile.id, email: profile.email, name: profile.name,
+      department: profile.department, role: profile.role, isApproved: profile.is_approved
+    };
+    var pn = document.getElementById("profile_name");
+    var pd = document.getElementById("profile_department");
+    if(pn) pn.value = currentUser.name || "";
+    if(pd && currentUser.department) pd.value = currentUser.department;
+
+    if(!currentUser.isApproved || currentUser.role === "pending"){
+      showScreen("pending");
+      return;
+    }
+    showScreen("app");
+    loadFromSupabase();
+  }
+
+  async function initAuth(){
+    populateAuthSelects();
+    supabaseClient.auth.onAuthStateChange(function(event, s){
+      var isNewLogin = event === "SIGNED_IN" && (!authSession || !s || authSession.user.id !== s.user.id);
+      authSession = s;
+      if(isNewLogin && s){
+        supabaseClient.from("access_log").insert({ user_id: s.user.id, event_type: "login" }).then(function(){});
+      }
+      handleAuthChange();
+    });
+  }
+
+  document.querySelectorAll(".auth-tab").forEach(function(tab){
+    tab.addEventListener("click", function(){
+      document.querySelectorAll(".auth-tab").forEach(function(t){ t.classList.toggle("active", t === tab); });
+      document.getElementById("loginForm").style.display = tab.dataset.tab === "login" ? "block" : "none";
+      document.getElementById("signupForm").style.display = tab.dataset.tab === "signup" ? "block" : "none";
+    });
+  });
+
+  document.getElementById("loginForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    var msg = document.getElementById("loginMsg");
+    msg.textContent = ""; msg.className = "auth-msg";
+    var email = document.getElementById("login_email").value.trim();
+    var password = document.getElementById("login_password").value;
+    var btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    try{
+      var res = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
+      if(res.error) throw res.error;
+    }catch(err){
+      msg.textContent = "로그인 실패: " + (err && err.message ? err.message : err);
+      msg.className = "auth-msg error";
+    }finally{
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById("signupForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    var msg = document.getElementById("signupMsg");
+    msg.textContent = ""; msg.className = "auth-msg";
+    var email = document.getElementById("signup_email").value.trim();
+    var password = document.getElementById("signup_password").value;
+    var name = document.getElementById("signup_name").value.trim();
+    var department = document.getElementById("signup_department").value;
+    var btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    try{
+      var res = await supabaseClient.auth.signUp({ email: email, password: password });
+      if(res.error) throw res.error;
+      if(res.data.session){
+        await supabaseClient.rpc("complete_profile", { p_name: name, p_department: department });
+        msg.textContent = "가입 완료. 관리자 승인을 기다려주세요.";
+        msg.className = "auth-msg ok";
+      } else {
+        msg.textContent = "가입 완료. 받으신 이메일에서 인증 후 로그인해주세요.";
+        msg.className = "auth-msg ok";
+      }
+    }catch(err){
+      msg.textContent = "가입 실패: " + (err && err.message ? err.message : err);
+      msg.className = "auth-msg error";
+    }finally{
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById("profileForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    var msg = document.getElementById("profileMsg");
+    msg.textContent = ""; msg.className = "auth-msg";
+    var name = document.getElementById("profile_name").value.trim();
+    var department = document.getElementById("profile_department").value;
+    try{
+      var res = await supabaseClient.rpc("complete_profile", { p_name: name, p_department: department });
+      if(res.error) throw res.error;
+      msg.textContent = "저장되었습니다.";
+      msg.className = "auth-msg ok";
+    }catch(err){
+      msg.textContent = "저장 실패: " + (err && err.message ? err.message : err);
+      msg.className = "auth-msg error";
+    }
+  });
+
+  document.getElementById("pendingLogoutBtn").addEventListener("click", function(){ supabaseClient.auth.signOut(); });
+  document.getElementById("logoutBtn").addEventListener("click", function(){ supabaseClient.auth.signOut(); });
+
+  initAuth();
 })();
 </script>
 </body>
