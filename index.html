@@ -3120,7 +3120,11 @@
         options: { emailRedirectTo: window.location.origin + window.location.pathname }
       });
       if(res.error) throw res.error;
-      if(res.data.session){
+      var isDuplicate = res.data.user && res.data.user.identities && res.data.user.identities.length === 0;
+      if(isDuplicate){
+        msg.textContent = "이미 가입된 이메일입니다. 로그인해주세요. 비밀번호를 잊으셨다면 로그인 화면에서 재설정할 수 있습니다.";
+        msg.className = "auth-msg error";
+      } else if(res.data.session){
         await supabaseClient.rpc("complete_profile", { p_name: name, p_department: department });
         msg.textContent = "가입 완료. 관리자 승인을 기다려주세요.";
         msg.className = "auth-msg ok";
