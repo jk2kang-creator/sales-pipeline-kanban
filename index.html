@@ -2326,7 +2326,6 @@
     downloadWorkbook([{ name:"활동이력", rows: buildActivitiesExportRows(filteredActivities()) }], "활동이력");
   });
   document.getElementById("activityCancelBtn").addEventListener("click", closeActivityModal);
-  activityOverlay.addEventListener("click", function(e){ if(e.target === activityOverlay) closeActivityModal(); });
 
   activityDeleteBtn.addEventListener("click", function(){
     if(!editingActivityId) return;
