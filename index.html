@@ -2850,19 +2850,25 @@
         var department = tr.querySelector(".admin-dept-select").value;
         var role = tr.querySelector(".admin-role-select").value;
         var isApprovedVal = tr.querySelector(".admin-approved-check").checked;
+        var originalLabel = btn.textContent;
         btn.disabled = true;
         try{
           var res = await supabaseClient.from("app_users").update({
             name: name || null, department: department || null, role: role, is_approved: isApprovedVal
-          }).eq("id", uid);
+          }).eq("id", uid).select();
           if(res.error) throw res.error;
+          if(!res.data || !res.data.length){
+            throw new Error("변경 권한이 없거나 대상 사용자를 찾을 수 없습니다.");
+          }
           hideError();
           var raw = adminUsersRaw.find(function(u){ return u.id === uid; });
           if(raw){ raw.name = name || null; raw.department = department || null; raw.role = role; raw.is_approved = isApprovedVal; }
-          renderAdminUsersTable();
+          btn.textContent = "저장됨";
+          setTimeout(function(){ renderAdminUsersTable(); }, 900);
+          return;
         }catch(err){
           showError("사용자 저장 실패: " + (err && err.message ? err.message : err));
-        }finally{
+          btn.textContent = originalLabel;
           btn.disabled = false;
         }
       });
