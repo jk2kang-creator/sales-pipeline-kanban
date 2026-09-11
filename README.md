@@ -38,6 +38,7 @@
 1. `supabase_schema.sql` — `stages`/`deals` 기본 테이블, RLS, 7단계 기준정보 생성
 2. `migration_02_excel_schema.sql` — `deals` 테이블에 엑셀 컬럼 추가, `activities`(활동 이력) 테이블 생성, 엑셀 실데이터 20건 + 활동이력 10건 삽입
 3. `migration_03_auth_and_history.sql` — 사용자 인증·권한(`app_users`), 딜 변경 이력(`deal_history`), 접속 이력(`access_log`) 테이블과 역할 기반 RLS 정책 생성. **실행 후 파일 맨 아래 안내에 따라 최초 관리자를 지정해야 합니다.**
+4. `migration_04_manager_team_visibility.sql` — 매니저가 딜 등록 시 "담당자" 드롭다운에서 본인 부서 팀원을 선택할 수 있도록, 같은 부서 팀원의 `app_users` 조회를 허용하는 RLS 정책 보완
 
 `index.html` 하단 스크립트의 `SUPABASE_URL`, `SUPABASE_ANON_KEY` 값을 본인 프로젝트 값으로 교체해 사용하세요.
 

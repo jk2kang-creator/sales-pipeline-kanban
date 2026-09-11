@@ -1243,22 +1243,44 @@
   var ALERT_STALE_DAYS = 45;
   var ALERT_IMMINENT_DAYS = 7;
 
-  var DEPARTMENTS = ["영업1팀","영업2팀","영업3팀","솔루션팀","파트너팀"];
-  var BUSINESS_UNITS = ["S&P사업본부"];
+  var BUSINESS_UNITS = ["BTS사업본부","DT사업본부","NBS사업본부","CDS사업본부","SDI사업본부","JFT사업본부","Account사업본부","Security사업본부"];
   var UNIT_OF_DEPT = {
-    "영업1팀":"S&P사업본부", "영업2팀":"S&P사업본부", "영업3팀":"S&P사업본부",
-    "솔루션팀":"S&P사업본부", "파트너팀":"S&P사업본부"
+    "SI사업부":"BTS사업본부", "매니지드사업부":"BTS사업본부",
+    "NPS사업부":"DT사업본부", "NS사업부":"DT사업본부", "NCI사업부":"DT사업본부", "SIG사업부":"DT사업본부",
+    "중부사업부":"NBS사업본부", "영남사업부":"NBS사업본부",
+    "솔루션사업1부":"CDS사업본부", "솔루션사업2부":"CDS사업본부",
+    "SDI사업부":"SDI사업본부",
+    "OCI사업부":"JFT사업본부", "AI사업부":"JFT사업본부", "Infra사업부":"JFT사업본부",
+    "Account사업부":"Account사업본부",
+    "Security사업부":"Security사업본부"
   };
+  var DEPARTMENTS = Object.keys(UNIT_OF_DEPT);
   function unitOfDept(dept){ return UNIT_OF_DEPT[dept] || "-"; }
-  var OWNERS = [
-    {name:"김철수", dept:"영업1팀"},
-    {name:"박민준", dept:"영업1팀"},
-    {name:"이영희", dept:"영업2팀"},
-    {name:"최지연", dept:"영업3팀"},
-    {name:"정대호", dept:"솔루션팀"},
-    {name:"오준혁", dept:"솔루션팀"},
-    {name:"강수진", dept:"파트너팀"}
-  ];
+  var teamOwners = [];
+  async function loadTeamOwners(){
+    if(!currentUser){ teamOwners = []; return; }
+    try{
+      var res;
+      if(currentUser.role === "admin"){
+        res = await supabaseClient.from("app_users").select("name,department")
+          .eq("is_approved", true).in("role", ["admin","manager","rep"]);
+      } else if(currentUser.role === "manager"){
+        res = await supabaseClient.from("app_users").select("name,department")
+          .eq("is_approved", true).eq("department", currentUser.department).in("role", ["manager","rep"]);
+      } else {
+        res = { data: [] };
+      }
+      if(res.error) throw res.error;
+      teamOwners = (res.data||[]).filter(function(u){ return u.name; })
+        .map(function(u){ return { name:u.name, dept:u.department }; });
+    }catch(e){
+      teamOwners = [];
+    }
+    if(currentUser.name && !teamOwners.some(function(o){ return o.name === currentUser.name; })){
+      teamOwners.push({ name:currentUser.name, dept:currentUser.department });
+    }
+    teamOwners.sort(function(a,b){ return (a.dept||"").localeCompare(b.dept||"") || a.name.localeCompare(b.name); });
+  }
   var ACTIVITY_TYPES = ["미팅","전화","이메일","제안발표","데모·PoC","현장방문","계약협의","기타"];
 
   var STAGE_GUIDE = [
@@ -1650,6 +1672,7 @@
       activities = activitiesRes.data.map(mapRowToActivity);
       loaded = true;
       hideError();
+      await loadTeamOwners();
       populateStaticSelects();
       renderAll();
     }catch(err){
@@ -1860,8 +1883,8 @@
     }
     var deptSelect = document.getElementById("f_department");
     deptSelect.innerHTML = deptOptGroups(null, deptOptions);
-    // 모달 - 담당자: rep는 본인만 선택 가능 (RLS가 owner=본인이름을 강제하므로,
-    // OWNERS 예시 목록에 실제 가입자 이름이 없어도 항상 본인 이름을 옵션으로 넣어야 함)
+    // 모달 - 담당자: rep는 본인만 선택 가능 (RLS가 owner=본인이름을 강제함).
+    // manager/admin은 실제 가입된 팀원 목록(teamOwners)에서 선택.
     var ownerSelect = document.getElementById("f_owner");
     if(role === "rep"){
       var myName = (currentUser && currentUser.name) || "";
@@ -1869,11 +1892,7 @@
       ownerSelect.disabled = true;
     } else {
       ownerSelect.disabled = false;
-      var ownerOptions = OWNERS;
-      if(role === "manager"){
-        ownerOptions = OWNERS.filter(function(o){ return o.dept === currentUser.department; });
-      }
-      ownerSelect.innerHTML = ownerOptions.map(function(o){ return '<option value="'+escapeHtml(o.name)+'" data-dept="'+escapeHtml(o.dept)+'">'+escapeHtml(o.name)+' ('+escapeHtml(o.dept)+')</option>'; }).join("");
+      ownerSelect.innerHTML = teamOwners.map(function(o){ return '<option value="'+escapeHtml(o.name)+'" data-dept="'+escapeHtml(o.dept||"")+'">'+escapeHtml(o.name)+' ('+escapeHtml(o.dept||"-")+')</option>'; }).join("");
     }
     // 모달 - 단계
     var stageSelect = document.getElementById("f_stage");
@@ -2203,7 +2222,7 @@
     document.getElementById("modalTitle").textContent = deal ? "딜 수정" : "새 딜 추가";
     document.getElementById("modalDealCode").textContent = deal ? (deal.dealCode||"-") : ("자동 채번 예정: " + nextDealCode());
     var defaultDept = (currentUser && (currentUser.role === "rep" || currentUser.role === "manager")) ? currentUser.department : DEPARTMENTS[0];
-    var defaultOwner = (currentUser && currentUser.role === "rep") ? currentUser.name : (OWNERS[0] && OWNERS[0].name);
+    var defaultOwner = (currentUser && currentUser.role === "rep") ? currentUser.name : (teamOwners[0] && teamOwners[0].name);
     document.getElementById("f_company").value = deal ? deal.company : "";
     document.getElementById("f_department").value = deal ? (deal.department||defaultDept) : defaultDept;
     document.getElementById("f_owner").value = deal ? deal.owner : defaultOwner;
@@ -2709,8 +2728,8 @@
     // 3) 담당자별 x 단계별 현황
     var ownerTable = document.getElementById("analysisOwnerTable");
     var ownerFilterQ = (document.getElementById("anlFilterOwner").value||"").trim().toLowerCase();
-    var filteredOwners = OWNERS.filter(function(o){
-      return !ownerFilterQ || o.name.toLowerCase().indexOf(ownerFilterQ) !== -1 || o.dept.toLowerCase().indexOf(ownerFilterQ) !== -1;
+    var filteredOwners = teamOwners.filter(function(o){
+      return !ownerFilterQ || o.name.toLowerCase().indexOf(ownerFilterQ) !== -1 || (o.dept||"").toLowerCase().indexOf(ownerFilterQ) !== -1;
     });
     var ownerChartData = [];
     var ownerExportRows = [];
