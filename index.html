@@ -412,8 +412,8 @@
   table.data-table th:last-child{ border-right:none; }
   table.data-table td{
     padding:9px 10px;
-    border-bottom:1px solid #EEF3F8;
-    border-right:1px solid #EEF3F8;
+    border-bottom:1px solid var(--line);
+    border-right:1px solid var(--line);
     vertical-align:middle;
     white-space:nowrap;
     text-align:center;
@@ -423,6 +423,8 @@
   table.data-table td:last-child{ border-right:none; }
   table.data-table td.wrap{ white-space:normal; min-width:160px; text-align:left; }
   table.data-table td.num, table.data-table th.num{ text-align:right; font-variant-numeric:tabular-nums; }
+  table.data-table tbody tr:nth-child(even){ background:#F7FAFD; }
+  table.data-table th.actions-col, table.data-table td.actions-col{ min-width:132px; overflow:visible; }
   table.data-table tbody tr:hover{ background:var(--mist); }
   .col-resizer{
     position:absolute;
@@ -1950,7 +1952,7 @@
     var head = '<thead><tr>' +
       '<th>딜ID</th><th>고객사명</th><th>영업부서</th><th>담당자</th><th>단계</th><th>딜상태</th>' +
       '<th class="num">예상금액</th><th>예상수주일</th><th>최종업데이트</th><th class="num">경과일</th><th>다음액션일</th><th>D-Day</th>' +
-      '<th>다음 액션 내용</th><th>경쟁사</th><th>당사 경쟁우위</th><th>확정일</th><th>비고</th><th>점검알림</th><th></th>' +
+      '<th>다음 액션 내용</th><th>경쟁사</th><th>당사 경쟁우위</th><th>확정일</th><th>비고</th><th>점검알림</th><th class="actions-col"></th>' +
       '</tr></thead>';
 
     var body = "";
@@ -1980,7 +1982,7 @@
           '<td>' + (d.confirmedDate||"-") + '</td>' +
           '<td class="wrap">' + escapeHtml(d.memo||"-") + '</td>' +
           '<td>' + (meta.alert ? chip(meta.alert.label, ALERT_COLORS[meta.alert.level]||"#9aa0ac") : '-') + '</td>' +
-          '<td><div class="cell-actions">' +
+          '<td class="actions-col"><div class="cell-actions">' +
             (editable ? '<button type="button" class="icon-btn edit-row-btn" data-id="'+d.id+'">수정</button><button type="button" class="icon-btn del del-row-btn" data-id="'+d.id+'">삭제</button>' : '') +
             '<button type="button" class="icon-btn hist-row-btn" data-id="'+d.id+'">이력</button>' +
           '</div></td>' +
@@ -2423,7 +2425,7 @@
       table.innerHTML = '<tbody><tr><td class="loading-hint">불러오는 중...</td></tr></tbody>';
       return;
     }
-    var head = '<thead><tr><th>딜ID</th><th>고객사명</th><th>영업부서</th><th>담당자</th><th>활동일</th><th>활동유형</th><th>활동내용</th><th>다음액션</th><th>비고</th><th></th></tr></thead>';
+    var head = '<thead><tr><th>딜ID</th><th>고객사명</th><th>영업부서</th><th>담당자</th><th>활동일</th><th>활동유형</th><th>활동내용</th><th>다음액션</th><th>비고</th><th class="actions-col"></th></tr></thead>';
     var rows = filteredActivities();
     var body;
     if(rows.length === 0){
@@ -2441,7 +2443,7 @@
           '<td class="wrap">' + escapeHtml(a.content||"-") + '</td>' +
           '<td class="wrap">' + escapeHtml(a.nextAction||"-") + '</td>' +
           '<td class="wrap">' + escapeHtml(a.memo||"-") + '</td>' +
-          '<td><div class="cell-actions">' +
+          '<td class="actions-col"><div class="cell-actions">' +
             (deal && canEditDeal(deal) ? '<button type="button" class="icon-btn edit-act-btn" data-id="'+a.id+'">수정</button><button type="button" class="icon-btn del del-act-btn" data-id="'+a.id+'">삭제</button>' : '') +
           '</div></td>' +
         '</tr>';
