@@ -1833,15 +1833,21 @@
     }
     var deptSelect = document.getElementById("f_department");
     deptSelect.innerHTML = deptOptGroups(null, deptOptions);
-    // 모달 - 담당자: rep는 본인만 선택 가능
-    var ownerOptions = OWNERS;
-    if(role === "rep"){
-      ownerOptions = OWNERS.filter(function(o){ return o.name === currentUser.name; });
-    } else if(role === "manager"){
-      ownerOptions = OWNERS.filter(function(o){ return o.dept === currentUser.department; });
-    }
+    // 모달 - 담당자: rep는 본인만 선택 가능 (RLS가 owner=본인이름을 강제하므로,
+    // OWNERS 예시 목록에 실제 가입자 이름이 없어도 항상 본인 이름을 옵션으로 넣어야 함)
     var ownerSelect = document.getElementById("f_owner");
-    ownerSelect.innerHTML = ownerOptions.map(function(o){ return '<option value="'+escapeHtml(o.name)+'" data-dept="'+escapeHtml(o.dept)+'">'+escapeHtml(o.name)+' ('+escapeHtml(o.dept)+')</option>'; }).join("");
+    if(role === "rep"){
+      var myName = (currentUser && currentUser.name) || "";
+      ownerSelect.innerHTML = '<option value="'+escapeHtml(myName)+'" data-dept="'+escapeHtml(currentUser.department||"")+'">'+escapeHtml(myName)+' ('+escapeHtml(currentUser.department||"")+')</option>';
+      ownerSelect.disabled = true;
+    } else {
+      ownerSelect.disabled = false;
+      var ownerOptions = OWNERS;
+      if(role === "manager"){
+        ownerOptions = OWNERS.filter(function(o){ return o.dept === currentUser.department; });
+      }
+      ownerSelect.innerHTML = ownerOptions.map(function(o){ return '<option value="'+escapeHtml(o.name)+'" data-dept="'+escapeHtml(o.dept)+'">'+escapeHtml(o.name)+' ('+escapeHtml(o.dept)+')</option>'; }).join("");
+    }
     // 모달 - 단계
     var stageSelect = document.getElementById("f_stage");
     stageSelect.innerHTML = STAGES.map(function(s){ return '<option value="'+s.id+'">'+escapeHtml(s.name)+'</option>'; }).join("");
