@@ -541,6 +541,31 @@
   .principle-item .p-title{ font-weight:700; font-size:12.5px; margin-bottom:2px; }
   .principle-item .p-body{ font-size:11.5px; color:var(--text-dim); }
 
+  /* ---------- 딜 변경 이력 (날짜별 타임라인) ---------- */
+  .history-timeline{ max-height:62vh; overflow:auto; padding:2px 2px 4px; }
+  .hist-day{ margin-bottom:20px; }
+  .hist-day:last-child{ margin-bottom:4px; }
+  .hist-day-label{
+    font-size:12.5px; font-weight:800; color:var(--brand2);
+    padding-bottom:6px; margin-bottom:10px; border-bottom:1px solid var(--line);
+  }
+  .hist-day-label .cnt{ color:var(--muted); font-weight:600; margin-left:6px; }
+  .hist-event{ display:flex; gap:12px; }
+  .hist-event .he-rail{ display:flex; flex-direction:column; align-items:center; flex:none; }
+  .hist-event .he-dot{ width:9px; height:9px; border-radius:50%; background:var(--brand2); margin-top:14px; flex:none; }
+  .hist-event .he-connector{ width:2px; flex:1; background:var(--line); margin:2px 0; min-height:10px; }
+  .hist-event:last-child .he-connector{ display:none; }
+  .hist-event .he-card{
+    flex:1; min-width:0; background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    padding:10px 13px; margin-bottom:10px;
+  }
+  .hist-event .he-meta{ display:flex; justify-content:space-between; gap:8px; font-size:11px; color:var(--muted); margin-bottom:7px; }
+  .hist-event .he-fields{ display:flex; flex-direction:column; gap:5px; }
+  .hist-field{ font-size:12.5px; color:var(--text); line-height:1.5; }
+  .hist-field .fname{ font-weight:700; margin-right:6px; }
+  .hist-field .fval{ color:var(--text-dim); }
+  .hist-field .arrow{ color:var(--muted); margin:0 5px; }
+
   /* ---------- Kanban (reused) ---------- */
   .board-wrap{ overflow-x:auto; }
   .board{
@@ -1057,7 +1082,7 @@
   <div class="modal">
     <h2>딜 변경 이력</h2>
     <p class="modal-sub" id="historyDealLabel"></p>
-    <div class="table-scroll"><table class="data-table" id="historyTable"></table></div>
+    <div class="history-timeline" id="historyTimeline"></div>
     <div class="modal-actions" style="justify-content:flex-end;">
       <button type="button" class="btn" id="historyCloseBtn">닫기</button>
     </div>
@@ -2764,11 +2789,76 @@
     try{ await supabaseClient.from("deal_history").insert(rows); }catch(e){ /* 이력 기록 실패는 무시 */ }
   }
 
+  var HIST_WEEKDAYS = ["일","월","화","수","목","금","토"];
+  function formatHistDayLabel(dateStr){
+    var d = parseDateOnly(dateStr);
+    if(!d) return dateStr;
+    return d.getFullYear() + "년 " + (d.getMonth()+1) + "월 " + d.getDate() + "일 (" + HIST_WEEKDAYS[d.getDay()] + ")";
+  }
+  function groupHistoryRows(rows){
+    var days = [];
+    var dayMap = {}, eventMap = {};
+    rows.forEach(function(h){
+      var day = String(h.changed_at).slice(0,10);
+      if(!dayMap[day]){
+        dayMap[day] = { date: day, events: [] };
+        days.push(dayMap[day]);
+      }
+      var eventKey = day + "|" + h.changed_at + "|" + (h.changed_by||"");
+      if(!eventMap[eventKey]){
+        eventMap[eventKey] = {
+          changedAt: h.changed_at,
+          who: h.app_users ? (h.app_users.name || h.app_users.email) : "-",
+          changeType: h.change_type,
+          fields: []
+        };
+        dayMap[day].events.push(eventMap[eventKey]);
+      }
+      eventMap[eventKey].fields.push({
+        label: h.field_changed || "변경",
+        oldVal: h.old_value, newVal: h.new_value
+      });
+    });
+    return days;
+  }
+  function renderHistoryTimeline(rows){
+    if(!rows.length) return '<div class="loading-hint">변경 이력이 없습니다.</div>';
+    var days = groupHistoryRows(rows);
+    return days.map(function(day){
+      var eventsHtml = day.events.map(function(ev, idx){
+        var timeLabel = String(ev.changedAt).slice(11,16);
+        var fieldsHtml;
+        if(ev.changeType === "created"){
+          var createdVal = (ev.fields[0] && ev.fields[0].newVal) || "-";
+          fieldsHtml = '<div class="hist-field">딜이 최초 등록되었습니다 (고객사: <b>'+escapeHtml(createdVal)+'</b>)</div>';
+        } else {
+          fieldsHtml = ev.fields.map(function(f){
+            return '<div class="hist-field"><span class="fname">'+escapeHtml(f.label)+'</span>' +
+              '<span class="fval">'+escapeHtml(f.oldVal||"(없음)")+'</span>' +
+              '<span class="arrow">→</span>' +
+              '<span class="fval">'+escapeHtml(f.newVal||"(없음)")+'</span></div>';
+          }).join("");
+        }
+        return '<div class="hist-event">' +
+          '<div class="he-rail"><div class="he-dot"></div><div class="he-connector"></div></div>' +
+          '<div class="he-card">' +
+            '<div class="he-meta"><span>'+timeLabel+'</span><span>'+escapeHtml(ev.who)+'</span></div>' +
+            '<div class="he-fields">'+fieldsHtml+'</div>' +
+          '</div>' +
+        '</div>';
+      }).join("");
+      return '<div class="hist-day">' +
+        '<div class="hist-day-label">'+formatHistDayLabel(day.date)+'<span class="cnt">· 변경 '+day.events.length+'건</span></div>' +
+        eventsHtml +
+      '</div>';
+    }).join("");
+  }
+
   async function openHistoryModal(dealId){
     var deal = dealById(dealId);
     document.getElementById("historyDealLabel").textContent = deal ? (deal.dealCode + " · " + deal.company) : "";
-    var table = document.getElementById("historyTable");
-    table.innerHTML = '<tbody><tr><td class="loading-hint">불러오는 중...</td></tr></tbody>';
+    var wrap = document.getElementById("historyTimeline");
+    wrap.innerHTML = '<div class="loading-hint">불러오는 중...</div>';
     document.getElementById("historyOverlay").classList.add("open");
     try{
       var res = await supabaseClient.from("deal_history")
@@ -2776,18 +2866,9 @@
         .eq("deal_id", dealId)
         .order("changed_at", {ascending:false});
       if(res.error) throw res.error;
-      var rows = res.data || [];
-      var head = '<thead><tr><th>일시</th><th>변경자</th><th>항목</th><th>이전</th><th>이후</th></tr></thead>';
-      var body = rows.length ? "<tbody>" + rows.map(function(h){
-        var who = h.app_users ? (h.app_users.name || h.app_users.email) : "-";
-        var fieldLabel = h.field_changed || (h.change_type === "created" ? "생성" : "-");
-        return '<tr><td>'+escapeHtml(String(h.changed_at).slice(0,16).replace("T"," "))+'</td><td>'+escapeHtml(who)+'</td>' +
-          '<td>'+escapeHtml(fieldLabel)+'</td>' +
-          '<td class="wrap">'+escapeHtml(h.old_value||"-")+'</td><td class="wrap">'+escapeHtml(h.new_value||"-")+'</td></tr>';
-      }).join("") + "</tbody>" : '<tbody><tr><td colspan="5" class="loading-hint">변경 이력이 없습니다.</td></tr></tbody>';
-      table.innerHTML = head + body;
+      wrap.innerHTML = renderHistoryTimeline(res.data || []);
     }catch(err){
-      table.innerHTML = '<tbody><tr><td class="loading-hint">이력을 불러오지 못했습니다.</td></tr></tbody>';
+      wrap.innerHTML = '<div class="loading-hint">이력을 불러오지 못했습니다.</div>';
     }
   }
   document.getElementById("historyCloseBtn").addEventListener("click", function(){
