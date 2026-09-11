@@ -3115,7 +3115,10 @@
     var btn = e.target.querySelector('button[type="submit"]');
     btn.disabled = true;
     try{
-      var res = await supabaseClient.auth.signUp({ email: email, password: password });
+      var res = await supabaseClient.auth.signUp({
+        email: email, password: password,
+        options: { emailRedirectTo: window.location.origin + window.location.pathname }
+      });
       if(res.error) throw res.error;
       if(res.data.session){
         await supabaseClient.rpc("complete_profile", { p_name: name, p_department: department });
