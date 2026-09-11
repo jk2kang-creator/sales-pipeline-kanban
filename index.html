@@ -3149,7 +3149,7 @@
     try{
       var res = await supabaseClient.rpc("complete_profile", { p_name: name, p_department: department });
       if(res.error) throw res.error;
-      msg.textContent = "저장되었습니다.";
+      msg.textContent = "정보가 저장되었습니다. 관리자 승인을 계속 기다려주세요.";
       msg.className = "auth-msg ok";
     }catch(err){
       msg.textContent = "저장 실패: " + (err && err.message ? err.message : err);
