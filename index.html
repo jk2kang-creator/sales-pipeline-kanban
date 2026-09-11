@@ -2210,7 +2210,6 @@
     downloadWorkbook([{ name:"딜파이프라인", rows: buildDealsExportRows(filteredDeals()) }], "영업파이프라인");
   });
   document.getElementById("cancelBtn").addEventListener("click", closeModal);
-  overlay.addEventListener("click", function(e){ if(e.target === overlay) closeModal(); });
   document.addEventListener("keydown", function(e){
     if(e.key === "Escape"){
       if(overlay.classList.contains("open")) closeModal();
