@@ -497,6 +497,10 @@
     border-color:var(--accent);
     color:#fff;
   }
+  .pipeline-total-badge{
+    margin-left:auto; align-self:center; font-size:12px; font-weight:700; color:var(--muted);
+  }
+  .pipeline-total-badge b{ color:var(--brand2); font-size:14px; margin-right:2px; }
   .subview{ display:none; }
   .subview.active{ display:block; }
 
@@ -792,8 +796,9 @@
         <input type="email" id="signup_email" required autocomplete="username">
       </div>
       <div class="field">
-        <label>비밀번호 (6자 이상)</label>
-        <input type="password" id="signup_password" required minlength="6" autocomplete="new-password">
+        <label>비밀번호</label>
+        <input type="password" id="signup_password" required minlength="8" autocomplete="new-password">
+        <div class="hint">8자 이상, 영문 대문자·소문자·특수문자를 모두 포함해야 합니다.</div>
       </div>
       <div class="field">
         <label>이름</label>
@@ -867,6 +872,7 @@
     <div class="top-actions">
       <span class="sync-tag" id="syncTag">저장 중...</span>
       <div class="user-badge" id="userBadge"></div>
+      <button class="btn btn-ghost" id="myInfoBtn">내 정보</button>
       <button class="btn btn-ghost" id="refreshBtn">새로고침</button>
       <button class="btn btn-invert" id="newDealBtn">+ 새 딜 추가</button>
       <button class="btn btn-ghost" id="logoutBtn">로그아웃</button>
@@ -933,6 +939,7 @@
     <div class="subtabs" id="pipelineSubtabs">
       <button data-sub="table" class="active">테이블 보기</button>
       <button data-sub="kanban">칸반 보기</button>
+      <span class="pipeline-total-badge" id="pipelineTotalBadge"></span>
     </div>
 
     <div class="subview active" id="sub-table">
@@ -1086,6 +1093,30 @@
     <div class="modal-actions" style="justify-content:flex-end;">
       <button type="button" class="btn" id="historyCloseBtn">닫기</button>
     </div>
+  </div>
+</div>
+
+<!-- ============ 내 정보 수정 모달 ============ -->
+<div class="overlay" id="myInfoOverlay">
+  <div class="modal">
+    <h2>내 정보 수정</h2>
+    <form id="myInfoForm" class="auth-form" style="margin-top:14px;">
+      <div class="field">
+        <label>이메일</label>
+        <input type="email" id="myinfo_email" required>
+        <div class="hint">이메일을 변경하면 새 주소로 인증 메일이 발송되며, 링크를 클릭해야 최종 반영됩니다.</div>
+      </div>
+      <div class="field">
+        <label>부서</label>
+        <select id="myinfo_department"></select>
+        <div class="hint" id="myinfoDeptWarn" style="display:none;color:#a5620f;">부서를 변경하면 관리자 재승인을 받아야 다시 이용할 수 있습니다.</div>
+      </div>
+      <div class="auth-msg" id="myInfoMsg"></div>
+      <div class="modal-actions" style="justify-content:flex-end;">
+        <button type="button" class="btn" id="myInfoCancelBtn">닫기</button>
+        <button type="submit" class="btn btn-primary">저장</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -1371,6 +1402,15 @@
   }
   function canCreateDeal(){
     return !!currentUser && ["admin","manager","rep"].indexOf(currentUser.role) !== -1;
+  }
+  // 제안 단계 이상 진행된 딜은 이력의 연속성을 위해 삭제를 막고,
+  // 발굴·접촉 단계(아직 본격적으로 진행되지 않은 딜)만 삭제를 허용한다.
+  // 관리자는 데이터 정리를 위해 예외적으로 모든 단계에서 삭제 가능.
+  var DELETABLE_STAGE_IDS = ["discovery","contact"];
+  function canDeleteDeal(deal){
+    if(!canEditDeal(deal)) return false;
+    if(currentUser.role === "admin") return true;
+    return DELETABLE_STAGE_IDS.indexOf(deal.stage) !== -1;
   }
 
   var fmtWon = new Intl.NumberFormat("ko-KR");
@@ -1769,6 +1809,12 @@
     document.querySelectorAll(".anl-chart-view").forEach(function(el){ el.style.display = showChart ? "block" : "none"; });
   }
 
+  function updatePipelineTotalBadge(){
+    var badge = document.getElementById("pipelineTotalBadge");
+    if(!badge) return;
+    badge.innerHTML = loaded ? ("<b>" + deals.length + "</b>건 등록") : "";
+  }
+
   function renderAll(){
     bindFiltersOnce();
     applyRoleUI();
@@ -1776,6 +1822,7 @@
     renderPipelineFilters();
     renderPipelineTable();
     renderKanban();
+    updatePipelineTotalBadge();
     renderActivities();
     renderDashboard();
     renderAnalysis();
@@ -2007,6 +2054,7 @@
         var stage = stageById(d.stage);
         var meta = computeDealMeta(d);
         var editable = canEditDeal(d);
+        var deletable = canDeleteDeal(d);
         return '<tr>' +
           '<td>' + escapeHtml(d.dealCode||"-") + '</td>' +
           '<td class="wrap"><b>' + escapeHtml(d.company) + '</b></td>' +
@@ -2027,7 +2075,8 @@
           '<td class="wrap">' + escapeHtml(d.memo||"-") + '</td>' +
           '<td>' + (meta.alert ? chip(meta.alert.label, ALERT_COLORS[meta.alert.level]||"#9aa0ac") : '-') + '</td>' +
           '<td class="actions-col"><div class="cell-actions">' +
-            (editable ? '<button type="button" class="icon-btn edit-row-btn" data-id="'+d.id+'">수정</button><button type="button" class="icon-btn del del-row-btn" data-id="'+d.id+'">삭제</button>' : '') +
+            (editable ? '<button type="button" class="icon-btn edit-row-btn" data-id="'+d.id+'">수정</button>' : '') +
+            (deletable ? '<button type="button" class="icon-btn del del-row-btn" data-id="'+d.id+'">삭제</button>' : '') +
             '<button type="button" class="icon-btn hist-row-btn" data-id="'+d.id+'">이력</button>' +
           '</div></td>' +
         '</tr>';
@@ -2145,6 +2194,7 @@
     var stage = stageById(deal.stage);
     var meta = computeDealMeta(deal);
     var editable = canEditDeal(deal);
+    var deletable = canDeleteDeal(deal);
     var card = document.createElement("div");
     card.className = "deal-card";
     card.draggable = editable;
@@ -2157,7 +2207,8 @@
       (meta.alert ? '<div class="card-alert"></div>' : '') +
       '<div class="meta-row"><span class="owner-badge"><span class="owner-dot"></span><span class="owner-name"></span></span><span class="due"></span></div>' +
       '<div class="card-actions">' +
-        (editable ? '<button type="button" class="icon-btn edit-btn">수정</button><button type="button" class="icon-btn del del-btn">삭제</button>' : '') +
+        (editable ? '<button type="button" class="icon-btn edit-btn">수정</button>' : '') +
+        (deletable ? '<button type="button" class="icon-btn del del-btn">삭제</button>' : '') +
         '<button type="button" class="icon-btn hist-btn">이력</button>' +
       '</div>';
 
@@ -3070,6 +3121,9 @@
       showScreen("pending");
       return;
     }
+    if(authSession.user.email && authSession.user.email !== profile.email){
+      try{ await supabaseClient.rpc("sync_own_email"); profile.email = authSession.user.email; }catch(e){ /* 무시 */ }
+    }
     currentUser = {
       id: profile.id, email: profile.email, name: profile.name,
       department: profile.department, role: profile.role, isApproved: profile.is_approved
@@ -3216,6 +3270,7 @@
     }
   });
 
+  var PASSWORD_POLICY_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
   document.getElementById("signupForm").addEventListener("submit", async function(e){
     e.preventDefault();
     var msg = document.getElementById("signupMsg");
@@ -3224,6 +3279,11 @@
     var password = document.getElementById("signup_password").value;
     var name = document.getElementById("signup_name").value.trim();
     var department = document.getElementById("signup_department").value;
+    if(!PASSWORD_POLICY_RE.test(password)){
+      msg.textContent = "비밀번호는 8자 이상이며 영문 대문자·소문자·특수문자를 모두 포함해야 합니다.";
+      msg.className = "auth-msg error";
+      return;
+    }
     var btn = e.target.querySelector('button[type="submit"]');
     btn.disabled = true;
     try{
@@ -3271,6 +3331,73 @@
 
   document.getElementById("pendingLogoutBtn").addEventListener("click", function(){ supabaseClient.auth.signOut(); });
   document.getElementById("logoutBtn").addEventListener("click", function(){ supabaseClient.auth.signOut(); });
+
+  /* ---------- 내 정보 수정 ---------- */
+
+  function checkMyInfoDeptWarn(){
+    var warn = document.getElementById("myinfoDeptWarn");
+    var sel = document.getElementById("myinfo_department");
+    var needsReapproval = currentUser && ["manager","rep"].indexOf(currentUser.role) !== -1 && sel.value !== currentUser.department;
+    warn.style.display = needsReapproval ? "" : "none";
+  }
+  function openMyInfoModal(){
+    if(!currentUser) return;
+    document.getElementById("myinfo_email").value = currentUser.email || "";
+    document.getElementById("myinfo_department").innerHTML = deptOptGroups(currentUser.department, DEPARTMENTS);
+    checkMyInfoDeptWarn();
+    document.getElementById("myInfoMsg").textContent = "";
+    document.getElementById("myInfoMsg").className = "auth-msg";
+    document.getElementById("myInfoOverlay").classList.add("open");
+  }
+  document.getElementById("myInfoBtn").addEventListener("click", openMyInfoModal);
+  document.getElementById("myInfoCancelBtn").addEventListener("click", function(){
+    document.getElementById("myInfoOverlay").classList.remove("open");
+  });
+  document.getElementById("myinfo_department").addEventListener("change", checkMyInfoDeptWarn);
+
+  document.getElementById("myInfoForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    var msg = document.getElementById("myInfoMsg");
+    msg.textContent = ""; msg.className = "auth-msg";
+    var newEmail = document.getElementById("myinfo_email").value.trim();
+    var newDept = document.getElementById("myinfo_department").value;
+    var btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    var notes = [];
+    try{
+      if(newEmail && newEmail !== currentUser.email){
+        var emailRes = await supabaseClient.auth.updateUser({ email: newEmail });
+        if(emailRes.error) throw emailRes.error;
+        notes.push("새 이메일로 인증 메일을 보냈습니다. 인증을 완료해야 이메일이 최종 반영됩니다.");
+      }
+      if(newDept && newDept !== currentUser.department){
+        var deptRes = await supabaseClient.rpc("complete_profile", { p_name: currentUser.name, p_department: newDept });
+        if(deptRes.error) throw deptRes.error;
+        var fresh = await fetchProfile(currentUser.id);
+        if(fresh && !fresh.is_approved){
+          notes.push("부서가 변경되어 관리자 재승인이 필요합니다.");
+          currentUser.department = fresh.department;
+          currentUser.isApproved = false;
+          msg.textContent = notes.join(" ");
+          msg.className = "auth-msg ok";
+          setTimeout(function(){
+            document.getElementById("myInfoOverlay").classList.remove("open");
+            showScreen("pending");
+          }, 1200);
+          return;
+        }
+        currentUser.department = fresh ? fresh.department : newDept;
+        applyRoleUI();
+      }
+      msg.textContent = notes.length ? notes.join(" ") : "저장되었습니다.";
+      msg.className = "auth-msg ok";
+    }catch(err){
+      msg.textContent = "저장 실패: " + (err && err.message ? err.message : err);
+      msg.className = "auth-msg error";
+    }finally{
+      btn.disabled = false;
+    }
+  });
 
   initAuth();
 })();
