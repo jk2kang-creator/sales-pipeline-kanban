@@ -757,6 +757,12 @@
   .modal-actions .right{ display:flex; gap:8px; }
 
   /* ---------- 엑셀 일괄 등록 ---------- */
+  .excel-field-legend{
+    display:flex; flex-direction:column; gap:4px; font-size:11.5px; color:var(--text-dim);
+    background:#f7f8fb; border:1px solid var(--border); border-radius:8px; padding:9px 12px; margin-bottom:14px;
+  }
+  .excel-field-legend .required b{ color:#b3423d; margin-right:6px; }
+  .excel-field-legend .optional b{ color:var(--muted); margin-right:6px; }
   .excel-upload-actions{ display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
   .excel-filename{ font-size:12px; color:var(--text-dim); }
   .excel-summary-box{
@@ -1139,6 +1145,10 @@
   <div class="modal modal-lg">
     <h2>엑셀로 딜 일괄 등록</h2>
     <p class="modal-sub">양식을 내려받아 채운 뒤 업로드하면 여러 건의 딜을 한 번에 등록합니다. 오류가 있는 행이 하나라도 있으면 전체가 등록되지 않으니, 오류를 고친 뒤 다시 업로드해주세요.</p>
+    <div class="excel-field-legend">
+      <span class="required"><b>필수</b> 고객사명 · 영업부서 · 담당자 · 단계</span>
+      <span class="optional"><b>선택</b> 예상금액 · 예상수주일 · 다음액션일 · 다음액션내용 · 경쟁사 · 당사경쟁우위 · 확정일 · 비고</span>
+    </div>
     <div class="excel-upload-actions">
       <button type="button" class="dl-btn" id="excelTemplateBtn" style="margin-left:0;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
@@ -1518,7 +1528,7 @@
     var sampleDept = (currentUser && currentUser.role !== "admin") ? currentUser.department : (DEPARTMENTS[0]||"");
     var sampleOwner = (currentUser && currentUser.role === "rep") ? currentUser.name : ((teamOwners[0] && teamOwners[0].name) || "");
     var sampleRow = {
-      "고객사명": "예시고객사(주)", "영업부서": sampleDept||"", "담당자": sampleOwner||"", "단계": "발굴",
+      "고객사명*": "예시고객사(주)", "영업부서*": sampleDept||"", "담당자*": sampleOwner||"", "단계*": "발굴",
       "예상금액": 100000000, "예상수주일": "2026-12-31", "다음액션일": "2026-10-15",
       "다음액션내용": "1차 미팅 진행", "경쟁사": "", "당사경쟁우위": "", "확정일": "", "비고": ""
     };
@@ -1549,6 +1559,14 @@
     return isNaN(n) ? 0 : Math.round(n);
   }
 
+  function normalizeExcelRowKeys(raw){
+    // 양식의 필수 항목 표시("고객사명*" 등)를 업로드 시 관용적으로 처리
+    var out = {};
+    Object.keys(raw).forEach(function(k){
+      out[String(k).replace(/\*\s*$/, "").trim()] = raw[k];
+    });
+    return out;
+  }
   function validateExcelRow(raw, rowNum){
     var errors = [];
     var company = String(raw["고객사명"]||"").trim();
@@ -3571,7 +3589,7 @@
         var errors = [];
         var validRows = [];
         rows.forEach(function(raw, i){
-          var res = validateExcelRow(raw, i + 2); // 1행은 헤더
+          var res = validateExcelRow(normalizeExcelRowKeys(raw), i + 2); // 1행은 헤더
           if(res.ok) validRows.push(res.data);
           else errors.push(res.error);
         });
