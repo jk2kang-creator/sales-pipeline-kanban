@@ -755,6 +755,19 @@
   .field-row3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
   .modal-actions{ display:flex; justify-content:space-between; align-items:center; margin-top:18px; gap:8px; }
   .modal-actions .right{ display:flex; gap:8px; }
+
+  /* ---------- 엑셀 일괄 등록 ---------- */
+  .excel-upload-actions{ display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+  .excel-filename{ font-size:12px; color:var(--text-dim); }
+  .excel-summary-box{
+    background:#f7f8fb; border:1px solid var(--border); border-radius:8px;
+    padding:12px 14px; margin-bottom:6px; font-size:12.5px;
+  }
+  .excel-summary-box.ok{ border-color:var(--good); background:#f1f9f4; }
+  .excel-summary-box.error{ border-color:#e2a4a4; background:#fdf3f2; }
+  .excel-summary-count{ font-weight:800; margin-bottom:6px; }
+  .excel-error-list{ max-height:220px; overflow:auto; margin:0; padding-left:18px; }
+  .excel-error-list li{ font-size:12px; color:#b3423d; margin-bottom:4px; line-height:1.5; }
   .deal-preview-box{
     background:#f7f8fb; border:1px solid var(--border); border-radius:8px;
     padding:10px 12px; font-size:12px; color:var(--text-dim); margin-bottom:13px;
@@ -874,6 +887,7 @@
       <div class="user-badge" id="userBadge"></div>
       <button class="btn btn-ghost" id="myInfoBtn">내 정보</button>
       <button class="btn btn-ghost" id="refreshBtn">새로고침</button>
+      <button class="btn btn-ghost" id="excelUploadBtn">엑셀 업로드</button>
       <button class="btn btn-invert" id="newDealBtn">+ 새 딜 추가</button>
       <button class="btn btn-ghost" id="logoutBtn">로그아웃</button>
     </div>
@@ -1117,6 +1131,28 @@
         <button type="submit" class="btn btn-primary">저장</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- ============ 엑셀 일괄 등록 모달 ============ -->
+<div class="overlay" id="excelUploadOverlay">
+  <div class="modal modal-lg">
+    <h2>엑셀로 딜 일괄 등록</h2>
+    <p class="modal-sub">양식을 내려받아 채운 뒤 업로드하면 여러 건의 딜을 한 번에 등록합니다. 오류가 있는 행이 하나라도 있으면 전체가 등록되지 않으니, 오류를 고친 뒤 다시 업로드해주세요.</p>
+    <div class="excel-upload-actions">
+      <button type="button" class="dl-btn" id="excelTemplateBtn" style="margin-left:0;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+        엑셀 양식 다운로드
+      </button>
+      <button type="button" class="btn" id="excelChooseFileBtn">파일 선택</button>
+      <span class="excel-filename" id="excelFileName">선택된 파일 없음</span>
+      <input type="file" id="excelUploadInput" accept=".xlsx,.xls" style="display:none;">
+    </div>
+    <div id="excelUploadSummary"></div>
+    <div class="modal-actions" style="justify-content:flex-end;">
+      <button type="button" class="btn" id="excelUploadCancelBtn">닫기</button>
+      <button type="button" class="btn btn-primary" id="excelUploadCommitBtn" disabled>일괄 등록</button>
+    </div>
   </div>
 </div>
 
@@ -1473,6 +1509,97 @@
         "활동내용": a.content||"", "다음액션": a.nextAction||"", "비고": a.memo||""
       };
     });
+  }
+
+  // ---------- 엑셀 일괄 등록 ----------
+  var pendingImportRows = [];
+
+  function downloadExcelTemplate(){
+    var sampleDept = (currentUser && currentUser.role !== "admin") ? currentUser.department : (DEPARTMENTS[0]||"");
+    var sampleOwner = (currentUser && currentUser.role === "rep") ? currentUser.name : ((teamOwners[0] && teamOwners[0].name) || "");
+    var sampleRow = {
+      "고객사명": "예시고객사(주)", "영업부서": sampleDept||"", "담당자": sampleOwner||"", "단계": "발굴",
+      "예상금액": 100000000, "예상수주일": "2026-12-31", "다음액션일": "2026-10-15",
+      "다음액션내용": "1차 미팅 진행", "경쟁사": "", "당사경쟁우위": "", "확정일": "", "비고": ""
+    };
+    downloadWorkbook([{ name:"딜업로드양식", rows:[sampleRow] }], "딜업로드양식");
+  }
+
+  function stageIdByName(name){
+    var s = STAGES.find(function(st){ return st.name === String(name||"").trim(); });
+    return s ? s.id : null;
+  }
+
+  function parseExcelDateCell(val){
+    if(val === null || val === undefined || val === "") return null;
+    if(val instanceof Date){
+      var y = val.getUTCFullYear(), m = String(val.getUTCMonth()+1).padStart(2,"0"), d = String(val.getUTCDate()).padStart(2,"0");
+      return y + "-" + m + "-" + d;
+    }
+    var s = String(val).trim();
+    var m1 = /^(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/.exec(s);
+    if(m1) return m1[1] + "-" + m1[2].padStart(2,"0") + "-" + m1[3].padStart(2,"0");
+    return null;
+  }
+
+  function parseExcelAmount(val){
+    if(val === null || val === undefined || val === "") return 0;
+    if(typeof val === "number") return Math.round(val);
+    var n = Number(String(val).replace(/[^0-9.\-]/g, ""));
+    return isNaN(n) ? 0 : Math.round(n);
+  }
+
+  function validateExcelRow(raw, rowNum){
+    var errors = [];
+    var company = String(raw["고객사명"]||"").trim();
+    if(!company) errors.push("고객사명이 비어 있습니다.");
+
+    var department = String(raw["영업부서"]||"").trim();
+    if(!department){
+      errors.push("영업부서가 비어 있습니다.");
+    } else if(DEPARTMENTS.indexOf(department) === -1){
+      errors.push('"' + department + '"은(는) 등록된 부서가 아닙니다.');
+    } else if(currentUser.role !== "admin" && department !== currentUser.department){
+      errors.push("본인 부서(" + currentUser.department + ") 딜만 등록할 수 있습니다.");
+    }
+
+    var owner = String(raw["담당자"]||"").trim();
+    if(!owner){
+      errors.push("담당자가 비어 있습니다.");
+    } else if(currentUser.role === "rep" && owner !== currentUser.name){
+      errors.push("담당자는 본인(" + currentUser.name + ")만 지정할 수 있습니다.");
+    } else if(currentUser.role !== "rep" && !teamOwners.some(function(o){ return o.name === owner; })){
+      errors.push('"' + owner + '"은(는) 등록된 담당자가 아닙니다.');
+    }
+
+    var stageName = String(raw["단계"]||"").trim();
+    var stageId = stageIdByName(stageName);
+    if(!stageName){
+      errors.push("단계가 비어 있습니다.");
+    } else if(!stageId){
+      errors.push('"' + stageName + '"은(는) 올바른 단계명이 아닙니다 (발굴/접촉/제안/협상/수주/실주/보류).');
+    }
+
+    if(errors.length){
+      return { ok:false, error:"[" + rowNum + "행] " + errors.join(" ") };
+    }
+
+    var st = stageById(stageId);
+    return {
+      ok:true,
+      data:{
+        company: company, department: department, owner: owner, stage: stageId,
+        probability: st.defaultProbability != null ? st.defaultProbability : 0,
+        amount: parseExcelAmount(raw["예상금액"]),
+        closeDate: parseExcelDateCell(raw["예상수주일"]),
+        nextActionDate: parseExcelDateCell(raw["다음액션일"]),
+        confirmedDate: parseExcelDateCell(raw["확정일"]),
+        nextActionNote: String(raw["다음액션내용"]||"").trim(),
+        competitor: String(raw["경쟁사"]||"").trim(),
+        competitiveEdge: String(raw["당사경쟁우위"]||"").trim(),
+        memo: String(raw["비고"]||"").trim()
+      }
+    };
   }
 
   // 열 너비 드래그 조정 — 테이블별로 폭을 기억해 재렌더링 후에도 유지
@@ -3083,6 +3210,7 @@
     document.getElementById("adminNavBtn").style.display = currentUser.role === "admin" ? "" : "none";
     document.getElementById("newDealBtn").style.display = canCreateDeal() ? "" : "none";
     document.getElementById("newActivityBtn").style.display = canCreateDeal() ? "" : "none";
+    document.getElementById("excelUploadBtn").style.display = canCreateDeal() ? "" : "none";
 
     if(isViewer && (currentView === "pipeline" || currentView === "activities")){
       switchView("dashboard");
@@ -3396,6 +3524,112 @@
       msg.className = "auth-msg error";
     }finally{
       btn.disabled = false;
+    }
+  });
+
+  /* ---------- 엑셀 일괄 등록 ---------- */
+
+  document.getElementById("excelUploadBtn").addEventListener("click", function(){
+    pendingImportRows = [];
+    document.getElementById("excelFileName").textContent = "선택된 파일 없음";
+    document.getElementById("excelUploadSummary").innerHTML = "";
+    document.getElementById("excelUploadCommitBtn").disabled = true;
+    document.getElementById("excelUploadInput").value = "";
+    document.getElementById("excelUploadOverlay").classList.add("open");
+  });
+  document.getElementById("excelUploadCancelBtn").addEventListener("click", function(){
+    document.getElementById("excelUploadOverlay").classList.remove("open");
+  });
+  document.getElementById("excelTemplateBtn").addEventListener("click", downloadExcelTemplate);
+  document.getElementById("excelChooseFileBtn").addEventListener("click", function(){
+    document.getElementById("excelUploadInput").click();
+  });
+  document.getElementById("excelUploadInput").addEventListener("change", function(e){
+    var file = e.target.files && e.target.files[0];
+    var summaryEl = document.getElementById("excelUploadSummary");
+    var commitBtn = document.getElementById("excelUploadCommitBtn");
+    pendingImportRows = [];
+    commitBtn.disabled = true;
+    if(!file){
+      document.getElementById("excelFileName").textContent = "선택된 파일 없음";
+      summaryEl.innerHTML = "";
+      return;
+    }
+    document.getElementById("excelFileName").textContent = file.name;
+    summaryEl.innerHTML = '<div class="excel-summary-box">읽는 중...</div>';
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      try{
+        if(typeof XLSX === "undefined") throw new Error("엑셀 라이브러리를 불러오지 못했습니다.");
+        var wb = XLSX.read(ev.target.result, { type:"array", cellDates:true });
+        var sheet = wb.Sheets[wb.SheetNames[0]];
+        var rows = XLSX.utils.sheet_to_json(sheet, { defval:"" });
+        if(!rows.length){
+          summaryEl.innerHTML = '<div class="excel-summary-box error">시트에 데이터가 없습니다.</div>';
+          return;
+        }
+        var errors = [];
+        var validRows = [];
+        rows.forEach(function(raw, i){
+          var res = validateExcelRow(raw, i + 2); // 1행은 헤더
+          if(res.ok) validRows.push(res.data);
+          else errors.push(res.error);
+        });
+        if(errors.length){
+          summaryEl.innerHTML = '<div class="excel-summary-box error">' +
+            '<div class="excel-summary-count">총 ' + rows.length + '행 중 ' + errors.length + '행에 오류가 있습니다. 오류를 고친 뒤 다시 업로드해주세요.</div>' +
+            '<ul class="excel-error-list">' + errors.map(function(msg){ return '<li>' + escapeHtml(msg) + '</li>'; }).join("") + '</ul>' +
+          '</div>';
+        } else {
+          pendingImportRows = validRows;
+          summaryEl.innerHTML = '<div class="excel-summary-box ok"><div class="excel-summary-count">총 ' + validRows.length + '행 확인 완료 — 모두 정상입니다.</div>아래 "일괄 등록"을 누르면 저장됩니다.</div>';
+          commitBtn.disabled = false;
+        }
+      }catch(err){
+        summaryEl.innerHTML = '<div class="excel-summary-box error">파일을 읽지 못했습니다: ' + escapeHtml(err && err.message ? err.message : String(err)) + '</div>';
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  });
+
+  document.getElementById("excelUploadCommitBtn").addEventListener("click", async function(){
+    if(!pendingImportRows.length) return;
+    var btn = this;
+    var originalLabel = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "등록 중...";
+    setSyncing(true);
+    try{
+      var maxCode = 0;
+      deals.forEach(function(d){
+        var m = /^D-(\d+)$/.exec(d.dealCode || "");
+        if(m) maxCode = Math.max(maxCode, parseInt(m[1], 10));
+      });
+      var rowsToInsert = pendingImportRows.map(function(data, i){
+        var row = dealToRow(data);
+        var n = maxCode + i + 1;
+        row.deal_code = "D-" + (n < 100 ? ("0" + n).slice(-3) : String(n));
+        return row;
+      });
+      var insertRes = await supabaseClient.from("deals").insert(rowsToInsert).select();
+      if(insertRes.error) throw insertRes.error;
+      var newDeals = insertRes.data.map(mapRowToDeal);
+      deals = deals.concat(newDeals);
+      var historyRows = newDeals.map(function(d){
+        return { deal_id:d.id, change_type:"created", field_changed:"고객사명", old_value:null, new_value:d.company };
+      });
+      if(historyRows.length) supabaseClient.from("deal_history").insert(historyRows).then(function(){});
+      hideError();
+      document.getElementById("excelUploadOverlay").classList.remove("open");
+      pendingImportRows = [];
+      populateStaticSelects();
+      renderAll();
+    }catch(err){
+      showError("일괄 등록에 실패했습니다: " + (err && err.message ? err.message : err));
+    }finally{
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+      setSyncing(false);
     }
   });
 
