@@ -742,6 +742,7 @@
   .modal .modal-sub{ font-size:11.5px; color:var(--text-dim); margin:0 0 16px; }
   .field{ margin-bottom:13px; }
   .field label{ display:block; font-size:12px; font-weight:700; color:var(--text-dim); margin-bottom:6px; }
+  .req-mark{ color:#b3423d; font-weight:800; }
   .field input, .field select, .field textarea{
     width:100%; padding:9px 11px; border:1px solid var(--border); border-radius:8px;
     font-size:13px; font-family:inherit; background:#fbfbfc; color:var(--text);
@@ -1184,25 +1185,26 @@
   <div class="modal">
     <h2 id="modalTitle">새 딜 추가</h2>
     <p class="modal-sub" id="modalDealCode"></p>
+    <p class="modal-sub"><span class="req-mark">*</span> 표시는 필수 입력 항목입니다.</p>
     <form id="dealForm">
       <div class="field-row">
         <div class="field">
-          <label>고객사명</label>
+          <label>고객사명 <span class="req-mark">*</span></label>
           <input type="text" id="f_company" required placeholder="예: 삼성전자">
         </div>
         <div class="field">
-          <label>영업부서</label>
+          <label>영업부서 <span class="req-mark">*</span></label>
           <select id="f_department"></select>
           <div class="hint" id="f_unitHint"></div>
         </div>
       </div>
       <div class="field-row">
         <div class="field">
-          <label>담당자</label>
+          <label>담당자 <span class="req-mark">*</span></label>
           <select id="f_owner"></select>
         </div>
         <div class="field">
-          <label>파이프라인 단계</label>
+          <label>파이프라인 단계 <span class="req-mark">*</span></label>
           <select id="f_stage"></select>
           <div class="hint" id="f_probHint"></div>
         </div>
@@ -1210,7 +1212,7 @@
       <div class="field-row">
         <div class="field">
           <label>예상 수주금액 (원)</label>
-          <input type="number" id="f_amount" required min="0" step="1" placeholder="0">
+          <input type="number" id="f_amount" min="0" step="1" placeholder="0">
         </div>
         <div class="field">
           <label>예상 수주일</label>
