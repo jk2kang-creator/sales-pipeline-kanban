@@ -1132,6 +1132,10 @@
         <div class="hint" id="myinfoDeptWarn" style="display:none;color:#a5620f;">부서를 변경하면 관리자 재승인을 받아야 다시 이용할 수 있습니다.</div>
       </div>
       <div class="field">
+        <label>현재 비밀번호 <span style="font-weight:400;color:var(--text-dim);">(비밀번호 변경 시에만 필요)</span></label>
+        <input type="password" id="myinfo_current_password" autocomplete="current-password">
+      </div>
+      <div class="field">
         <label>새 비밀번호 <span style="font-weight:400;color:var(--text-dim);">(변경할 때만 입력)</span></label>
         <input type="password" id="myinfo_password" autocomplete="new-password">
         <div class="hint">8자 이상, 영문 대문자·소문자·특수문자를 모두 포함해야 합니다.</div>
@@ -3499,6 +3503,7 @@
     if(!currentUser) return;
     document.getElementById("myinfo_email").value = currentUser.email || "";
     document.getElementById("myinfo_department").innerHTML = deptOptGroups(currentUser.department, DEPARTMENTS);
+    document.getElementById("myinfo_current_password").value = "";
     document.getElementById("myinfo_password").value = "";
     document.getElementById("myinfo_password2").value = "";
     checkMyInfoDeptWarn();
@@ -3518,10 +3523,16 @@
     msg.textContent = ""; msg.className = "auth-msg";
     var newEmail = document.getElementById("myinfo_email").value.trim();
     var newDept = document.getElementById("myinfo_department").value;
+    var currentPassword = document.getElementById("myinfo_current_password").value;
     var newPassword = document.getElementById("myinfo_password").value;
     var newPassword2 = document.getElementById("myinfo_password2").value;
 
     if(newPassword || newPassword2){
+      if(!currentPassword){
+        msg.textContent = "비밀번호를 변경하려면 현재 비밀번호를 입력해야 합니다.";
+        msg.className = "auth-msg error";
+        return;
+      }
       if(newPassword !== newPassword2){
         msg.textContent = "새 비밀번호가 일치하지 않습니다.";
         msg.className = "auth-msg error";
@@ -3544,9 +3555,12 @@
         notes.push("새 이메일로 인증 메일을 보냈습니다. 인증을 완료해야 이메일이 최종 반영됩니다.");
       }
       if(newPassword){
+        var verifyRes = await supabaseClient.auth.signInWithPassword({ email: currentUser.email, password: currentPassword });
+        if(verifyRes.error) throw new Error("현재 비밀번호가 일치하지 않습니다.");
         var pwRes = await supabaseClient.auth.updateUser({ password: newPassword });
         if(pwRes.error) throw pwRes.error;
         notes.push("비밀번호가 변경되었습니다.");
+        document.getElementById("myinfo_current_password").value = "";
         document.getElementById("myinfo_password").value = "";
         document.getElementById("myinfo_password2").value = "";
       }
