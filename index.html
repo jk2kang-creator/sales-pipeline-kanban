@@ -1081,7 +1081,19 @@
       <div class="table-scroll"><table class="data-table" id="adminUsersTable"></table></div>
     </div>
     <div class="section-block">
-      <div class="section-title">접속 이력</div>
+      <div class="section-title" style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+        <span>접속 이력</span>
+        <button type="button" class="dl-btn dl-btn-sm" id="adminAccessExportBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+          엑셀 다운로드
+        </button>
+      </div>
+      <div class="toolbar">
+        <span class="tb-label">기간</span>
+        <input type="date" id="adminAccessFrom" title="시작일">
+        <span class="tb-label">~</span>
+        <input type="date" id="adminAccessTo" title="종료일">
+      </div>
       <div class="table-scroll"><table class="data-table" id="adminAccessTable"></table></div>
     </div>
   </section>
@@ -1625,6 +1637,7 @@
   var lastAnalysisExport = { stage:[], dept:[], owner:[] };
   var lastDashboardExport = { stage:[], alert:[], dept:[] };
   var lastAdminExport = [];
+  var lastAdminAccessExport = [];
   var columnWidths = {};
   function makeTableResizable(table){
     var headRows = table.querySelectorAll("thead tr");
@@ -1945,6 +1958,12 @@
     });
     document.getElementById("adminExportBtn").addEventListener("click", function(){
       downloadWorkbook([{ name:"사용자목록", rows: lastAdminExport }], "사용자관리");
+    });
+    document.getElementById("adminAccessExportBtn").addEventListener("click", function(){
+      downloadWorkbook([{ name:"접속이력", rows: lastAdminAccessExport }], "접속이력");
+    });
+    ["adminAccessFrom","adminAccessTo"].forEach(function(id){
+      document.getElementById(id).addEventListener("change", function(){ renderAdminAccessLog(); });
     });
   }
 
@@ -3235,9 +3254,36 @@
     });
   }
 
+  async function renderAdminAccessLog(){
+    var accessTable = document.getElementById("adminAccessTable");
+    var fromF = document.getElementById("adminAccessFrom").value;
+    var toF = document.getElementById("adminAccessTo").value;
+    accessTable.innerHTML = '<tbody><tr><td class="loading-hint">불러오는 중...</td></tr></tbody>';
+    try{
+      var q = supabaseClient.from("access_log").select("*, app_users(name,email)").order("created_at",{ascending:false});
+      if(fromF) q = q.gte("created_at", fromF + "T00:00:00");
+      if(toF) q = q.lte("created_at", toF + "T23:59:59");
+      var accRes = await q.limit(500);
+      if(accRes.error) throw accRes.error;
+      var rows = accRes.data;
+      var ahead = '<thead><tr><th>일시</th><th>사용자</th><th>이벤트</th></tr></thead>';
+      var abody = rows.length ? "<tbody>" + rows.map(function(a){
+        var who = a.app_users ? (a.app_users.name || a.app_users.email) : "-";
+        return '<tr><td>'+escapeHtml(String(a.created_at).slice(0,16).replace("T"," "))+'</td><td>'+escapeHtml(who)+'</td><td>'+escapeHtml(a.event_type)+'</td></tr>';
+      }).join("") + "</tbody>" : '<tbody><tr><td class="loading-hint">해당 기간의 접속 이력이 없습니다.</td></tr></tbody>';
+      accessTable.innerHTML = ahead + abody;
+      makeTableResizable(accessTable);
+      lastAdminAccessExport = rows.map(function(a){
+        var who = a.app_users ? (a.app_users.name || a.app_users.email) : "-";
+        return { "일시": String(a.created_at).slice(0,16).replace("T"," "), "사용자": who, "이벤트": a.event_type };
+      });
+    }catch(err){
+      accessTable.innerHTML = '<tbody><tr><td class="loading-hint">접속 이력을 불러오지 못했습니다.</td></tr></tbody>';
+    }
+  }
+
   async function renderAdmin(){
     var usersTable = document.getElementById("adminUsersTable");
-    var accessTable = document.getElementById("adminAccessTable");
     try{
       var usersRes = await supabaseClient.from("app_users").select("*").order("created_at", {ascending:false});
       if(usersRes.error) throw usersRes.error;
@@ -3246,20 +3292,7 @@
     }catch(err){
       usersTable.innerHTML = '<tbody><tr><td class="loading-hint">사용자 목록을 불러오지 못했습니다.</td></tr></tbody>';
     }
-
-    try{
-      var accRes = await supabaseClient.from("access_log").select("*, app_users(name,email)").order("created_at",{ascending:false}).limit(50);
-      if(accRes.error) throw accRes.error;
-      var ahead = '<thead><tr><th>일시</th><th>사용자</th><th>이벤트</th></tr></thead>';
-      var abody = "<tbody>" + accRes.data.map(function(a){
-        var who = a.app_users ? (a.app_users.name || a.app_users.email) : "-";
-        return '<tr><td>'+escapeHtml(String(a.created_at).slice(0,16).replace("T"," "))+'</td><td>'+escapeHtml(who)+'</td><td>'+escapeHtml(a.event_type)+'</td></tr>';
-      }).join("") + "</tbody>";
-      accessTable.innerHTML = ahead + abody;
-      makeTableResizable(accessTable);
-    }catch(err){
-      accessTable.innerHTML = '<tbody><tr><td class="loading-hint">접속 이력을 불러오지 못했습니다.</td></tr></tbody>';
-    }
+    renderAdminAccessLog();
   }
 
   /* ---------- 역할 기반 UI 제어 ---------- */
