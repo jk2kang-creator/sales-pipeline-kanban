@@ -2079,6 +2079,19 @@
 
   /* ---------- 딜 파이프라인 : 필터 ---------- */
 
+  // 딜 모달 - 담당자 옵션을 선택된 영업부서 소속 팀원으로 한정
+  function populateOwnerOptionsForDept(deptValue, desiredName){
+    if(currentUser && currentUser.role === "rep") return; // rep는 본인 고정
+    var ownerSelect = document.getElementById("f_owner");
+    var filtered = teamOwners.filter(function(o){ return !deptValue || o.dept === deptValue; });
+    if(!filtered.length) filtered = teamOwners; // 해당 부서에 등록된 팀원이 없으면 전체 목록으로 대체
+    ownerSelect.innerHTML = filtered.map(function(o){
+      return '<option value="'+escapeHtml(o.name)+'" data-dept="'+escapeHtml(o.dept||"")+'">'+escapeHtml(o.name)+' ('+escapeHtml(o.dept||"-")+')</option>';
+    }).join("");
+    var hasDesired = desiredName && filtered.some(function(o){ return o.name === desiredName; });
+    ownerSelect.value = hasDesired ? desiredName : (filtered[0] ? filtered[0].name : "");
+  }
+
   function populateStaticSelects(){
     var role = currentUser ? currentUser.role : null;
     // 모달 - 부서: rep/manager는 본인 부서만 선택 가능
@@ -2097,7 +2110,7 @@
       ownerSelect.disabled = true;
     } else {
       ownerSelect.disabled = false;
-      ownerSelect.innerHTML = teamOwners.map(function(o){ return '<option value="'+escapeHtml(o.name)+'" data-dept="'+escapeHtml(o.dept||"")+'">'+escapeHtml(o.name)+' ('+escapeHtml(o.dept||"-")+')</option>'; }).join("");
+      populateOwnerOptionsForDept(null, null);
     }
     // 모달 - 단계
     var stageSelect = document.getElementById("f_stage");
@@ -2417,7 +2430,12 @@
     if(opt && opt.dataset.dept) deptSelectEl.value = opt.dataset.dept;
     updateUnitHint();
   });
-  deptSelectEl.addEventListener("change", updateUnitHint);
+  deptSelectEl.addEventListener("change", function(){
+    if(!currentUser || currentUser.role !== "rep"){
+      populateOwnerOptionsForDept(deptSelectEl.value, null);
+    }
+    updateUnitHint();
+  });
   stageSelectEl.addEventListener("change", function(){
     var st = stageById(stageSelectEl.value);
     document.getElementById("f_probHint").textContent = "자동 확률: " + (st.defaultProbability!=null?st.defaultProbability:0) + "% (단계 기준값)";
@@ -2433,8 +2451,13 @@
     var defaultDept = (currentUser && (currentUser.role === "rep" || currentUser.role === "manager")) ? currentUser.department : DEPARTMENTS[0];
     var defaultOwner = (currentUser && currentUser.role === "rep") ? currentUser.name : (teamOwners[0] && teamOwners[0].name);
     document.getElementById("f_company").value = deal ? deal.company : "";
-    document.getElementById("f_department").value = deal ? (deal.department||defaultDept) : defaultDept;
-    document.getElementById("f_owner").value = deal ? deal.owner : defaultOwner;
+    var targetDept = deal ? (deal.department||defaultDept) : defaultDept;
+    document.getElementById("f_department").value = targetDept;
+    if(currentUser && currentUser.role === "rep"){
+      document.getElementById("f_owner").value = deal ? deal.owner : defaultOwner;
+    } else {
+      populateOwnerOptionsForDept(targetDept, deal ? deal.owner : defaultOwner);
+    }
     updateUnitHint();
     document.getElementById("f_amount").value = deal ? deal.amount : "";
     document.getElementById("f_closeDate").value = deal ? (deal.closeDate||"") : "";
