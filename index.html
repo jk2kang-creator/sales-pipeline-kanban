@@ -410,6 +410,7 @@
     top:0;
   }
   table.data-table th:last-child{ border-right:none; }
+  table.data-table th[title]{ cursor:help; }
   table.data-table td{
     padding:9px 10px;
     border-bottom:1px solid var(--line);
@@ -2222,9 +2223,25 @@
     var rows = filteredDeals().slice().sort(function(a,b){ return dealCodeSortKey(a.dealCode) - dealCodeSortKey(b.dealCode); });
 
     var head = '<thead><tr>' +
-      '<th>딜ID</th><th>고객사명</th><th>영업부서</th><th>담당자</th><th>단계</th><th>딜상태</th>' +
-      '<th class="num">예상금액</th><th>예상수주일</th><th>최종업데이트</th><th class="num">경과일</th><th>다음액션일</th><th>D-Day</th>' +
-      '<th>다음 액션 내용</th><th>경쟁사</th><th>당사 경쟁우위</th><th>확정일</th><th>비고</th><th>점검알림</th><th class="actions-col"></th>' +
+      '<th title="자동으로 부여되는 딜 고유 번호">딜ID</th>' +
+      '<th title="거래 상대 고객사 이름">고객사명</th>' +
+      '<th title="이 딜을 담당하는 영업부서">영업부서</th>' +
+      '<th title="이 딜의 실제 담당자">담당자</th>' +
+      '<th title="현재 파이프라인 진행 단계 (발굴/접촉/제안/협상/수주/실주/보류)">단계</th>' +
+      '<th title="단계값으로 자동 판정되는 상태 (진행중/수주/실주/보류)">딜상태</th>' +
+      '<th class="num" title="예상되는 수주 금액">예상금액</th>' +
+      '<th title="수주될 것으로 예상하는 날짜">예상수주일</th>' +
+      '<th title="이 딜의 정보가 마지막으로 수정된 날짜">최종업데이트</th>' +
+      '<th class="num" title="최종업데이트일로부터 오늘까지 지난 일수">경과일</th>' +
+      '<th title="다음으로 예정된 영업 활동 날짜">다음액션일</th>' +
+      '<th title="다음액션일까지 남았거나 지난 일수 (오늘 기준 자동 계산, D+는 지연됨을 의미)">D-Day</th>' +
+      '<th title="다음액션일에 진행할 구체적인 활동 내용">다음 액션 내용</th>' +
+      '<th title="이 딜에서 경쟁 중인 업체">경쟁사</th>' +
+      '<th title="경쟁사 대비 당사의 강점">당사 경쟁우위</th>' +
+      '<th title="수주 또는 실주로 최종 결론이 난 날짜">확정일</th>' +
+      '<th title="기타 특이사항 메모">비고</th>' +
+      '<th title="다음액션일·최종업데이트일 기준 자동 판정되는 위험 신호 (액션지연/방치/정체/임박)">점검알림</th>' +
+      '<th class="actions-col"></th>' +
       '</tr></thead>';
 
     var body = "";
