@@ -2080,11 +2080,19 @@
   /* ---------- 딜 파이프라인 : 필터 ---------- */
 
   // 딜 모달 - 담당자 옵션을 선택된 영업부서 소속 팀원으로 한정
+  // (부서에 등록된 팀원이 없다고 해서 다른 부서 사람을 보여주면 부서·담당자
+  //  불일치를 막으려던 목적 자체가 무너지므로, 그 경우엔 빈 상태로 둔다.)
   function populateOwnerOptionsForDept(deptValue, desiredName){
     if(currentUser && currentUser.role === "rep") return; // rep는 본인 고정
     var ownerSelect = document.getElementById("f_owner");
     var filtered = teamOwners.filter(function(o){ return !deptValue || o.dept === deptValue; });
-    if(!filtered.length) filtered = teamOwners; // 해당 부서에 등록된 팀원이 없으면 전체 목록으로 대체
+    if(!filtered.length){
+      ownerSelect.innerHTML = '<option value="">이 부서에 등록된 담당자가 없습니다</option>';
+      ownerSelect.value = "";
+      ownerSelect.disabled = true;
+      return;
+    }
+    ownerSelect.disabled = false;
     ownerSelect.innerHTML = filtered.map(function(o){
       return '<option value="'+escapeHtml(o.name)+'" data-dept="'+escapeHtml(o.dept||"")+'">'+escapeHtml(o.name)+' ('+escapeHtml(o.dept||"-")+')</option>';
     }).join("");
@@ -2527,6 +2535,10 @@
       memo: document.getElementById("f_memo").value.trim()
     };
     if(!data.company){ return; }
+    if(!data.owner){
+      showError("선택한 부서에 등록된 담당자가 없습니다. 먼저 사용자 관리에서 해당 부서 팀원을 등록해주세요.");
+      return;
+    }
 
     var saveBtn = form.querySelector('button[type="submit"]');
     saveBtn.disabled = true;
