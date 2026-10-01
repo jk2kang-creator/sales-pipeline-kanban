@@ -372,6 +372,34 @@
   }
   .icon-btn.admin-save-btn:hover{ background:var(--brand2); color:#fff; }
 
+  /* ---------- 조직 관리 ---------- */
+  .org-unit-card{
+    border:1px solid var(--border); border-radius:10px; padding:14px 16px;
+    margin-bottom:12px; background:#fff;
+  }
+  .org-unit-head{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .org-unit-head .org-unit-name{
+    flex:1; font-weight:800; font-size:13.5px; padding:7px 10px;
+    border:1px solid var(--border); border-radius:7px; color:var(--text); background:#fbfbfc;
+  }
+  .org-unit-head .org-unit-name:focus{ outline:none; border-color:var(--accent); background:#fff; }
+  .org-dept-list{
+    display:flex; flex-direction:column; gap:6px; padding-left:14px;
+    border-left:2px solid var(--line); margin-left:2px;
+  }
+  .org-dept-row{ display:flex; align-items:center; gap:8px; }
+  .org-dept-row .org-dept-name{
+    flex:1; padding:6px 9px; border:1px solid var(--border); border-radius:6px;
+    font-size:12.5px; color:var(--text); background:#fbfbfc;
+  }
+  .org-dept-row .org-dept-name:focus{ outline:none; border-color:var(--accent); background:#fff; }
+  .org-dept-add-row{ display:flex; align-items:center; gap:8px; margin-top:4px; }
+  .org-dept-add-row .org-dept-new{
+    flex:1; padding:6px 9px; border:1px dashed var(--border); border-radius:6px;
+    font-size:12.5px; color:var(--text); background:#fbfbfc;
+  }
+  .org-dept-add-row .org-dept-new:focus{ outline:none; border-color:var(--accent); background:#fff; }
+
   /* ---------- Bar chart ---------- */
   .barchart{ display:flex; flex-direction:column; gap:11px; padding:4px 2px 8px; }
   .barchart .bc-row{ display:grid; grid-template-columns:130px 1fr 96px; align-items:center; gap:10px; }
@@ -1096,6 +1124,15 @@
       </div>
       <div class="table-scroll"><table class="data-table" id="adminAccessTable"></table></div>
     </div>
+    <div class="section-block">
+      <div class="section-title">조직 관리</div>
+      <div class="section-sub">사업본부·부서를 추가·수정·삭제합니다. 이름을 바꾸면 기존 딜·사용자의 소속 값도 함께 바뀝니다. 삭제하면 새로 등록할 때 선택지에서만 빠지고, 기존 데이터는 그대로 유지됩니다.</div>
+      <div class="toolbar">
+        <input type="text" id="newUnitNameInput" placeholder="새 사업본부명" style="max-width:220px;">
+        <button type="button" class="btn btn-primary" id="addUnitBtn">+ 사업본부 추가</button>
+      </div>
+      <div id="orgUnitsWrap"></div>
+    </div>
   </section>
 
 </main>
@@ -1347,19 +1384,31 @@
   var ALERT_STALE_DAYS = 45;
   var ALERT_IMMINENT_DAYS = 7;
 
-  var BUSINESS_UNITS = ["BTS사업본부","DT사업본부","NBS사업본부","CDS사업본부","SDI사업본부","JFT사업본부","Account사업본부","Security사업본부"];
-  var UNIT_OF_DEPT = {
-    "SI사업부":"BTS사업본부", "매니지드사업부":"BTS사업본부",
-    "NPS사업부":"DT사업본부", "NS사업부":"DT사업본부", "NCI사업부":"DT사업본부", "SIG사업부":"DT사업본부",
-    "중부사업부":"NBS사업본부", "영남사업부":"NBS사업본부",
-    "솔루션사업1부":"CDS사업본부", "솔루션사업2부":"CDS사업본부",
-    "SDI사업부":"SDI사업본부",
-    "OCI사업부":"JFT사업본부", "AI사업부":"JFT사업본부", "Infra사업부":"JFT사업본부",
-    "Account사업부":"Account사업본부",
-    "Security사업부":"Security사업본부"
-  };
-  var DEPARTMENTS = Object.keys(UNIT_OF_DEPT);
+  // 사업본부/부서는 DB(business_units/departments 테이블)에서 불러와 채워짐
+  // — loadOrgStructure() 참고. 조직 변경이 잦아 관리자가 "조직 관리" 화면에서
+  // 직접 추가·수정·삭제할 수 있도록 하드코딩 대신 DB를 사용한다.
+  var BUSINESS_UNITS = [];
+  var UNIT_OF_DEPT = {};
+  var DEPARTMENTS = [];
+  var orgUnitsRaw = [];
+  var orgDeptsRaw = [];
   function unitOfDept(dept){ return UNIT_OF_DEPT[dept] || "-"; }
+  async function loadOrgStructure(){
+    try{
+      var unitsRes = await supabaseClient.from("business_units").select("*").order("sort_order", {ascending:true});
+      if(unitsRes.error) throw unitsRes.error;
+      var deptsRes = await supabaseClient.from("departments").select("*").order("sort_order", {ascending:true});
+      if(deptsRes.error) throw deptsRes.error;
+      orgUnitsRaw = unitsRes.data || [];
+      orgDeptsRaw = deptsRes.data || [];
+      BUSINESS_UNITS = orgUnitsRaw.map(function(u){ return u.name; });
+      UNIT_OF_DEPT = {};
+      orgDeptsRaw.forEach(function(d){ UNIT_OF_DEPT[d.name] = d.business_unit; });
+      DEPARTMENTS = orgDeptsRaw.map(function(d){ return d.name; });
+    }catch(e){
+      // 조직 데이터를 불러오지 못해도 기존 값(비어있거나 이전 값)을 유지해 화면이 완전히 막히지 않게 함
+    }
+  }
   var teamOwners = [];
   async function loadTeamOwners(){
     if(!currentUser){ teamOwners = []; return; }
@@ -1876,6 +1925,7 @@
   async function loadFromSupabase(){
     setSyncing(true);
     try{
+      await loadOrgStructure();
       var stagesRes = await supabaseClient.from("stages").select("*").order("sort_order", {ascending:true});
       if(stagesRes.error) throw stagesRes.error;
       var dealsRes = await supabaseClient.from("deals").select("*").order("created_at", {ascending:true});
@@ -3273,6 +3323,139 @@
     });
   }
 
+  function renderOrgManagement(){
+    var wrap = document.getElementById("orgUnitsWrap");
+    if(!wrap) return;
+    wrap.innerHTML = orgUnitsRaw.map(function(u){
+      var deptsForUnit = orgDeptsRaw.filter(function(d){ return d.business_unit === u.name; });
+      return '<div class="org-unit-card" data-unit="'+escapeHtml(u.name)+'">' +
+        '<div class="org-unit-head">' +
+          '<input type="text" class="org-unit-name" value="'+escapeHtml(u.name)+'" data-orig="'+escapeHtml(u.name)+'">' +
+          '<button type="button" class="icon-btn admin-save-btn org-unit-save">저장</button>' +
+          '<button type="button" class="icon-btn del org-unit-del">삭제</button>' +
+        '</div>' +
+        '<div class="org-dept-list">' +
+          deptsForUnit.map(function(d){
+            return '<div class="org-dept-row" data-dept="'+escapeHtml(d.name)+'">' +
+              '<input type="text" class="org-dept-name" value="'+escapeHtml(d.name)+'" data-orig="'+escapeHtml(d.name)+'">' +
+              '<button type="button" class="icon-btn admin-save-btn org-dept-save">저장</button>' +
+              '<button type="button" class="icon-btn del org-dept-del">삭제</button>' +
+            '</div>';
+          }).join("") +
+          '<div class="org-dept-add-row">' +
+            '<input type="text" class="org-dept-new" placeholder="새 부서명">' +
+            '<button type="button" class="icon-btn admin-save-btn org-dept-add">+ 부서 추가</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join("") || '<div class="loading-hint">등록된 사업본부가 없습니다. 위에서 추가해주세요.</div>';
+
+    wrap.querySelectorAll(".org-unit-save").forEach(function(btn){
+      btn.addEventListener("click", async function(){
+        var card = btn.closest(".org-unit-card");
+        var input = card.querySelector(".org-unit-name");
+        var oldName = input.dataset.orig;
+        var newName = input.value.trim();
+        if(!newName || newName === oldName) return;
+        btn.disabled = true;
+        try{
+          var res = await supabaseClient.rpc("rename_business_unit", { p_old_name: oldName, p_new_name: newName });
+          if(res.error) throw res.error;
+          hideError();
+          await loadOrgStructure();
+          populateStaticSelects();
+          renderOrgManagement();
+        }catch(err){
+          showError("사업본부명 변경 실패: " + (err && err.message ? err.message : err));
+          btn.disabled = false;
+        }
+      });
+    });
+    wrap.querySelectorAll(".org-unit-del").forEach(function(btn){
+      btn.addEventListener("click", async function(){
+        var card = btn.closest(".org-unit-card");
+        var name = card.dataset.unit;
+        if(!confirm('"'+name+'" 사업본부를 삭제할까요? 소속 부서가 남아있으면 삭제되지 않습니다.')) return;
+        btn.disabled = true;
+        try{
+          var res = await supabaseClient.from("business_units").delete().eq("name", name);
+          if(res.error) throw res.error;
+          hideError();
+          await loadOrgStructure();
+          populateStaticSelects();
+          renderOrgManagement();
+        }catch(err){
+          showError("삭제 실패: 먼저 하위 부서를 삭제하거나 다른 사업본부로 옮긴 뒤 다시 시도해주세요.");
+          btn.disabled = false;
+        }
+      });
+    });
+    wrap.querySelectorAll(".org-dept-save").forEach(function(btn){
+      btn.addEventListener("click", async function(){
+        var row = btn.closest(".org-dept-row");
+        var input = row.querySelector(".org-dept-name");
+        var oldName = input.dataset.orig;
+        var newName = input.value.trim();
+        if(!newName || newName === oldName) return;
+        btn.disabled = true;
+        try{
+          var res = await supabaseClient.rpc("rename_department", { p_old_name: oldName, p_new_name: newName });
+          if(res.error) throw res.error;
+          hideError();
+          await loadOrgStructure();
+          await loadTeamOwners();
+          populateStaticSelects();
+          renderOrgManagement();
+        }catch(err){
+          showError("부서명 변경 실패: " + (err && err.message ? err.message : err));
+          btn.disabled = false;
+        }
+      });
+    });
+    wrap.querySelectorAll(".org-dept-del").forEach(function(btn){
+      btn.addEventListener("click", async function(){
+        var row = btn.closest(".org-dept-row");
+        var name = row.dataset.dept;
+        if(!confirm('"'+name+'" 부서를 삭제할까요? 기존 딜·사용자 데이터는 영향받지 않으며, 앞으로 새로 등록할 때는 선택할 수 없게 됩니다.')) return;
+        btn.disabled = true;
+        try{
+          var res = await supabaseClient.from("departments").delete().eq("name", name);
+          if(res.error) throw res.error;
+          hideError();
+          await loadOrgStructure();
+          populateStaticSelects();
+          renderOrgManagement();
+        }catch(err){
+          showError("삭제 실패: " + (err && err.message ? err.message : err));
+          btn.disabled = false;
+        }
+      });
+    });
+    wrap.querySelectorAll(".org-dept-add").forEach(function(btn){
+      btn.addEventListener("click", async function(){
+        var card = btn.closest(".org-unit-card");
+        var unitName = card.dataset.unit;
+        var input = card.querySelector(".org-dept-new");
+        var name = input.value.trim();
+        if(!name) return;
+        btn.disabled = true;
+        try{
+          var deptsForUnit = orgDeptsRaw.filter(function(d){ return d.business_unit === unitName; });
+          var nextOrder = deptsForUnit.length ? Math.max.apply(null, deptsForUnit.map(function(d){ return d.sort_order||0; })) + 1 : 1;
+          var res = await supabaseClient.from("departments").insert({ name: name, business_unit: unitName, sort_order: nextOrder });
+          if(res.error) throw res.error;
+          hideError();
+          await loadOrgStructure();
+          populateStaticSelects();
+          renderOrgManagement();
+        }catch(err){
+          showError("부서 추가 실패: " + (err && err.message ? err.message : err));
+          btn.disabled = false;
+        }
+      });
+    });
+  }
+
   async function renderAdminAccessLog(){
     var accessTable = document.getElementById("adminAccessTable");
     var fromF = document.getElementById("adminAccessFrom").value;
@@ -3312,6 +3495,7 @@
       usersTable.innerHTML = '<tbody><tr><td class="loading-hint">사용자 목록을 불러오지 못했습니다.</td></tr></tbody>';
     }
     renderAdminAccessLog();
+    renderOrgManagement();
   }
 
   /* ---------- 역할 기반 UI 제어 ---------- */
@@ -3397,6 +3581,7 @@
   }
 
   async function initAuth(){
+    await loadOrgStructure();
     populateAuthSelects();
     supabaseClient.auth.onAuthStateChange(function(event, s){
       if(event === "PASSWORD_RECOVERY"){
@@ -3684,6 +3869,30 @@
     }catch(err){
       msg.textContent = "저장 실패: " + (err && err.message ? err.message : err);
       msg.className = "auth-msg error";
+    }finally{
+      btn.disabled = false;
+    }
+  });
+
+  /* ---------- 조직 관리 ---------- */
+
+  document.getElementById("addUnitBtn").addEventListener("click", async function(){
+    var input = document.getElementById("newUnitNameInput");
+    var name = input.value.trim();
+    if(!name) return;
+    var btn = this;
+    btn.disabled = true;
+    try{
+      var nextOrder = orgUnitsRaw.length ? Math.max.apply(null, orgUnitsRaw.map(function(u){ return u.sort_order||0; })) + 1 : 1;
+      var res = await supabaseClient.from("business_units").insert({ name: name, sort_order: nextOrder });
+      if(res.error) throw res.error;
+      input.value = "";
+      hideError();
+      await loadOrgStructure();
+      populateStaticSelects();
+      renderOrgManagement();
+    }catch(err){
+      showError("사업본부 추가 실패: " + (err && err.message ? err.message : err));
     }finally{
       btn.disabled = false;
     }
