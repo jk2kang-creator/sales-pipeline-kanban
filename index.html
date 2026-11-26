@@ -3551,11 +3551,14 @@
   async function handleAuthChange(){
     resetIdleTimer();
     if(!authSession){
+      passwordRecovery = false;
       currentUser = null;
       showScreen("auth");
       return;
     }
+    if(passwordRecovery) return; // 새 비밀번호를 정하기 전에는 앱 화면으로 넘기지 않음
     var profile = await fetchProfile(authSession.user.id);
+    if(passwordRecovery) return;
     if(!profile){
       showScreen("pending");
       return;
@@ -3580,11 +3583,13 @@
     loadFromSupabase();
   }
 
+  var passwordRecovery = false;
+
   async function initAuth(){
-    await loadOrgStructure();
-    populateAuthSelects();
+    // PASSWORD_RECOVERY는 한 번만 발생하므로, 네트워크 대기 전에 먼저 구독해야 놓치지 않는다.
     supabaseClient.auth.onAuthStateChange(function(event, s){
       if(event === "PASSWORD_RECOVERY"){
+        passwordRecovery = true;
         authSession = s;
         showScreen("auth");
         showAuthForm("newpw");
@@ -3597,6 +3602,10 @@
       }
       handleAuthChange();
     });
+    await loadOrgStructure();
+    populateAuthSelects();
+    var pd = document.getElementById("profile_department");
+    if(pd && currentUser && currentUser.department) pd.value = currentUser.department;
   }
 
   var SAVED_EMAIL_KEY = "etevers_saved_login_email";
